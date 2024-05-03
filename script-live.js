@@ -5,6 +5,11 @@ import { OrbitControls } from "three/OrbitControls";
 import { RGBELoader } from "three/RGBELoader";
 import { PMREMGenerator } from "three";
 
+
+import { scaleTransformRenderer } from './transform.js';
+
+
+
 // delete later
 import { setupGUI } from "./gui.js";
 
@@ -568,6 +573,6 @@ function handleResize(render, camera) {
 
 
 document.addEventListener('DOMContentLoaded', async function () {
-  await initCellRenderer();
-  initHumanRenderer();
+  await Promise.all([initCellRenderer(), initHumanRenderer()]);
+  scaleTransformRenderer();
 });
