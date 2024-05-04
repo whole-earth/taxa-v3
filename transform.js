@@ -11,7 +11,8 @@ export function scaleTransformRenderer() {
             window.addEventListener('scroll', transitionScroll);
         }
         else {
-            cellThree.style.transform = ""; // clear
+            cellThree.style = ""; // clear
+            humanThree.style = ""; // clear
             window.removeEventListener('scroll', transitionScroll);
         }
     });
