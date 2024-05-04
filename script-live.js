@@ -4,8 +4,6 @@ import { DRACOLoader } from 'three/DracoLoader';
 import { OrbitControls } from "three/OrbitControls";
 import { RGBELoader } from "three/RGBELoader";
 import { PMREMGenerator } from "three";
-
-
 import { scaleTransformRenderer } from './transform.js';
 
 
