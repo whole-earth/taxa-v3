@@ -11,6 +11,7 @@ export function scaleTransformRenderer() {
             window.addEventListener('scroll', transitionScroll);
         }
         else {
+            cellThree.style.transform = "scale(1)";
             window.removeEventListener('scroll', transitionScroll);
         }
     });
@@ -38,8 +39,8 @@ export function scaleTransformRenderer() {
         // HUMAN opacity: 0 until progress=0.25, then linear towards progress=1
         humanThree.style.opacity = progression < 0.25 ? 0 : Math.min(1, (progression - 0.25) / 0.75);
 
-        //CELL opacity: 1 until progress=0.3, then linear towards 0 until progress=0.8.
-        cellThree.style.opacity = progression < 0.3 ? 1 : Math.max(0, 1 - ((progression - 0.3) / 0.5));
+        // CELL opacity: 1 until progress=0.3, then linear towards 0 until progress=0.7.
+        cellThree.style.opacity = progression < 0.3 ? 1 : (progression > 0.7 ? 0 : 1 - ((progression - 0.3) / 0.4));
 
         /*======================================================================*/
 
@@ -63,7 +64,7 @@ export function scaleTransformRenderer() {
             humanOffsetY = progression < 0.6 ? -12 : (progression <= 1 ? 12 * (progression - 0.6) / 0.4 - 12 : 0);
         }
 
-        // TRANSFORM: human sets both scale & translate3d (offset)
+        // TRANSLATE: human sets both scale & translate3d (offset)
         humanThree.style.transform = `scale(${Math.max(1, Math.min(8, humanScaleVal))}) translate3d(${humanOffsetX}vw, ${humanOffsetY}%, 0)`;
     }
 
