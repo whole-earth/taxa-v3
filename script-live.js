@@ -518,6 +518,21 @@ function initHumanRenderer() {
 
   const human = document.querySelector('.human');
 
+  function humanOffsetMaxWidth() {
+    const screenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+    if (screenWidth > 1650) {
+      const marginLeft = window.getComputedStyle(human).marginLeft;
+      const marginLeftValue = parseInt(marginLeft, 10);
+  
+      const innerCanvas = human.querySelector('.human-three canvas');
+      innerCanvas.style.marginLeft = -marginLeftValue + 'px';
+    }
+  }
+
+  humanOffsetMaxWidth();
+  window.addEventListener('resize', humanOffsetMaxWidth);
+
+
   function humanScroll() {
     const humanRect = human.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
