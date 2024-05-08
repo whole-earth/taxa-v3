@@ -36,10 +36,10 @@ export function scaleTransformRenderer() {
 
         /*======================================================================*/
 
-        // HUMAN opacity: 0 until progress=0.25, then linear towards progress=1
-        humanThree.style.opacity = progression < 0.25 ? 0 : Math.min(1, (progression - 0.25) / 0.75);
+        // HUMAN opacity: 0 until progress=0.2, then linear towards progress=1
+        humanThree.style.opacity = progression < 0.2 ? 0 : Math.min(1, (progression - 0.2) / 0.8);
 
-        // CELL opacity: 1 until progress=0.3, then linear towards 0 until progress=0.7.
+        // CELL opacity: 1 until progress=0.3, then linear towards 0 until progress=0.7
         cellThree.style.opacity = progression < 0.3 ? 1 : (progression > 0.7 ? 0 : 1 - ((progression - 0.3) / 0.4));
 
         /*======================================================================*/

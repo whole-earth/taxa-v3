@@ -476,6 +476,19 @@ function initHumanRenderer() {
 
       scene.add(model);
 
+      //=====================================================
+
+      // Create a sphere geometry
+      const sphereGeometry = new THREE.SphereGeometry(5, 32, 32); // radius = 5, widthSegments = 32, heightSegments = 32
+      // Create a basic material
+      const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 }); // red color
+      // Create a mesh with the sphere geometry and basic material
+      const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+      // Add the sphere mesh to the scene
+      scene.add(sphereMesh);
+      
+      //=====================================================
+
       mixer = new THREE.AnimationMixer(model);
       action = mixer.clipAction(gltf.animations[0]);
       action.play();

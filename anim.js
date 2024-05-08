@@ -4,11 +4,9 @@ import { DRACOLoader } from 'three/DracoLoader';
 import { OrbitControls } from "three/OrbitControls";
 import { RGBELoader } from "three/RGBELoader";
 import { PMREMGenerator } from "three";
-import { scaleTransformRenderer } from './transform.js';
+import { scaleTransformRenderer } from './transition.js';
 
-
-
-// delete later
+// delete for prod
 import { setupGUI } from "./gui.js";
 
 function initCellRenderer() {
@@ -23,8 +21,8 @@ function initCellRenderer() {
           this.scene = scene;
           this.position = new THREE.Vector3(0, 0, 0);
 
-          // this.basePath = '/assets/obj/';
-          this.basePath = 'https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/obj/'; // PATHCHANGE
+          // this.basePath = '/assets/obj/'; // PATHCHANGE
+          this.basePath = 'https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/obj/';
           this.loader = new GLTFLoader();
           const dracoLoader = new DRACOLoader()
 
@@ -48,7 +46,7 @@ function initCellRenderer() {
           this.centerObject(this.object);
           if (shader) { this.applyCustomShader(shader); }
 
-          // condition to add GUI
+          // condition to add GUI: delete for prod
           if (addGUI) { setupGUI(this.object.material); }
 
           this.boundingBox.setFromObject(this.object);
@@ -68,7 +66,6 @@ function initCellRenderer() {
           }
         });
       }
-
 
       centerObject(object) {
         const box = new THREE.Box3().setFromObject(object);
@@ -186,8 +183,8 @@ function initCellRenderer() {
 
     const rgbeLoader = new RGBELoader();
 
-    rgbeLoader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/environments/aloe.hdr", function (texture) { // PATHCHANGE
-    // rgbeLoader.load("/assets/environments/ambient.hdr", function (texture) {
+    rgbeLoader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/environments/aloe.hdr", function (texture) {
+      // rgbeLoader.load("/assets/environments/ambient.hdr", function (texture) { // PATHCHANGE
       const pmremGenerator = new PMREMGenerator(cellRender);
       pmremGenerator.compileEquirectangularShader();
       const envMap = pmremGenerator.fromEquirectangular(texture).texture;
@@ -220,8 +217,8 @@ function initCellRenderer() {
 
     const loadPromises = [
       new CellComponent("blob-outer.gltf"),
-      new CellComponent("ribbons.glb", grayPurple), // 2.3 deleted 'true' for gui
-      new CellComponent("blob-inner.glb", iridescent),
+      new CellComponent("ribbons.glb", grayPurple),
+      new CellComponent("blob-inner.glb", iridescent, true)
     ];
 
     function initInteract() {
@@ -372,7 +369,7 @@ function initHumanRenderer() {
   controls.enableDamping = true;
   controls.dampingFactor = 0.1;
   controls.enableZoom = false;
-  controls.enableRotate = false;
+  // controls.enableRotate = false;
 
   function loadLights() {
 
@@ -407,76 +404,56 @@ function initHumanRenderer() {
   }
 
   const materialMap = new THREE.TextureLoader().load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/obj/blue.jpg"); // PATHCHANGE
-  const material = new THREE.MeshStandardMaterial({
+
+  const materialBlue = new THREE.MeshStandardMaterial({
     map: materialMap,
     roughness: 1,
     metalness: 0.75,
     side: THREE.DoubleSide
   });
 
+  const materialBlueLogo = new THREE.MeshStandardMaterial({
+    map: materialMap,
+    roughness: 1,
+    metalness: 0.75,
+    side: THREE.DoubleSide,
+    transparent: true
+  });
+
+  const greenLogo = new THREE.MeshBasicMaterial({
+    color: 0xd2ecbf,
+    side: THREE.DoubleSide,
+    transparent: true
+  });
+
   let mixer, action;
 
-  function modelInit() {
+  let logoObject = null;
+  let modelObject = null;
 
+  function modelInit() {
     const loader = new GLTFLoader();
     let modelHeight;
     const modelHeights = [];
 
     // PATHCHANGE
-    loader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/obj/model.glb", function(gltf) {
-    // loader.load("/assets/obj/model.glb", function (gltf) {
+    loader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/obj/model.glb", function (gltf) {
 
-      const model = gltf.scene;
-
-      model.traverse(function (child) {
+      modelObject = gltf.scene;
+      modelObject.traverse(function (child) {
         if (child.isMesh) {
           const bbox = new THREE.Box3().setFromObject(child);
           const height = bbox.max.y - bbox.min.y;
           modelHeights.push(height);
-          child.material = material;
+          child.material = materialBlue;
         }
       });
 
-      model.scale.set(80, 80, 80);
+      modelObject.scale.set(80, 80, 80);
       modelHeight = Math.max(...modelHeights);
 
-      // 2.2 NEW
-      let distance, modelX, modelY;
-      if (window.innerWidth <= 320) {
-        distance = 240;
-        modelX = 20;
-        modelY = -modelHeight * 80;
-      } else if (window.innerWidth <= 768) {
-        distance = 200;
-        modelX = 30;
-        modelY = -modelHeight * 80;
-      } else if (window.innerWidth <= 996) {
-        distance = 180;
-        modelX = 25;
-        modelY = -modelHeight * 80;
-      } else {
-        distance = 110;
-        modelX = 30;
-        modelY = -modelHeight * 70;
-      }
+      function responsiveAdjust() {
 
-      model.position.set(modelX, modelY, 0);
-      model.rotation.y = -Math.PI / 6;
-
-      camera.fov = 45;
-      camera.position.set(0, modelHeight * 0.5, distance);
-      camera.lookAt(model.position);
-      camera.updateProjectionMatrix();
-
-      scene.add(model);
-
-      mixer = new THREE.AnimationMixer(model);
-      action = mixer.clipAction(gltf.animations[0]);
-      action.play();
-
-      window.addEventListener('resize', function () {
-
-        // 2.2 NEW
         let distance, modelX, modelY;
         if (window.innerWidth <= 320) {
           distance = 240;
@@ -496,34 +473,89 @@ function initHumanRenderer() {
           modelY = -modelHeight * 70;
         }
 
-        model.position.set(modelX, modelY, 0);
-        model.rotation.y = -Math.PI / 6;
+        modelObject.position.set(modelX, modelY, 0);
+        modelObject.rotation.y = -Math.PI / 6;
 
         camera.fov = 45;
         camera.position.set(0, modelHeight * 0.5, distance);
-        camera.lookAt(model.position);
+        camera.lookAt(modelObject.position);
         camera.updateProjectionMatrix();
 
         handleResize(humanRender, camera);
 
-      });
+      }
+
+      responsiveAdjust();
+      window.addEventListener('resize', responsiveAdjust);
+
+      scene.add(modelObject);
+
+      mixer = new THREE.AnimationMixer(modelObject);
+      action = mixer.clipAction(gltf.animations[0]);
+      action.play();
+
+      //=================================================================
+
+      function logoInit() {
+        const loader = new GLTFLoader();
+        loader.load("assets/obj/logo.glb", function (logo) { // PATHCHANGE!
+          // loader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/obj/logo.glb", function (logo) {
+
+          logoObject = logo.scene;
+
+          // Traverse the objects in the model
+          logoObject.traverse(function (child) {
+            if (child.isMesh) {
+              if (child.name === "PHALLUS") {
+                child.material = materialBlueLogo;
+              }
+              else if (child.name === "BALL") {
+                child.material = greenLogo;
+
+                const bbox = new THREE.Box3().setFromObject(child);
+                const height = bbox.max.y - bbox.min.y;
+                const tenPercentHeight = height * 0.1;
+
+                // Store the original position and the 10% height
+                child.userData.originalPosition = child.position.y;
+                child.userData.tenPercentHeight = tenPercentHeight;
+
+
+              }
+            }
+          });
+
+          // Create a bounding box for the model
+          const modelBounds = new THREE.Box3().setFromObject(modelObject);
+          const boundingBox = new THREE.Box3().setFromObject(logoObject);
+          const logoSize = boundingBox.getSize(new THREE.Vector3());
+          const scale = 12 / Math.max(logoSize.x, logoSize.y, logoSize.z);
+          logoObject.scale.set(scale, scale, scale);
+
+          logoObject.position.set(modelBounds.min.x, modelBounds.max.y, (modelBounds.min.z + modelBounds.max.z) / 2);
+
+          scene.add(logoObject);
+
+        });
+
+      }
+
+      logoInit();
+
+      loadLights();
 
     });
-
-    loadLights();
   }
 
   modelInit();
 
-
   const human = document.querySelector('.human');
-
   function humanOffsetMaxWidth() {
     const screenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
     if (screenWidth > 1650) {
       const marginLeft = window.getComputedStyle(human).marginLeft;
       const marginLeftValue = parseInt(marginLeft, 10);
-  
+
       const innerCanvas = human.querySelector('.human-three canvas');
       innerCanvas.style.marginLeft = -marginLeftValue + 'px';
     }
@@ -544,9 +576,27 @@ function initHumanRenderer() {
 
     let scrollProgress = 0;
 
-    // Calculate the scroll progress based on the modified animationStart
     if (humanRect.top <= animationStart && humanRect.bottom >= viewportHeight) {
       scrollProgress = Math.min(1, Math.max(0, Math.abs(humanRect.top - animationStart) / (animationEnd + transitionSpacerHeight)));
+
+      // opacity of logo
+      if (logoObject) {
+        if (scrollProgress >= 0.8) {
+          const opacityProgress = Math.min(1, (scrollProgress - 0.8) / 0.2);
+          logoObject.traverse(function (child) {
+            if (child.isMesh) {
+              child.material.opacity = opacityProgress;
+            }
+          });
+        } else {
+          logoObject.traverse(function (child) {
+            if (child.isMesh) {
+              child.material.opacity = 0;
+            }
+          });
+        }
+      }
+
     } else if (humanRect.top > animationStart) {
       scrollProgress = 0;
     } else {
@@ -570,6 +620,18 @@ function initHumanRenderer() {
       humanScroll(); // Update animation based on scroll position
     }
 
+    if (logoObject) {
+      logoObject.traverse(function (child) {
+        if (child.isMesh && child.name === "BALL") {
+          // Calculate the new position
+          const newPosition = child.userData.originalPosition + Math.sin(Date.now() * 0.001) * child.userData.tenPercentHeight;
+
+          // Update the position
+          child.position.y = newPosition;
+        }
+      });
+    }
+
     humanRender.render(scene, camera);
 
   }
@@ -583,7 +645,6 @@ function handleResize(render, camera) {
   camera.updateProjectionMatrix();
   render.setSize(window.innerWidth, window.innerHeight);
 }
-
 
 document.addEventListener('DOMContentLoaded', async function () {
   await Promise.all([initCellRenderer(), initHumanRenderer()]);
