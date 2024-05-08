@@ -498,8 +498,8 @@ function initHumanRenderer() {
 
       function logoInit() {
         const loader = new GLTFLoader();
-        loader.load("assets/obj/logo.glb", function (logo) { // PATHCHANGE!
-          // loader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/obj/logo.glb", function (logo) {
+        // loader.load("assets/obj/logo.glb", function (logo) { // PATHCHANGE!
+        loader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/obj/logo.glb", function (logo) {
 
           logoObject = logo.scene;
 
