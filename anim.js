@@ -108,7 +108,7 @@ function initCellRenderer() {
     // Variables for Zoom
     const splashEndFOV = splashStartFOV * 0.80; // 1.2x increase
     const diveStartFOV = splashEndFOV;
-    const diveEndFOV = 30;
+    const diveEndFOV = 26;
     const zoomOutStartFOV = diveEndFOV;
     const zoomOutEndFOV = 100;
 
@@ -218,7 +218,7 @@ function initCellRenderer() {
     const loadPromises = [
       new CellComponent("blob-outer.gltf"),
       new CellComponent("ribbons.glb", grayPurple),
-      new CellComponent("blob-inner.glb", iridescent, true)
+      new CellComponent("blob-inner.glb", iridescent)
     ];
 
     function initInteract() {
@@ -514,7 +514,7 @@ function initHumanRenderer() {
 
                 const bbox = new THREE.Box3().setFromObject(child);
                 const height = bbox.max.y - bbox.min.y;
-                const tenPercentHeight = height * 0.1;
+                const tenPercentHeight = height * 0.12;
 
                 // Store the original position and the 10% height
                 child.userData.originalPosition = child.position.y;
