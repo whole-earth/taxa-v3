@@ -179,7 +179,7 @@ function initCellRenderer() {
         camera.position.y = rotation * 0.10;
         //const splashProgress = (scrollY - splashAreaRect.top) / (splashAreaRect.bottom - window.innerHeight);
         const splashProgress = Math.max(0, (scrollY - splashAreaRect.top + splashOffsetHeight) / (splashAreaRect.bottom - window.innerHeight));
-        camera.fov = smoothLerp(splashStartFOV, splashEndFOV, splashProgress);
+        //camera.fov = smoothLerp(splashStartFOV, splashEndFOV, splashProgress);
         console.log("Splash FOV: ", camera.fov);
 
 
