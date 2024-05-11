@@ -76,11 +76,11 @@ function initCellRenderer() {
 
     const scene = new THREE.Scene();
 
-    const splashStartFOV = 60;
+    const splashStartFOV = 80;
 
     const aspectRatio = window.innerWidth / window.innerHeight;
     const camera = new THREE.PerspectiveCamera(splashStartFOV, aspectRatio, 0.5, 2000);
-    camera.position.set(0, 0, 60);
+    camera.position.set(0, 0, splashStartFOV);
 
     // Renderer
     const cellRender = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -175,12 +175,10 @@ function initCellRenderer() {
         controls.autoRotate = !(diveHeight * 0.8 + splashHeight < scrollY); // stop rotating the last 20% of dive.height
         const diveProgress = (scrollY - (splashAreaRect.bottom - window.innerHeight)) / diveAreaRect.height;
         camera.fov = smoothLerp(diveStartFOV, diveEndFOV, diveProgress);
-      } else if (zoomOutBool) {
+      } else { // zoomBool
         controls.autoRotate = true;
         const zoomOutProgress = Math.max(0, (scrollY - zoomOutAreaRect.top) / (zoomOutAreaRect.bottom - zoomOutAreaRect.top));
         camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress);
-      } else {
-        camera.fov = splashStartFOV;
       }
 
       camera.updateProjectionMatrix();
