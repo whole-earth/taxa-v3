@@ -106,11 +106,11 @@ function initCellRenderer() {
     controls.maxPolarAngle = Math.PI / 2;
 
     // Variables for Zoom
-    const splashEndFOV = splashStartFOV * 0.80; // 1.2x increase
+    const splashEndFOV = splashStartFOV * 0.90; // 1.1x increase
     const diveStartFOV = splashEndFOV;
     const diveEndFOV = 26;
     const zoomOutStartFOV = diveEndFOV;
-    const zoomOutEndFOV = 100;
+    const zoomOutEndFOV = 150;
 
     const multiplierDistanceControl = 10;
     const multiplierValue = 10.05;
@@ -139,10 +139,12 @@ function initCellRenderer() {
 
       let scrollY = window.scrollY;
       let scrollDiff = scrollY - lastScrollY;
-      let diveBool = scrollY < diveAreaRect.bottom;
-      let splashBool = scrollY < splashAreaRect.bottom;
+      let diveBool = scrollY < diveAreaRect.bottom - window.innerHeight;
+      let splashBool = scrollY < splashAreaRect.bottom - window.innerHeight;
+      let zoomOutBool = scrollY < zoomOutAreaRect.bottom;
       const diveHeight = diveAreaRect.height;
       const splashHeight = splashAreaRect.height;
+
       let multiplier = Math.floor(scrollDiff / multiplierDistanceControl);
 
       controls.autoRotateSpeed = 1.0 + multiplier * multiplierValue;
@@ -157,19 +159,22 @@ function initCellRenderer() {
         return;
       }
 
-      if (splashBool) {
+      if ((splashBool) || (scroll > 20 )) {
         let rotation = (rotationDegree / (splashHeight * 1.000));
+        console.log("true")
         camera.position.y = rotation * 0.10;
-        const splashProgress = (scrollY - splashAreaRect.top) / (splashHeight * 1.00000);
+        const splashProgress = (scrollY - splashAreaRect.top) / (splashAreaRect.bottom - window.innerHeight);
         camera.fov = smoothLerp(splashStartFOV, splashEndFOV, splashProgress);
       } else if (diveBool) {
-        controls.autoRotate = !(diveHeight * 0.8 + splashHeight < scrollY);
+        controls.autoRotate = !(diveHeight * 0.75 + splashHeight < scrollY); // stop rotating the last 25% of dive.height
         const diveProgress = (scrollY - (splashAreaRect.bottom - window.innerHeight)) / diveAreaRect.height;
         camera.fov = smoothLerp(diveStartFOV, diveEndFOV, diveProgress);
-      } else {
+      } else if (zoomOutBool) {
         controls.autoRotate = true;
         const zoomOutProgress = Math.max(0, (scrollY - zoomOutAreaRect.top) / (zoomOutAreaRect.bottom - zoomOutAreaRect.top));
         camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress);
+      } else {
+        console.log('this should never log...')
       }
 
       camera.updateProjectionMatrix();

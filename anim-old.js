@@ -106,11 +106,11 @@ function initCellRenderer() {
     controls.maxPolarAngle = Math.PI / 2;
 
     // Variables for Zoom
-    const splashEndFOV = splashStartFOV * 0.90; // 1.1x increase
+    const splashEndFOV = splashStartFOV * 0.80; // 1.2x increase
     const diveStartFOV = splashEndFOV;
     const diveEndFOV = 26;
     const zoomOutStartFOV = diveEndFOV;
-    const zoomOutEndFOV = 150;
+    const zoomOutEndFOV = 100;
 
     const multiplierDistanceControl = 10;
     const multiplierValue = 10.05;
@@ -139,12 +139,10 @@ function initCellRenderer() {
 
       let scrollY = window.scrollY;
       let scrollDiff = scrollY - lastScrollY;
-      let diveBool = scrollY < diveAreaRect.bottom - window.innerHeight;
-      let splashBool = scrollY < splashAreaRect.bottom - window.innerHeight;
-      let zoomOutBool = scrollY < zoomOutAreaRect.bottom;
+      let diveBool = scrollY < diveAreaRect.bottom;
+      let splashBool = scrollY < splashAreaRect.bottom;
       const diveHeight = diveAreaRect.height;
       const splashHeight = splashAreaRect.height;
-
       let multiplier = Math.floor(scrollDiff / multiplierDistanceControl);
 
       controls.autoRotateSpeed = 1.0 + multiplier * multiplierValue;
