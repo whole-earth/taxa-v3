@@ -129,14 +129,11 @@ function initCellRenderer() {
     //=============
 
     let splashOffsetHeight = 0;
-    // Check if there is an element with class 'announcement'
     const announcementElement = document.querySelector('.announcement');
     if (announcementElement) {
       splashOffsetHeight += announcementElement.getBoundingClientRect().height;
       announcementElement.getBoundingClientRect().height
     }
-
-    // Check if there is an element with class 'nav'
     const navElement = document.querySelector('.nav');
     if (navElement) {
       splashOffsetHeight += navElement.getBoundingClientRect().height;
@@ -158,8 +155,8 @@ function initCellRenderer() {
 
       let scrollY = window.scrollY;
       let scrollDiff = scrollY - lastScrollY;
-      let diveBool = scrollY < (diveAreaRect.bottom - window.innerHeight);
-      let splashBool = scrollY >= splashAreaRect.top + splashOffsetHeight && scrollY < splashAreaRect.bottom;
+      let diveBool = scrollY < diveAreaRect.bottom - window.innerHeight;
+      let splashBool = scrollY < splashAreaRect.bottom - window.innerHeight;
       let zoomOutBool = scrollY < zoomOutAreaRect.bottom;
       const diveHeight = diveAreaRect.height;
       const splashHeight = splashAreaRect.height;
@@ -178,17 +175,13 @@ function initCellRenderer() {
         return;
       }
 
-      // console.log(camera.fov)
+      console.log(camera.fov)
 
-      if (scrollY <= splashOffsetHeight){
-        camera.fov = splashStartFOV;
-      }
-      else if (splashBool) {
+      if (splashBool) {
         let rotation = (rotationDegree / (splashHeight * 1.000));
         camera.position.y = rotation * 0.10;
         //const splashProgress = (scrollY - splashAreaRect.top) / (splashAreaRect.bottom - window.innerHeight);
         const splashProgress = (scrollY - splashAreaRect.top + splashOffsetHeight) / (splashAreaRect.bottom - window.innerHeight);
-        console.log(splashProgress)
         camera.fov = smoothLerp(splashStartFOV, splashEndFOV, splashProgress);
       } else if (diveBool) {
         controls.autoRotate = !(diveHeight * 0.75 + splashHeight < scrollY); // stop rotating the last 25% of dive.height
