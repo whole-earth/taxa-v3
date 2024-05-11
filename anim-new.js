@@ -179,7 +179,6 @@ function initCellRenderer() {
       } else if (zoomOutBool) {
         controls.autoRotate = true;
         const zoomOutProgress = Math.max(0, (scrollY - zoomOutAreaRect.top) / (zoomOutAreaRect.bottom - zoomOutAreaRect.top));
-        console.log(zoomOutProgress)
         camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress);
       }
 
