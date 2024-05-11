@@ -159,7 +159,7 @@ function initCellRenderer() {
       let scrollY = window.scrollY;
       let scrollDiff = scrollY - lastScrollY;
       let diveBool = scrollY < (diveAreaRect.bottom - window.innerHeight);
-      let splashBool = scrollY >= splashAreaRect.top + offsetHeight && scrollY < splashAreaRect.bottom;
+      let splashBool = scrollY >= splashAreaRect.top + splashOffsetHeight && scrollY < splashAreaRect.bottom;
       let zoomOutBool = scrollY < zoomOutAreaRect.bottom;
       const diveHeight = diveAreaRect.height;
       const splashHeight = splashAreaRect.height;
