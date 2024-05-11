@@ -161,7 +161,6 @@ function initCellRenderer() {
         let rotation = (rotationDegree / (splashHeight * 1.000));
         camera.position.y = rotation * 0.10;
         const splashProgress = (scrollY - splashAreaRect.top) / (splashHeight * 1.00000);
-
         camera.fov = smoothLerp(splashStartFOV, splashEndFOV, splashProgress);
       } else if (diveBool) {
         controls.autoRotate = !(diveHeight * 0.8 + splashHeight < scrollY);
@@ -169,7 +168,7 @@ function initCellRenderer() {
         camera.fov = smoothLerp(diveStartFOV, diveEndFOV, diveProgress);
       } else {
         controls.autoRotate = true;
-        const zoomOutProgress = (scrollY - (splashAreaRect.top + splashHeight + diveHeight)) / (zoomOutAreaRect.height * 1.00000);
+        const zoomOutProgress = Math.max(0, (scrollY - zoomOutAreaRect.top) / (zoomOutAreaRect.bottom - zoomOutAreaRect.top));
         camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress);
       }
 
