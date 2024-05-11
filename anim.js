@@ -76,7 +76,7 @@ function initCellRenderer() {
 
     const scene = new THREE.Scene();
 
-    const splashStartFOV = 65;
+    const splashStartFOV = 70;
 
     const aspectRatio = window.innerWidth / window.innerHeight;
     const camera = new THREE.PerspectiveCamera(splashStartFOV, aspectRatio, 0.5, 2000);
@@ -126,20 +126,22 @@ function initCellRenderer() {
     const diveAreaRect = diveArea.getBoundingClientRect();
     const zoomOutAreaRect = zoomOutArea.getBoundingClientRect();
 
-    //=============
+    /*=============
 
     let splashOffsetHeight = 0;
+    // Check if there is an element with class 'announcement'
     const announcementElement = document.querySelector('.announcement');
     if (announcementElement) {
       splashOffsetHeight += announcementElement.getBoundingClientRect().height;
-      announcementElement.getBoundingClientRect().height
     }
+
+    // Check if there is an element with class 'nav'
     const navElement = document.querySelector('.nav');
     if (navElement) {
       splashOffsetHeight += navElement.getBoundingClientRect().height;
     }
 
-    //=============
+    =============*/
 
 
     function smoothLerp(start, end, progress) {
@@ -174,15 +176,17 @@ function initCellRenderer() {
         return;
       }
 
-      if (splashBool) {
+      console.log(camera.fov)
+
+      if (scrollY <= 2) {
+        console.log('top')
+        camera.fov = splashStartFOV;
+      }
+      else if (splashBool) {
         let rotation = (rotationDegree / (splashHeight * 1.000));
         camera.position.y = rotation * 0.10;
-        //const splashProgress = (scrollY - splashAreaRect.top) / (splashAreaRect.bottom - window.innerHeight);
-        const splashProgress = Math.max(0, (scrollY - splashAreaRect.top + splashOffsetHeight) / (splashAreaRect.bottom - window.innerHeight));
-        //camera.fov = smoothLerp(splashStartFOV, splashEndFOV, splashProgress);
-        console.log("Splash FOV: ", camera.fov);
-
-
+        const splashProgress = (scrollY - splashAreaRect.top) / (splashAreaRect.bottom - window.innerHeight);
+        camera.fov = smoothLerp(splashStartFOV, splashEndFOV, splashProgress);
       } else if (diveBool) {
         controls.autoRotate = !(diveHeight * 0.75 + splashHeight < scrollY); // stop rotating the last 25% of dive.height
         const diveProgress = (scrollY - (splashAreaRect.bottom - window.innerHeight)) / diveAreaRect.height;
