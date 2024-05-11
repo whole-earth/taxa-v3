@@ -126,22 +126,21 @@ function initCellRenderer() {
     const diveAreaRect = diveArea.getBoundingClientRect();
     const zoomOutAreaRect = zoomOutArea.getBoundingClientRect();
 
-    /*=============
+    //=============
 
     let splashOffsetHeight = 0;
-    // Check if there is an element with class 'announcement'
     const announcementElement = document.querySelector('.announcement');
     if (announcementElement) {
       splashOffsetHeight += announcementElement.getBoundingClientRect().height;
+      announcementElement.getBoundingClientRect().height
     }
-
-    // Check if there is an element with class 'nav'
     const navElement = document.querySelector('.nav');
     if (navElement) {
       splashOffsetHeight += navElement.getBoundingClientRect().height;
+      // console.log (navElement.getBoundingClientRect().height)
     }
 
-    =============*/
+    //=============
 
 
     function smoothLerp(start, end, progress) {
@@ -156,8 +155,8 @@ function initCellRenderer() {
 
       let scrollY = window.scrollY;
       let scrollDiff = scrollY - lastScrollY;
-      let diveBool = scrollY < diveAreaRect.bottom - window.innerHeight;
-      let splashBool = scrollY < splashAreaRect.bottom - window.innerHeight;
+      let splashBool = scrollY < splashAreaRect.bottom;
+      let diveBool = scrollY < diveAreaRect.bottom;
       let zoomOutBool = scrollY < zoomOutAreaRect.bottom;
       const diveHeight = diveAreaRect.height;
       const splashHeight = splashAreaRect.height;
@@ -176,26 +175,28 @@ function initCellRenderer() {
         return;
       }
 
-      console.log(camera.fov)
-
-      if (scrollY <= 2) {
-        console.log('top')
-        camera.fov = splashStartFOV;
-      }
-      else if (splashBool) {
+      if (splashBool) {
         let rotation = (rotationDegree / (splashHeight * 1.000));
         camera.position.y = rotation * 0.10;
-        const splashProgress = (scrollY - splashAreaRect.top) / (splashAreaRect.bottom - window.innerHeight);
-        camera.fov = smoothLerp(splashStartFOV, splashEndFOV, splashProgress);
-      } else if (diveBool) {
+        const splashProgress = Math.max(0, (scrollY - splashAreaRect.top) / (splashAreaRect.bottom - splashAreaRect.top));        camera.fov = smoothLerp(splashStartFOV, splashEndFOV, splashProgress);
+        console.log("splash---------------------- ", splashProgress)
+      } 
+      
+      else if (diveBool) {
         controls.autoRotate = !(diveHeight * 0.75 + splashHeight < scrollY); // stop rotating the last 25% of dive.height
-        const diveProgress = (scrollY - (splashAreaRect.bottom - window.innerHeight)) / diveAreaRect.height;
+        const diveProgress = Math.max(0, (scrollY - diveAreaRect.top) / (diveAreaRect.bottom - diveAreaRect.top));
         camera.fov = smoothLerp(diveStartFOV, diveEndFOV, diveProgress);
-      } else if (zoomOutBool) {
+        console.log("dive------------------------ ", diveProgress);
+      } 
+      
+      else if (zoomOutBool) {
         controls.autoRotate = true;
         const zoomOutProgress = Math.max(0, (scrollY - zoomOutAreaRect.top) / (zoomOutAreaRect.bottom - zoomOutAreaRect.top));
         camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress);
-      } else {
+        console.log("zoom-out-------------------- ", zoomOutProgress)
+      } 
+      
+      else {
         console.log('this should never log...')
       }
 
