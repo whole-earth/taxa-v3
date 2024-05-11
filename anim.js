@@ -137,7 +137,7 @@ function initCellRenderer() {
     const navElement = document.querySelector('.nav');
     if (navElement) {
       splashOffsetHeight += navElement.getBoundingClientRect().height;
-      console.log (navElement.getBoundingClientRect().height)
+      console.log(navElement.getBoundingClientRect().height)
     }
 
     //=============
@@ -181,8 +181,13 @@ function initCellRenderer() {
         let rotation = (rotationDegree / (splashHeight * 1.000));
         camera.position.y = rotation * 0.10;
         //const splashProgress = (scrollY - splashAreaRect.top) / (splashAreaRect.bottom - window.innerHeight);
-        const splashProgress = (scrollY - splashAreaRect.top + splashOffsetHeight) / (splashAreaRect.bottom - window.innerHeight);
+        const splashProgress = Math.max(0, (scrollY - splashAreaRect.top + splashOffsetHeight) / (splashAreaRect.bottom - window.innerHeight));
         camera.fov = smoothLerp(splashStartFOV, splashEndFOV, splashProgress);
+
+        console.log("Scroll Progress: ", splashProgress);
+        console.log("Camera FOV: ", camera.fov);
+
+
       } else if (diveBool) {
         controls.autoRotate = !(diveHeight * 0.75 + splashHeight < scrollY); // stop rotating the last 25% of dive.height
         const diveProgress = (scrollY - (splashAreaRect.bottom - window.innerHeight)) / diveAreaRect.height;
