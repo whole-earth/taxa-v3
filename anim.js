@@ -133,12 +133,14 @@ function initCellRenderer() {
     const announcementElement = document.querySelector('.announcement');
     if (announcementElement) {
       splashOffsetHeight += announcementElement.getBoundingClientRect().height;
+      announcementElement.getBoundingClientRect().height
     }
 
     // Check if there is an element with class 'nav'
     const navElement = document.querySelector('.nav');
     if (navElement) {
       splashOffsetHeight += navElement.getBoundingClientRect().height;
+      console.log (navElement.getBoundingClientRect().height)
     }
 
     //=============
@@ -156,8 +158,8 @@ function initCellRenderer() {
 
       let scrollY = window.scrollY;
       let scrollDiff = scrollY - lastScrollY;
-      let diveBool = scrollY < diveAreaRect.bottom - window.innerHeight;
-      let splashBool = scrollY < splashAreaRect.bottom - window.innerHeight;
+      let diveBool = scrollY < (diveAreaRect.bottom - window.innerHeight);
+      let splashBool = scrollY < (splashAreaRect.bottom - window.innerHeight -splashOffsetHeight);
       let zoomOutBool = scrollY < zoomOutAreaRect.bottom;
       const diveHeight = diveAreaRect.height;
       const splashHeight = splashAreaRect.height;
