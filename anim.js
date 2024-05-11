@@ -164,7 +164,7 @@ function initCellRenderer() {
         camera.fov = smoothLerp(splashStartFOV, splashEndFOV, splashProgress);
       } else if (diveBool) {
         controls.autoRotate = !(diveHeight * 0.8 + splashHeight < scrollY);
-        const diveProgress = (scrollY - (splashAreaRect.top + splashAreaRect.height)) / diveAreaRect.height;
+        const diveProgress = (scrollY - (splashAreaRect.bottom - window.innerHeight)) / diveAreaRect.height;
         camera.fov = smoothLerp(diveStartFOV, diveEndFOV, diveProgress);
       } else {
         controls.autoRotate = true;
