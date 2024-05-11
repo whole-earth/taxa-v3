@@ -178,10 +178,9 @@ function initCellRenderer() {
         return;
       }
 
-      console.log(camera.fov)
+      // console.log(camera.fov)
 
       if (scrollY <= splashOffsetHeight){
-        console.log('top of page');
         camera.fov = splashStartFOV;
       }
       else if (splashBool) {
@@ -189,6 +188,7 @@ function initCellRenderer() {
         camera.position.y = rotation * 0.10;
         //const splashProgress = (scrollY - splashAreaRect.top) / (splashAreaRect.bottom - window.innerHeight);
         const splashProgress = (scrollY - splashAreaRect.top + splashOffsetHeight) / (splashAreaRect.bottom - window.innerHeight);
+        console.log(splashProgress)
         camera.fov = smoothLerp(splashStartFOV, splashEndFOV, splashProgress);
       } else if (diveBool) {
         controls.autoRotate = !(diveHeight * 0.75 + splashHeight < scrollY); // stop rotating the last 25% of dive.height
