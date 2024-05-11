@@ -80,7 +80,7 @@ function initCellRenderer() {
 
     const aspectRatio = window.innerWidth / window.innerHeight;
     const camera = new THREE.PerspectiveCamera(splashStartFOV, aspectRatio, 0.5, 2000);
-    camera.position.set(0, 0, splashStartFOV);
+    camera.position.set(0, 0, 60);
 
     // Renderer
     const cellRender = new THREE.WebGLRenderer({ antialias: true, alpha: true });
