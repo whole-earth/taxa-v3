@@ -76,7 +76,7 @@ function initCellRenderer() {
 
     const scene = new THREE.Scene();
 
-    const splashStartFOV = 65;
+    const splashStartFOV = 70;
 
     const aspectRatio = window.innerWidth / window.innerHeight;
     const camera = new THREE.PerspectiveCamera(splashStartFOV, aspectRatio, 0.5, 2000);
