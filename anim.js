@@ -180,7 +180,11 @@ function initCellRenderer() {
 
       console.log(camera.fov)
 
-      if (splashBool) {
+      if (scrollY <= splashOffsetHeight){
+        console.log('top of page');
+        camera.fov = splashStartFOV;
+      }
+      else if (splashBool) {
         let rotation = (rotationDegree / (splashHeight * 1.000));
         camera.position.y = rotation * 0.10;
         //const splashProgress = (scrollY - splashAreaRect.top) / (splashAreaRect.bottom - window.innerHeight);
