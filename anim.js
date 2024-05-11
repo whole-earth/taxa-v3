@@ -159,9 +159,10 @@ function initCellRenderer() {
         return;
       }
 
-      if ((splashBool) || (scroll > 20 )) {
+      console.log(camera.fov)
+
+      if (splashBool) {
         let rotation = (rotationDegree / (splashHeight * 1.000));
-        console.log("true")
         camera.position.y = rotation * 0.10;
         const splashProgress = (scrollY - splashAreaRect.top) / (splashAreaRect.bottom - window.innerHeight);
         camera.fov = smoothLerp(splashStartFOV, splashEndFOV, splashProgress);
