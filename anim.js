@@ -91,6 +91,8 @@ function initCellRenderer() {
 
     document.querySelector(".cell-three").appendChild(cellRender.domElement);
 
+    console.log(camera.fov);
+
     // OrbitControls
     const controls = new OrbitControls(camera, cellRender.domElement);
     controls.enableDamping = true;
@@ -176,21 +178,21 @@ function initCellRenderer() {
         camera.position.y = rotation * 0.10;
         const splashProgress = Math.max(0, (scrollY - splashAreaRect.top) / (splashAreaRect.bottom - window.innerHeight - splashOffsetHeight));
         camera.fov = smoothLerp(splashStartFOV, splashEndFOV, splashProgress);
-        console.log("splash---------------------- ", splashProgress)
+        console.log("splash---------------------- ", camera.fov)
       } 
       
       else if (diveBool) {
         controls.autoRotate = !(diveHeight * 0.75 + splashHeight < scrollY); // stop rotating the last 25% of dive.height
         const diveProgress = Math.max(0, Math.min(1, (scrollY + window.innerHeight - diveAreaRect.top) / (diveAreaRect.bottom - diveAreaRect.top)));
         camera.fov = smoothLerp(diveStartFOV, diveEndFOV, diveProgress);
-        console.log("dive------------------------ ", diveProgress);
+        console.log("dive------------------------ ", camera.fov);
       } 
       
       else if (zoomOutBool) {
         controls.autoRotate = true;
         const zoomOutProgress = Math.max(0, (scrollY - zoomOutAreaRect.top) / (zoomOutAreaRect.bottom - zoomOutAreaRect.top));
         camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress);
-        console.log("zoom-out-------------------- ", zoomOutProgress)
+        console.log("zoom-out-------------------- ", camera.fov)
       } 
       
       else {
