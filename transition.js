@@ -54,7 +54,10 @@ export function scaleTransformRenderer() {
         // TRANSLATE: human
         let humanOffsetX;
         let humanOffsetY;
-        if (window.innerWidth < 996) {
+        if (window.innerWidth < 768) {
+            humanOffsetX = progression < 0.6 ? -25 : (progression <= 1 ? 25 * (progression - 0.6) / 0.4 - 25 : 0);
+            humanOffsetY = progression < 0.6 ? -20 : (progression <= 1 ? 20 * (progression - 0.6) / 0.4 - 20 : 0);
+        } else if (window.innerWidth < 996) {
             // mobile
             humanOffsetX = progression < 0.6 ? -16 : (progression <= 1 ? 16 * (progression - 0.6) / 0.4 - 16 : 0);
             humanOffsetY = progression < 0.6 ? -20 : (progression <= 1 ? 20 * (progression - 0.6) / 0.4 - 20 : 0);
