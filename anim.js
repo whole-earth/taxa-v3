@@ -91,12 +91,12 @@ function initCellRenderer() {
 
     document.querySelector(".cell-three").appendChild(cellRender.domElement);
 
-    console.log(camera.fov);
+    //console.log(camera.fov);
 
     // OrbitControls
     const controls = new OrbitControls(camera, cellRender.domElement);
     controls.enableDamping = true;
-    controls.dampingFactor = window.innerWidth < 768 ? 0.01 : 0.03; // more damp on mobile... test
+    controls.dampingFactor = 0.03;
     controls.enableZoom = false;
     controls.enablePan = false;
     controls.autoRotate = true;
@@ -139,7 +139,6 @@ function initCellRenderer() {
     const navElement = document.querySelector('.nav');
     if (navElement) {
       splashOffsetHeight += navElement.getBoundingClientRect().height;
-      // console.log (navElement.getBoundingClientRect().height)
     }
 
     function smoothLerp(start, end, progress) {
@@ -150,14 +149,16 @@ function initCellRenderer() {
       return x * x * (3 - 2 * x);
     }
 
+    /*
     window.addEventListener('scroll', function () {
 
       let scrollY = window.scrollY;
+      let windowHeight = window.innerHeight;
       let scrollDiff = scrollY - lastScrollY;
 
-      let splashBool = (scrollY > splashOffsetHeight) && (scrollY < (splashAreaRect.bottom - window.innerHeight));
-      let diveBool = (scrollY > (diveAreaRect.top - window.innerHeight)) && (scrollY < (diveAreaRect.bottom - window.innerHeight));
-      let zoomOutBool = (scrollY > (zoomOutAreaRect.top - window.innerHeight)) && (scrollY < zoomOutAreaRect.bottom);
+      let splashBool = (scrollY >= splashOffsetHeight) && (scrollY < (splashAreaRect.bottom - windowHeight));
+      let diveBool = (scrollY > (diveAreaRect.top - windowHeight)) && (scrollY < (diveAreaRect.bottom - windowHeight));
+      let zoomOutBool = (scrollY > (zoomOutAreaRect.top - windowHeight)) && (scrollY < zoomOutAreaRect.bottom);
 
       let multiplier = Math.floor(scrollDiff / multiplierDistanceControl);
 
@@ -196,9 +197,52 @@ function initCellRenderer() {
       } 
       
       else {
-        console.log('btwn')
+        console.log(scrollY)
+        //console.log('btwn')
       }
 
+      camera.updateProjectionMatrix();
+      lastScrollY = scrollY;
+    });
+    */
+
+    window.addEventListener('scroll', function () {
+      const scrollY = window.scrollY;
+      const scrollDiff = scrollY - lastScrollY;
+      const innerHeight = window.innerHeight;
+    
+      const splashBool = scrollY > splashOffsetHeight && scrollY < splashAreaRect.bottom - innerHeight;
+      const diveBool = scrollY > diveAreaRect.top - innerHeight && scrollY < diveAreaRect.bottom - innerHeight;
+      const zoomOutBool = scrollY > zoomOutAreaRect.top - innerHeight && scrollY < zoomOutAreaRect.bottom;
+    
+      const multiplier = Math.floor(scrollDiff / multiplierDistanceControl);
+      controls.autoRotateSpeed = 1.0 + multiplier * multiplierValue;
+    
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(function () {
+        controls.autoRotateSpeed = 0.5;
+      }, 100);
+    
+      if (scrollY > zoomOutAreaRect.bottom) {
+        lastScrollY = scrollY;
+        return;
+      }
+    
+      if (splashBool) {
+        const rotation = rotationDegree / splashHeight;
+        camera.position.y = rotation * 0.10;
+        const splashProgress = Math.max(0, (scrollY - splashAreaRect.top) / (splashAreaRect.bottom - innerHeight - splashOffsetHeight));
+        camera.fov = smoothLerp(splashStartFOV, splashEndFOV, splashProgress);
+      } else if (diveBool) {
+        controls.autoRotate = !(diveHeight * 0.75 + splashHeight < scrollY);
+        const diveProgress = Math.max(0, Math.min(1, (scrollY + innerHeight - diveAreaRect.top) / (diveAreaRect.bottom - diveAreaRect.top)));
+        camera.fov = smoothLerp(diveStartFOV, diveEndFOV, diveProgress);
+      } else if (zoomOutBool) {
+        controls.autoRotate = true;
+        const zoomOutProgress = Math.max(0, (scrollY - zoomOutAreaRect.top) / (zoomOutAreaRect.bottom - zoomOutAreaRect.top));
+        camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress);
+      }
+    
       camera.updateProjectionMatrix();
       lastScrollY = scrollY;
     });
