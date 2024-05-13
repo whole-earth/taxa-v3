@@ -76,7 +76,7 @@ function initCellRenderer() {
 
     const scene = new THREE.Scene();
 
-    const splashStartFOV = 70;
+    const splashStartFOV = 65;
 
     const aspectRatio = window.innerWidth / window.innerHeight;
     const camera = new THREE.PerspectiveCamera(splashStartFOV, aspectRatio, 0.5, 2000);
@@ -96,7 +96,7 @@ function initCellRenderer() {
     // OrbitControls
     const controls = new OrbitControls(camera, cellRender.domElement);
     controls.enableDamping = true;
-    controls.dampingFactor = 0.03;
+    controls.dampingFactor = window.innerWidth < 768 ? 0.01 : 0.03; // more damp on mobile... test
     controls.enableZoom = false;
     controls.enablePan = false;
     controls.autoRotate = true;
