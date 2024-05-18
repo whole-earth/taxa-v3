@@ -5,9 +5,7 @@ import { OrbitControls } from "three/OrbitControls";
 import { RGBELoader } from "three/RGBELoader";
 import { PMREMGenerator } from "three";
 import { scaleTransformRenderer } from './transition.js';
-
-// delete for prod
-import { setupGUI } from "./gui.js";
+import { textIntersectionFade } from './text.js';
 
 function initCellRenderer() {
   return new Promise((resolve) => {
@@ -16,7 +14,7 @@ function initCellRenderer() {
     let loadedObjects = [];
 
     class CellComponent {
-      constructor(gltf, shader = null, addGUI = false) {
+      constructor(gltf, shader = null) {
         return new Promise((resolve) => {
           this.scene = scene;
           this.position = new THREE.Vector3(0, 0, 0);
@@ -29,7 +27,7 @@ function initCellRenderer() {
           dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.3/')
           this.loader.setDRACOLoader(dracoLoader)
 
-          this.loadObject(gltf, shader, resolve, addGUI);
+          this.loadObject(gltf, shader, resolve);
 
           this.boundingBox = new THREE.Box3();
           boundingBoxes.push(this.boundingBox);
@@ -37,7 +35,7 @@ function initCellRenderer() {
         });
       }
 
-      loadObject(gltf, shader, resolve, addGUI) {
+      loadObject(gltf, shader, resolve) {
         const fullPath = this.basePath + gltf;
         this.loader.load(fullPath, (gltf) => {
           this.object = gltf.scene;
@@ -45,9 +43,6 @@ function initCellRenderer() {
           this.scene.add(this.object);
           this.centerObject(this.object);
           if (shader) { this.applyCustomShader(shader); }
-
-          // condition to add GUI: delete for prod
-          if (addGUI) { setupGUI(this.object.material); }
 
           this.boundingBox.setFromObject(this.object);
 
@@ -284,8 +279,9 @@ function initCellRenderer() {
         const randomPosition = getRandomPositionWithinBounds();
 
 
-        const sphereGeometry = new THREE.SphereGeometry(0.25, 6, 6); // Adjust radius and segments as needed
-        const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+        const sphereGeometry = new THREE.SphereGeometry(0.25, 6, 6);
+        const color = i % 2 === 0 ? 0x333333 : 0x92cb86; // 5.16 TOWO COLORS
+        const sphereMaterial = new THREE.MeshBasicMaterial({ color: color });
         const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
 
         sphereMesh.position.copy(randomPosition);
@@ -660,4 +656,5 @@ function handleResize(render, camera) {
 document.addEventListener('DOMContentLoaded', async function () {
   await Promise.all([initCellRenderer(), initHumanRenderer()]);
   scaleTransformRenderer();
+  textIntersectionFade();
 });
