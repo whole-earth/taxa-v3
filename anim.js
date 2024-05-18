@@ -656,5 +656,5 @@ function handleResize(render, camera) {
 document.addEventListener('DOMContentLoaded', async function () {
   await Promise.all([initCellRenderer(), initHumanRenderer()]);
   scaleTransformRenderer();
-  textIntersectionFade();
+  // textIntersectionFade();
 });
