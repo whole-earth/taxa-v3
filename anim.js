@@ -461,7 +461,6 @@ function initHumanRenderer() {
           child.material = materialBlue;
 
           if (child.name === "Head_and_shouldersbaked") {
-            console.log('loaded soap');
             child.material = bottleGreen;
           }
         }
@@ -608,5 +607,5 @@ function handleResize(render, camera) {
 document.addEventListener('DOMContentLoaded', async function () {
   await Promise.all([initCellRenderer(), initHumanRenderer()]);
   scaleTransformRenderer();
-  textFadeInit();
+  //textFadeInit();
 });
