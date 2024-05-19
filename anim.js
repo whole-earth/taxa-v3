@@ -105,7 +105,7 @@ function initCellRenderer() {
     const diveStartFOV = splashEndFOV;
     const diveEndFOV = window.innerWidth < 768 ? 40 : 26; // 50 for mobile
     const zoomOutStartFOV = diveEndFOV;
-    const zoomOutEndFOV = 150;
+    const zoomOutEndFOV = 160;
 
     const multiplierDistanceControl = 10;
     const multiplierValue = 10.05;
