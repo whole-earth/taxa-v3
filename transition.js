@@ -19,12 +19,6 @@ export function scaleTransformRenderer() {
 
     function transitionScroll() {
 
-        // 5.19 NEW
-        if (window.scrollY < (transitionSpacer.offsetTop + transitionSpacer.offsetHeight - window.innerHeight)) {
-            humanThree.style.opacity = 0;
-            console.log('trigger')
-        }
-
         let progression = (window.scrollY + window.innerHeight - transitionSpacer.offsetTop) / (window.innerHeight + transitionSpacer.offsetHeight);
         progression = Math.max(0, Math.min(1, progression));
         // console.log(progression);
@@ -42,8 +36,9 @@ export function scaleTransformRenderer() {
 
         /*======================================================================*/
 
-        // HUMAN opacity: 0 until progress=0.2, then linear towards progress=1
-        humanThree.style.opacity = Math.min(1, (progression));
+        // HUMAN opacity: 0 until progress=0.1, then linear towards progress=1
+        const targetOpacity = progression < 0.1 ? 0 : Math.min(1, (progression - 0.1) / 0.9);
+        humanThree.style.opacity = targetOpacity;
 
         // CELL opacity: 1 until progress=0.3, then linear towards 0 until progress=0.7
         cellThree.style.opacity = progression < 0.3 ? 1 : (progression > 0.7 ? 0 : 1 - ((progression - 0.3) / 0.4));
