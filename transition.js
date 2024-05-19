@@ -12,6 +12,7 @@ export function scaleTransformRenderer() {
         }
         else {
             cellThree.style.transform = "scale(1)";
+            humanThree.style.opacity = "0";
             window.removeEventListener('scroll', transitionScroll);
         }
     });
