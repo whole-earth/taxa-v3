@@ -5,7 +5,7 @@ import { OrbitControls } from "three/OrbitControls";
 import { RGBELoader } from "three/RGBELoader";
 import { PMREMGenerator } from "three";
 import { scaleTransformRenderer } from './transition.js';
-import { textIntersectionFade } from './text.js';
+import { textFadeInit } from './text.js';
 
 function initCellRenderer() {
   return new Promise((resolve) => {
@@ -656,5 +656,5 @@ function handleResize(render, camera) {
 document.addEventListener('DOMContentLoaded', async function () {
   await Promise.all([initCellRenderer(), initHumanRenderer()]);
   scaleTransformRenderer();
-  // textIntersectionFade();
+  textFadeInit();
 });
