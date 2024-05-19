@@ -537,7 +537,8 @@ function initHumanRenderer() {
   function humanScroll() {
     const humanRect = human.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
-    const transitionSpacerHeight = document.querySelector('.transition-spacer').offsetHeight;
+    const transitionSpacer = document.querySelector('.transition-spacer');
+    const transitionSpacerHeight = transitionSpacer.offsetHeight;
 
     // Define the start and end of the animation range
     const animationStart = transitionSpacerHeight + viewportHeight; // Start earlier by subtracting the height of '.transition-spacer'
@@ -554,8 +555,6 @@ function initHumanRenderer() {
           modelObject.traverse(function (child) {
             if (child.isMesh && child.name == "Head_and_shouldersbaked") {
               child.material.opacity = opacityProgress;
-            } else {
-              // console.log('no')
             }
           });
         } else {
