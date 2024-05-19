@@ -224,7 +224,7 @@ function initCellRenderer() {
     const loadPromises = [
       new CellComponent("blob-outer.gltf"),
       new CellComponent("ribbons.glb", grayPurple),
-      new CellComponent("blob-inner.glb", iridescent)
+      new CellComponent("blob-inner_comp.glb", iridescent)
     ];
 
     function initInteract() {
@@ -504,8 +504,9 @@ function initHumanRenderer() {
       //=================================================================
 
       function logoInit() {
+        
         const loader = new GLTFLoader();
-        // loader.load("assets/obj/logo.glb", function (logo) { // PATHCHANGE!
+        // loader.load("assets/obj/logo_comp.glb", function (logo) { // PATHCHANGE!
         loader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/obj/logo.glb", function (logo) {
 
           logoObject = logo.scene;
@@ -656,5 +657,5 @@ function handleResize(render, camera) {
 document.addEventListener('DOMContentLoaded', async function () {
   await Promise.all([initCellRenderer(), initHumanRenderer()]);
   scaleTransformRenderer();
-  textFadeInit();
+  // textFadeInit();
 });
