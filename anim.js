@@ -146,24 +146,24 @@ function initCellRenderer() {
       const scrollY = window.scrollY;
       const scrollDiff = scrollY - lastScrollY;
       const innerHeight = window.innerHeight;
-    
+
       const splashBool = scrollY > splashOffsetHeight && scrollY < splashAreaRect.bottom - innerHeight;
       const diveBool = scrollY > diveAreaRect.top - innerHeight && scrollY < diveAreaRect.bottom - innerHeight;
       const zoomOutBool = scrollY > zoomOutAreaRect.top - innerHeight && scrollY < zoomOutAreaRect.bottom;
-    
+
       const multiplier = Math.floor(scrollDiff / multiplierDistanceControl);
       controls.autoRotateSpeed = 1.0 + multiplier * multiplierValue;
-    
+
       clearTimeout(scrollTimeout);
       scrollTimeout = setTimeout(function () {
         controls.autoRotateSpeed = 0.5;
       }, 100);
-    
+
       if (scrollY > zoomOutAreaRect.bottom) {
         lastScrollY = scrollY;
         return;
       }
-    
+
       if (splashBool) {
         const rotation = rotationDegree / splashHeight;
         camera.position.y = rotation * 0.10;
@@ -178,7 +178,7 @@ function initCellRenderer() {
         const zoomOutProgress = Math.max(0, (scrollY - zoomOutAreaRect.top) / (zoomOutAreaRect.bottom - zoomOutAreaRect.top));
         camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress);
       }
-    
+
       camera.updateProjectionMatrix();
       lastScrollY = scrollY;
     });
@@ -224,7 +224,7 @@ function initCellRenderer() {
     const loadPromises = [
       new CellComponent("blob-outer.gltf"),
       new CellComponent("ribbons.glb", grayPurple),
-      new CellComponent("blob-inner_comp.glb", iridescent)
+      new CellComponent("blob-inner.glb", iridescent)
     ];
 
     function initInteract() {
@@ -419,7 +419,7 @@ function initHumanRenderer() {
     side: THREE.DoubleSide
   });
 
-  const materialBlueLogo = new THREE.MeshStandardMaterial({
+  const materialBlueBottle = new THREE.MeshStandardMaterial({
     map: materialMap,
     roughness: 1,
     metalness: 0.75,
@@ -427,7 +427,7 @@ function initHumanRenderer() {
     transparent: true
   });
 
-  const greenLogo = new THREE.MeshBasicMaterial({
+  const bottleGreen = new THREE.MeshBasicMaterial({
     color: 0xd2ecbf,
     side: THREE.DoubleSide,
     transparent: true
@@ -435,24 +435,35 @@ function initHumanRenderer() {
 
   let mixer, action;
 
-  let logoObject = null;
   let modelObject = null;
 
   function modelInit() {
+
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.3/');
     const loader = new GLTFLoader();
+    loader.setDRACOLoader(dracoLoader);
+
     let modelHeight;
     const modelHeights = [];
 
     // PATHCHANGE
+    // loader.load("assets/obj/model.glb", function (gltf) {
     loader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/obj/model.glb", function (gltf) {
 
       modelObject = gltf.scene;
       modelObject.traverse(function (child) {
+        // console.log(child.name)
         if (child.isMesh) {
           const bbox = new THREE.Box3().setFromObject(child);
           const height = bbox.max.y - bbox.min.y;
           modelHeights.push(height);
           child.material = materialBlue;
+
+          if (child.name === "Head_and_shouldersbaked") {
+            console.log('loaded soap');
+            child.material = bottleGreen;
+          }
         }
       });
 
@@ -501,55 +512,6 @@ function initHumanRenderer() {
       action = mixer.clipAction(gltf.animations[0]);
       action.play();
 
-      //=================================================================
-
-      function logoInit() {
-        
-        const loader = new GLTFLoader();
-        // loader.load("assets/obj/logo_comp.glb", function (logo) { // PATHCHANGE!
-        loader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/obj/logo.glb", function (logo) {
-
-          logoObject = logo.scene;
-
-          // Traverse the objects in the model
-          logoObject.traverse(function (child) {
-            if (child.isMesh) {
-              if (child.name === "PHALLUS") {
-                child.material = materialBlueLogo;
-              }
-              else if (child.name === "BALL") {
-                child.material = greenLogo;
-
-                const bbox = new THREE.Box3().setFromObject(child);
-                const height = bbox.max.y - bbox.min.y;
-                const tenPercentHeight = height * 0.12;
-
-                // Store the original position and the 10% height
-                child.userData.originalPosition = child.position.y;
-                child.userData.tenPercentHeight = tenPercentHeight;
-
-
-              }
-            }
-          });
-
-          // Create a bounding box for the model
-          const modelBounds = new THREE.Box3().setFromObject(modelObject);
-          const boundingBox = new THREE.Box3().setFromObject(logoObject);
-          const logoSize = boundingBox.getSize(new THREE.Vector3());
-          const scale = 12 / Math.max(logoSize.x, logoSize.y, logoSize.z);
-          logoObject.scale.set(scale, scale, scale);
-
-          logoObject.position.set(modelBounds.min.x, modelBounds.max.y, (modelBounds.min.z + modelBounds.max.z) / 2);
-
-          scene.add(logoObject);
-
-        });
-
-      }
-
-      logoInit();
-
       loadLights();
 
     });
@@ -587,18 +549,19 @@ function initHumanRenderer() {
     if (humanRect.top <= animationStart && humanRect.bottom >= viewportHeight) {
       scrollProgress = Math.min(1, Math.max(0, Math.abs(humanRect.top - animationStart) / (animationEnd + transitionSpacerHeight)));
 
-      // opacity of logo
-      if (logoObject) {
-        if (scrollProgress >= 0.8) {
-          const opacityProgress = Math.min(1, (scrollProgress - 0.8) / 0.2);
-          logoObject.traverse(function (child) {
-            if (child.isMesh) {
+      if (modelObject) {
+        if (scrollProgress >= 0.2) {
+          let opacityProgress = (scrollProgress - 0.2) / 0.4; // Linearly progress opacity from 0 to 1 between scrollProgress 0.2 and 0.6
+          modelObject.traverse(function (child) {
+            if (child.isMesh && child.name == "Head_and_shouldersbaked") {
               child.material.opacity = opacityProgress;
+            } else {
+              // console.log('no')
             }
           });
         } else {
-          logoObject.traverse(function (child) {
-            if (child.isMesh) {
+          modelObject.traverse(function (child) {
+            if (child.isMesh && child.name === "Head_and_shouldersbaked") {
               child.material.opacity = 0;
             }
           });
@@ -612,7 +575,7 @@ function initHumanRenderer() {
     }
 
     // Set the animation time based on the scroll progress
-    const animationTime = scrollProgress * 4; // arbitrary multiplier... seems to work
+    const animationTime = scrollProgress * 5; // arbitrary multiplier... seems to work
     mixer.setTime(animationTime);
 
   }
@@ -626,18 +589,6 @@ function initHumanRenderer() {
     if (mixer) {
       mixer.update(0.01); // Update mixer in the animation loop
       humanScroll(); // Update animation based on scroll position
-    }
-
-    if (logoObject) {
-      logoObject.traverse(function (child) {
-        if (child.isMesh && child.name === "BALL") {
-          // Calculate the new position
-          const newPosition = child.userData.originalPosition + Math.sin(Date.now() * 0.001) * child.userData.tenPercentHeight;
-
-          // Update the position
-          child.position.y = newPosition;
-        }
-      });
     }
 
     humanRender.render(scene, camera);
