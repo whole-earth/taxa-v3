@@ -19,9 +19,15 @@ export function scaleTransformRenderer() {
 
     function transitionScroll() {
 
+        // 5.19 NEW
+        if (window.scrollY < (transitionSpacer.offsetTop + transitionSpacer.offsetHeight - window.innerHeight)) {
+            humanThree.style.opacity = 0;
+            console.log('trigger')
+        }
+
         let progression = (window.scrollY + window.innerHeight - transitionSpacer.offsetTop) / (window.innerHeight + transitionSpacer.offsetHeight);
         progression = Math.max(0, Math.min(1, progression));
-        console.log(progression);
+        // console.log(progression);
 
         /*======================================================================*/
 
