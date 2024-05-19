@@ -1,4 +1,4 @@
-export function textFade() {// tested, works 5/18
+export function textFadeInit() {// tested, works 5/18
 
     const splash = document.querySelector('.splash');
     const dive = document.querySelector('.dive');
