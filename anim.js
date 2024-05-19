@@ -419,7 +419,7 @@ function initHumanRenderer() {
     side: THREE.DoubleSide
   });
 
-  const materialBlueBottle = new THREE.MeshStandardMaterial({
+  const bottleBlue = new THREE.MeshStandardMaterial({
     map: materialMap,
     roughness: 1,
     metalness: 0.75,
@@ -435,29 +435,29 @@ function initHumanRenderer() {
 
   let mixer, action;
 
-  let modelObject = null;
+  let figureObject = null;
 
-  function modelInit() {
+  function figureInit() {
 
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.3/');
     const loader = new GLTFLoader();
     loader.setDRACOLoader(dracoLoader);
 
-    let modelHeight;
-    const modelHeights = [];
+    let figureHeight;
+    const figureHeights = [];
 
     // PATHCHANGE
-    // loader.load("assets/obj/model.glb", function (gltf) {
-    loader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/obj/model_comp.glb", function (gltf) {
+    // loader.load("assets/obj/figure.glb", function (gltf) {
+    loader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/obj/figure.glb", function (gltf) {
 
-      modelObject = gltf.scene;
-      modelObject.traverse(function (child) {
+      figureObject = gltf.scene;
+      figureObject.traverse(function (child) {
         // console.log(child.name)
         if (child.isMesh) {
           const bbox = new THREE.Box3().setFromObject(child);
           const height = bbox.max.y - bbox.min.y;
-          modelHeights.push(height);
+          figureHeights.push(height);
           child.material = materialBlue;
 
           if (child.name === "Head_and_shouldersbaked") {
@@ -466,36 +466,36 @@ function initHumanRenderer() {
         }
       });
 
-      modelObject.scale.set(80, 80, 80);
-      modelHeight = Math.max(...modelHeights);
+      figureObject.scale.set(80, 80, 80);
+      figureHeight = Math.max(...figureHeights);
 
       function responsiveAdjust() {
 
-        let distance, modelX, modelY;
+        let distance, figureX, figureY;
         if (window.innerWidth <= 320) {
           distance = 240;
-          modelX = 20;
-          modelY = -modelHeight * 80;
+          figureX = 20;
+          figureY = -figureHeight * 80;
         } else if (window.innerWidth <= 768) {
           distance = 200;
-          modelX = 30;
-          modelY = -modelHeight * 80;
+          figureX = 30;
+          figureY = -figureHeight * 80;
         } else if (window.innerWidth <= 996) {
           distance = 180;
-          modelX = 25;
-          modelY = -modelHeight * 80;
+          figureX = 25;
+          figureY = -figureHeight * 80;
         } else {
           distance = 110;
-          modelX = 30;
-          modelY = -modelHeight * 70;
+          figureX = 30;
+          figureY = -figureHeight * 70;
         }
 
-        modelObject.position.set(modelX, modelY, 0);
-        modelObject.rotation.y = -Math.PI / 6;
+        figureObject.position.set(figureX, figureY, 0);
+        figureObject.rotation.y = -Math.PI / 6;
 
         camera.fov = 45;
-        camera.position.set(0, modelHeight * 0.5, distance);
-        camera.lookAt(modelObject.position);
+        camera.position.set(0, figureHeight * 0.5, distance); // HM
+        camera.lookAt(figureObject.position);
         camera.updateProjectionMatrix();
 
         handleResize(humanRender, camera);
@@ -505,9 +505,9 @@ function initHumanRenderer() {
       responsiveAdjust();
       window.addEventListener('resize', responsiveAdjust);
 
-      scene.add(modelObject);
+      scene.add(figureObject);
 
-      mixer = new THREE.AnimationMixer(modelObject);
+      mixer = new THREE.AnimationMixer(figureObject);
       action = mixer.clipAction(gltf.animations[0]);
       action.play();
 
@@ -516,7 +516,7 @@ function initHumanRenderer() {
     });
   }
 
-  modelInit();
+  figureInit();
 
   const human = document.querySelector('.human');
   function humanOffsetMaxWidth() {
@@ -549,16 +549,16 @@ function initHumanRenderer() {
     if (humanRect.top <= animationStart && humanRect.bottom >= viewportHeight) {
       scrollProgress = Math.min(1, Math.max(0, Math.abs(humanRect.top - animationStart) / (animationEnd + transitionSpacerHeight)));
 
-      if (modelObject) {
+      if (figureObject) {
         if (scrollProgress >= 0.2) {
           let opacityProgress = (scrollProgress - 0.2) / 0.4; // Linearly progress opacity from 0 to 1 between scrollProgress 0.2 and 0.6
-          modelObject.traverse(function (child) {
+          figureObject.traverse(function (child) {
             if (child.isMesh && child.name == "Head_and_shouldersbaked") {
               child.material.opacity = opacityProgress;
             }
           });
         } else {
-          modelObject.traverse(function (child) {
+          figureObject.traverse(function (child) {
             if (child.isMesh && child.name === "Head_and_shouldersbaked") {
               child.material.opacity = 0;
             }
