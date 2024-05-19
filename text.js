@@ -12,7 +12,6 @@ export function textFadeInit() {
 
     window.addEventListener('scroll', () => {
 
-        // toggle scroll_top -> Combine with 
         checkAndToggleScrollTop();
 
         // toggle text visibilities

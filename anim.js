@@ -449,7 +449,7 @@ function initHumanRenderer() {
 
     // PATHCHANGE
     // loader.load("assets/obj/model.glb", function (gltf) {
-    loader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/obj/model.glb", function (gltf) {
+    loader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/obj/model_comp.glb", function (gltf) {
 
       modelObject = gltf.scene;
       modelObject.traverse(function (child) {
@@ -608,5 +608,5 @@ function handleResize(render, camera) {
 document.addEventListener('DOMContentLoaded', async function () {
   await Promise.all([initCellRenderer(), initHumanRenderer()]);
   scaleTransformRenderer();
-  // textFadeInit();
+  textFadeInit();
 });
