@@ -441,7 +441,7 @@ function initHumanRenderer() {
 
     // first, add background
     // Load the image as a texture
-    const texture = new THREE.TextureLoader().load("assets/obj/shelf-wip2.png"); // PATHCHANGE TO GH
+    const texture = new THREE.TextureLoader().load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/obj/shelf-wip2.png"); // PATHCHANGE TO GH
 
     const planeGeometry = new THREE.PlaneGeometry(150, 100); // Width, Height
     const planeMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide, transparent: true });
