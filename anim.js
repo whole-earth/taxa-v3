@@ -376,7 +376,7 @@ function initHumanRenderer() {
   controls.enableDamping = true;
   controls.dampingFactor = 0.1;
   controls.enableZoom = false;
-  controls.enableRotate = false;
+  //controls.enableRotate = false;
 
   function loadLights() {
 
@@ -438,6 +438,20 @@ function initHumanRenderer() {
   let figureObject = null;
 
   function figureInit() {
+
+    // first, add background
+    // Load the image as a texture
+    const texture = new THREE.TextureLoader().load("assets/obj/shelf-wip2.png"); // PATHCHANGE TO GH
+
+    const planeGeometry = new THREE.PlaneGeometry(150, 100); // Width, Height
+    const planeMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide, transparent: true });
+    const imagePlane = new THREE.Mesh(planeGeometry, planeMaterial);
+
+    // Set the position of the plane to be behind other elements
+    imagePlane.position.z = -40;
+
+    // Add the image plane to the scene
+    scene.add(imagePlane);
 
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.3/');

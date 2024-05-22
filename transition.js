@@ -21,7 +21,6 @@ export function scaleTransformRenderer() {
 
         let progression = (window.scrollY + window.innerHeight - transitionSpacer.offsetTop) / (window.innerHeight + transitionSpacer.offsetHeight);
         progression = Math.max(0, Math.min(1, progression));
-        // console.log(progression);
 
         /*======================================================================*/
 
@@ -30,10 +29,8 @@ export function scaleTransformRenderer() {
             humanThree.style.position = 'fixed';
         } else if ((window.scrollY + window.innerHeight) < (transitionSpacer.offsetTop + window.innerHeight)) {
             humanThree.style.position = 'sticky';
-        } else {
-            //console.log('Transform complete')
         }
-
+        
         /*======================================================================*/
 
         // HUMAN opacity: 0 until progress=0.1, then linear towards progress=1
