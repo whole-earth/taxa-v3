@@ -443,11 +443,12 @@ function initHumanRenderer() {
     // Load the image as a texture
     const texture = new THREE.TextureLoader().load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/obj/shelf-wip2.png"); // PATHCHANGE TO GH
 
-    const planeGeometry = new THREE.PlaneGeometry(150, 100); // Width, Height
+    const planeGeometry = new THREE.PlaneGeometry(210, 140); // Width, Height
     const planeMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide, transparent: true });
     const imagePlane = new THREE.Mesh(planeGeometry, planeMaterial);
 
     // Set the position of the plane to be behind other elements
+    imagePlane.position.y = -29; // Adjust the value as needed to move it down further
     imagePlane.position.z = -40;
 
     // Add the image plane to the scene
