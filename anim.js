@@ -464,7 +464,7 @@ function initHumanRenderer() {
 
     // PATHCHANGE
     // loader.load("assets/obj/figure.glb", function (gltf) {
-    loader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/obj/figure.glb", function (gltf) {
+    loader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/obj/figure_5-24.glb", function (gltf) {
 
       figureObject = gltf.scene;
       figureObject.traverse(function (child) {
