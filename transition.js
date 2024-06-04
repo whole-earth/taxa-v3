@@ -21,6 +21,8 @@ export function scaleTransformRenderer() {
         let progression = (window.scrollY + window.innerHeight - transitionSpacer.offsetTop) / (window.innerHeight + transitionSpacer.offsetHeight);
         progression = Math.max(0, Math.min(1, progression));
 
+        console.log(progression)
+
         /*======================================================================*/
 
         // POSITIONING
