@@ -14,7 +14,7 @@ function initCellRenderer() {
     let loadedObjects = [];
 
     class CellComponent {
-      constructor(gltf, shader = null) {
+      constructor(gltf, shader = null, zIndex = 0) {
         return new Promise((resolve) => {
           this.scene = scene;
           this.position = new THREE.Vector3(0, 0, 0);
@@ -419,21 +419,13 @@ function initHumanRenderer() {
     side: THREE.DoubleSide
   });
 
-  const bottleBlue = new THREE.MeshStandardMaterial({
-    map: materialMap,
-    roughness: 1,
-    metalness: 0.75,
-    side: THREE.DoubleSide,
-    transparent: true
-  });
-
   const bottleGreen = new THREE.MeshBasicMaterial({
     color: 0xd2ecbf,
     side: THREE.DoubleSide,
     transparent: true
   });
 
-  let mixer, action;
+  let mixer, action, imagePlane;
 
   let figureObject = null;
 
@@ -445,11 +437,12 @@ function initHumanRenderer() {
 
     const planeGeometry = new THREE.PlaneGeometry(210, 140); // Width, Height
     const planeMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide, transparent: true });
-    const imagePlane = new THREE.Mesh(planeGeometry, planeMaterial);
+    imagePlane = new THREE.Mesh(planeGeometry, planeMaterial);
 
     // Set the position of the plane to be behind other elements
-    imagePlane.position.y = -29; // Adjust the value as needed to move it down further
+    imagePlane.position.y = -26; // Adjust the value as needed to move it down further
     imagePlane.position.z = -40;
+    imagePlane.material.opacity = 0;
 
     // Add the image plane to the scene
     scene.add(imagePlane);
@@ -474,8 +467,7 @@ function initHumanRenderer() {
           const height = bbox.max.y - bbox.min.y;
           figureHeights.push(height);
           child.material = materialBlue;
-
-          if (child.name === "Head_and_shouldersbaked") {
+          if (child.name === "Head_and_shoulders") {
             child.material = bottleGreen;
           }
         }
@@ -565,16 +557,18 @@ function initHumanRenderer() {
       scrollProgress = Math.min(1, Math.max(0, Math.abs(humanRect.top - animationStart) / (animationEnd + transitionSpacerHeight)));
 
       if (figureObject) {
-        if (scrollProgress >= 0.2) {
-          let opacityProgress = (scrollProgress - 0.2) / 0.4; // Linearly progress opacity from 0 to 1 between scrollProgress 0.2 and 0.6
+        if (scrollProgress >= 0.1) {
+          let opacityProgress = (scrollProgress - 0.1) / 0.2;
           figureObject.traverse(function (child) {
-            if (child.isMesh && child.name == "Head_and_shouldersbaked") {
+            if (child.isMesh && child.name == "Head_and_shoulders") {
               child.material.opacity = opacityProgress;
             }
           });
+          imagePlane.material.opacity = opacityProgress;
         } else {
           figureObject.traverse(function (child) {
-            if (child.isMesh && child.name === "Head_and_shouldersbaked") {
+            if (child.isMesh && child.name === "Head_and_shoulders") {
+              imagePlane.material.opacity = 0;
               child.material.opacity = 0;
             }
           });
