@@ -71,12 +71,4 @@ export function scaleTransformRenderer() {
         humanThree.style.transform = `scale(${Math.max(1, Math.min(8, humanScaleVal))}) translate3d(${humanOffsetX}vw, ${humanOffsetY}%, 0)`;
     }
 
-    document.addEventListener('scroll', function () {
-        if (window.scrollY < transitionSpacer.offsetTop) {
-            cellThree.style.transform = 'scale(1)';
-            humanThree.style.opacity = 0;
-            return;
-        }
-    })
-
 }
