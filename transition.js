@@ -4,6 +4,7 @@ export function scaleTransformRenderer() {
     const humanThree = document.querySelector('.human-three');
 
     const transitionSpacer = document.querySelector('.transition-spacer');
+
     const observer = new IntersectionObserver((entries) => {
         const entry = entries[0];
 
@@ -31,7 +32,7 @@ export function scaleTransformRenderer() {
         } else if ((window.scrollY + window.innerHeight) < (transitionSpacer.offsetTop + window.innerHeight)) {
             humanThree.style.position = 'sticky';
         }
-        
+
         /*======================================================================*/
 
         // HUMAN opacity: 0 until progress=0.1, then linear towards progress=1
@@ -69,5 +70,13 @@ export function scaleTransformRenderer() {
         // TRANSLATE: human sets both scale & translate3d (offset)
         humanThree.style.transform = `scale(${Math.max(1, Math.min(8, humanScaleVal))}) translate3d(${humanOffsetX}vw, ${humanOffsetY}%, 0)`;
     }
+
+    document.addEventListener('scroll', function () {
+        if (window.scrollY < transitionSpacer.offsetTop) {
+            cellThree.style.transform = 'scale(1)';
+            humanThree.style.opacity = 0;
+            return;
+        }
+    })
 
 }
