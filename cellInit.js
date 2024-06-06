@@ -4,7 +4,7 @@ import { DRACOLoader } from 'three/DracoLoader';
 import { OrbitControls } from "three/OrbitControls";
 import { RGBELoader } from "three/RGBELoader";
 import { PMREMGenerator } from "three";
-import { handleResize } from './anim.js';
+import { threeSceneResize } from './anim.js';
 
 export function initCellRenderer() {
   return new Promise((resolve) => {
@@ -13,7 +13,7 @@ export function initCellRenderer() {
     let loadedObjects = [];
 
     class CellComponent {
-      constructor(gltf, shader = null, zIndex = 0) {
+      constructor(gltf, shader = null, renderOrder = 1) {
         return new Promise((resolve) => {
           this.scene = scene;
           this.position = new THREE.Vector3(0, 0, 0);
@@ -26,7 +26,7 @@ export function initCellRenderer() {
           dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.3/')
           this.loader.setDRACOLoader(dracoLoader)
 
-          this.loadObject(gltf, shader, resolve);
+          this.loadObject(gltf, shader, renderOrder, resolve);
 
           this.boundingBox = new THREE.Box3();
           boundingBoxes.push(this.boundingBox);
@@ -34,7 +34,7 @@ export function initCellRenderer() {
         });
       }
 
-      loadObject(gltf, shader, resolve) {
+      loadObject(gltf, shader, renderOrder, resolve) {
         const fullPath = this.basePath + gltf;
         this.loader.load(fullPath, (gltf) => {
           this.object = gltf.scene;
@@ -42,6 +42,8 @@ export function initCellRenderer() {
           this.scene.add(this.object);
           this.centerObject(this.object);
           if (shader) { this.applyCustomShader(shader); }
+
+          this.object.renderOrder = renderOrder;
 
           this.boundingBox.setFromObject(this.object);
 
@@ -51,7 +53,9 @@ export function initCellRenderer() {
       }
 
       applyCustomShader(shader) {
-        if (!shader) return;
+        if (!shader) {
+          return
+        };
 
         this.object.traverse((node) => {
           if (node.isMesh) {
@@ -202,7 +206,6 @@ export function initCellRenderer() {
 
     //===================================================================
 
-    // InnerBlob
     const iridescent = new THREE.MeshPhysicalMaterial({
       color: new THREE.Color('#849ed0'),
       roughness: 0.55,
@@ -215,15 +218,14 @@ export function initCellRenderer() {
       envMapIntensity: 1.5
     });
 
-    // RIBBON TEXTURE
     const grayPurple = new THREE.MeshBasicMaterial({
       color: 0xe7cbef
     });
 
     const loadPromises = [
-      new CellComponent("blob-outer.gltf"),
-      new CellComponent("ribbons.glb", grayPurple),
-      new CellComponent("blob-inner.glb", iridescent)
+      new CellComponent("blob-outer.gltf", null, 2),
+      new CellComponent("ribbons.glb", grayPurple, 1),
+      new CellComponent("blob-inner.glb", iridescent, 1)
     ];
 
     function initInteract() {
@@ -342,7 +344,7 @@ export function initCellRenderer() {
         controls.update();
         cellRender.render(scene, camera);
 
-        window.addEventListener('resize', () => handleResize(cellRender, camera));
+        window.addEventListener('resize', () => threeSceneResize(cellRender, camera));
 
       }
 

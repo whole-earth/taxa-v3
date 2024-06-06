@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/GLTFLoader";
 import { DRACOLoader } from 'three/DracoLoader';
 import { OrbitControls } from "three/OrbitControls";
-import { handleResize } from './anim.js';
+import { threeSceneResize } from './anim.js';
 
 
 export function initFigureRenderer() {
@@ -22,7 +22,7 @@ export function initFigureRenderer() {
   controls.enableDamping = true;
   controls.dampingFactor = 0.1;
   controls.enableZoom = false;
-  //controls.enableRotate = false;
+  controls.enableRotate = false;
 
   function loadLights() {
 
@@ -83,7 +83,7 @@ export function initFigureRenderer() {
     const planeMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide, transparent: true });
     imagePlane = new THREE.Mesh(planeGeometry, planeMaterial);
 
-    imagePlane.position.y = -25; // Adjust the value as needed to move it down further
+    imagePlane.position.y = -21; // Adjust vertical position
     imagePlane.position.z = -40;
     imagePlane.material.opacity = 0;
 
@@ -97,13 +97,11 @@ export function initFigureRenderer() {
     let figureHeight;
     const figureHeights = [];
 
-    // PATHCHANGE
-    // loader.load("assets/obj/figure_updated-wrist.glb", function (gltf) {
+    // rename file
     loader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets//obj/figure_updated-wrist.glb", function (gltf) {
 
       figureObject = gltf.scene;
       figureObject.traverse(function (child) {
-        // console.log(child.name)
         if (child.isMesh) {
           const bbox = new THREE.Box3().setFromObject(child);
           const height = bbox.max.y - bbox.min.y;
@@ -118,7 +116,7 @@ export function initFigureRenderer() {
       figureObject.scale.set(80, 80, 80);
       figureHeight = Math.max(...figureHeights);
 
-      function responsiveAdjust() {
+      function humanResizeScale() {
 
         let distance, figureX, figureY;
         if (window.innerWidth <= 320) {
@@ -147,12 +145,12 @@ export function initFigureRenderer() {
         camera.lookAt(figureObject.position);
         camera.updateProjectionMatrix();
 
-        handleResize(humanRender, camera);
+        threeSceneResize(humanRender, camera);
 
       }
 
-      responsiveAdjust();
-      window.addEventListener('resize', responsiveAdjust);
+      humanResizeScale();
+      window.addEventListener('resize', humanResizeScale);
 
       scene.add(figureObject);
 
