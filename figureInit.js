@@ -98,7 +98,7 @@ export function initFigureRenderer() {
     const figureHeights = [];
 
     // rename file
-    loader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets//obj/figure_updated-wrist.glb", function (gltf) {
+    loader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets//obj/figure.glb", function (gltf) {
 
       figureObject = gltf.scene;
       figureObject.traverse(function (child) {
