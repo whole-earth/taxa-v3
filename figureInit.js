@@ -8,10 +8,8 @@ import { threeSceneResize } from './anim.js';
 export function initFigureRenderer() {
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color('#FFF5E6');
 
   const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 10000);
-  camera.position.set(0, 40, 120);
 
   const humanRender = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   humanRender.setSize(window.innerWidth, window.innerHeight);
@@ -22,7 +20,7 @@ export function initFigureRenderer() {
   controls.enableDamping = true;
   controls.dampingFactor = 0.1;
   controls.enableZoom = false;
-  controls.enableRotate = false;
+  // controls.enableRotate = false;
 
   function loadLights() {
 
@@ -51,7 +49,7 @@ export function initFigureRenderer() {
     directionalUpward.position.set(0, 0, 40);
     scene.add(directionalUpward);
 
-    const ambientLight = new THREE.AmbientLight(0x849ED0, 10);
+    const ambientLight = new THREE.AmbientLight(0x849ED0, 5);
     scene.add(ambientLight);
 
   }
@@ -61,9 +59,9 @@ export function initFigureRenderer() {
   const materialBlue = new THREE.MeshStandardMaterial({
     map: materialMap,
     roughness: 1,
-    metalness: 0.75,
+    metalness: 0.6,
     side: THREE.DoubleSide
-  });
+  }); // MAKE SOFTER
 
   const bottleGreen = new THREE.MeshBasicMaterial({
     color: 0xd2ecbf,
@@ -71,23 +69,22 @@ export function initFigureRenderer() {
     transparent: true
   });
 
-  let mixer, action, imagePlane;
+  let mixer, action, shelfObj;
 
   let figureObject = null;
 
   function figureInit() {
 
-    const texture = new THREE.TextureLoader().load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/obj/shelf.png"); // PATHCHANGE TO GH
+    const shelfSrc = new THREE.TextureLoader().load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/obj/shelf.png"); // PATHCHANGE TO GH
+    const shelfPlane = new THREE.PlaneGeometry(210, 120);
+    const shelfMaterial = new THREE.MeshBasicMaterial({ map: shelfSrc, side: THREE.DoubleSide, transparent: true });
+    shelfObj = new THREE.Mesh(shelfPlane, shelfMaterial);
 
-    const planeGeometry = new THREE.PlaneGeometry(210, 120);
-    const planeMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide, transparent: true });
-    imagePlane = new THREE.Mesh(planeGeometry, planeMaterial);
+    shelfObj.position.y = -21; // Adjust vertical position
+    shelfObj.position.z = -40;
+    shelfObj.material.opacity = 0;
 
-    imagePlane.position.y = -21; // Adjust vertical position
-    imagePlane.position.z = -40;
-    imagePlane.material.opacity = 0;
-
-    scene.add(imagePlane);
+    scene.add(shelfObj);
 
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.3/');
@@ -141,7 +138,7 @@ export function initFigureRenderer() {
         figureObject.rotation.y = -Math.PI / 6;
 
         camera.fov = 45;
-        camera.position.set(0, figureHeight * 0.5, distance);
+        camera.position.set(0, figureHeight * 0.5, distance); // what actually sets the camera
         camera.lookAt(figureObject.position);
         camera.updateProjectionMatrix();
 
@@ -204,11 +201,11 @@ export function initFigureRenderer() {
               child.material.opacity = opacityProgress;
             }
           });
-          imagePlane.material.opacity = opacityProgress;
+          shelfObj.material.opacity = opacityProgress;
         } else {
           figureObject.traverse(function (child) {
             if (child.isMesh && child.name === "Head_and_shoulders") {
-              imagePlane.material.opacity = 0;
+              shelfObj.material.opacity = 0;
               child.material.opacity = 0;
             }
           });
@@ -234,8 +231,8 @@ export function initFigureRenderer() {
     controls.update();
 
     if (mixer) {
-      mixer.update(0.01); // Update mixer in the animation loop
-      humanScroll(); // Update animation based on scroll position
+      mixer.update(0.01);
+      humanScroll();
     }
 
     humanRender.render(scene, camera);
