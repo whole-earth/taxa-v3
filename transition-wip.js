@@ -10,6 +10,10 @@ export function scaleTransformRenderer() {
             window.addEventListener('scroll', onScroll);
         } else {
             window.removeEventListener('scroll', onScroll);
+            if (window.scrollY < transitionSpacer.offsetTop) {
+                cellThree.style.transform = 'scale(1)';
+                console.log('here')
+            }
         }
     });
     observer.observe(transitionSpacer);
