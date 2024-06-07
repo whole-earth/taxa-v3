@@ -10,9 +10,11 @@ export function scaleTransformRenderer() {
             window.addEventListener('scroll', onScroll);
         } else {
             window.removeEventListener('scroll', onScroll);
+            /*
             if (window.scrollY < transitionSpacer.offsetTop) {
                 cellThree.style.transform = 'scale(1)';
             }
+            */
         }
     });
     observer.observe(transitionSpacer);
@@ -53,9 +55,11 @@ export function scaleTransformRenderer() {
 
         /*======================================================================*/
 
+        /*
         // SCALE: cell
-        const cellScale = 1 - 0.9 * progression;
+        const cellScale = 1;
         cellThree.style.transform = `scale(${Math.max(0.1, cellScale)})`;
+        */
 
         // SCALE: human
         const humanScaleVal = 8 - 7 * progression;
@@ -76,9 +80,4 @@ export function scaleTransformRenderer() {
         humanThree.style.transform = `scale(${Math.max(1, humanScaleVal)}) translate3d(${humanOffsetX}vw, ${humanOffsetY}%, 0)`;
     }
 
-    // Set initial styles
-    cellThree.style.transform = 'scale(1)';
-    humanThree.style.transform = 'scale(1) translate3d(0, 0, 0)';
-    humanThree.style.position = 'fixed';
-    humanThree.style.opacity = '0';
 }
