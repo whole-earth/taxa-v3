@@ -4,7 +4,6 @@ import { DRACOLoader } from 'three/DracoLoader';
 import { OrbitControls } from "three/OrbitControls";
 import { threeSceneResize } from './anim.js';
 
-
 export function initFigureRenderer() {
 
   const scene = new THREE.Scene();
@@ -80,7 +79,7 @@ export function initFigureRenderer() {
     const shelfMaterial = new THREE.MeshBasicMaterial({ map: shelfSrc, side: THREE.DoubleSide, transparent: true });
     shelfObj = new THREE.Mesh(shelfPlane, shelfMaterial);
 
-    shelfObj.position.y = -21; // Adjust vertical position
+    shelfObj.position.y = -21;
     shelfObj.position.z = -40;
     shelfObj.material.opacity = 0;
 
@@ -94,7 +93,6 @@ export function initFigureRenderer() {
     let figureHeight;
     const figureHeights = [];
 
-    // rename file
     loader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets//obj/figure.glb", function (gltf) {
 
       figureObject = gltf.scene;

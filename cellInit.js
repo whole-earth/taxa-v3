@@ -18,7 +18,6 @@ export function initCellRenderer() {
           this.scene = scene;
           this.position = new THREE.Vector3(0, 0, 0);
 
-          // this.basePath = '/assets/obj/'; // PATHCHANGE
           this.basePath = 'https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/obj/';
           this.loader = new GLTFLoader();
           const dracoLoader = new DRACOLoader()
@@ -72,38 +71,7 @@ export function initCellRenderer() {
       }
     }
 
-    const scene = new THREE.Scene();
-
     const splashStartFOV = window.innerWidth < 768 ? 90 : 65; // 80 for mobile
-
-    const aspectRatio = window.innerWidth / window.innerHeight;
-    const camera = new THREE.PerspectiveCamera(splashStartFOV, aspectRatio, 0.5, 2000);
-    camera.position.set(0, 0, 60);
-
-    // Renderer
-    const cellRender = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    cellRender.toneMapping = THREE.ACESFilmicToneMapping;
-
-    cellRender.setSize(window.innerWidth, window.innerHeight);
-    cellRender.setPixelRatio(window.devicePixelRatio);
-
-    document.querySelector(".cell-three").appendChild(cellRender.domElement);
-
-    // OrbitControls
-    const controls = new OrbitControls(camera, cellRender.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.03;
-    controls.enableZoom = false;
-    controls.enablePan = false;
-    controls.autoRotate = true;
-    controls.autoRotateSpeed = 0.5;
-    controls.target.set(0, 0, 0);
-    // controls.minPolarAngle = Math.PI / 2 - (22 * Math.PI) / 180;
-    // controls.maxPolarAngle = Math.PI / 2 + (22 * Math.PI) / 180;
-    controls.minPolarAngle = Math.PI / 2;
-    controls.maxPolarAngle = Math.PI / 2;
-
-    // Variables for Zoom
     const splashEndFOV = splashStartFOV * 0.90; // 1.1x increase
     const diveStartFOV = splashEndFOV;
     const diveEndFOV = window.innerWidth < 768 ? 40 : 26; // 50 for mobile
@@ -114,8 +82,37 @@ export function initCellRenderer() {
     const multiplierValue = 10.05;
     const rotationDegree = 180;
 
+    const scene = new THREE.Scene();
+    const aspectRatio = window.innerWidth / window.innerHeight;
+    const camera = new THREE.PerspectiveCamera(splashStartFOV, aspectRatio, 0.5, 2000);
+    camera.position.set(0, 0, 60);
+
+    const cellRender = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    cellRender.toneMapping = THREE.ACESFilmicToneMapping;
+
+    cellRender.setSize(window.innerWidth, window.innerHeight);
+    cellRender.setPixelRatio(window.devicePixelRatio);
+
+    document.querySelector(".cell-three").appendChild(cellRender.domElement);
+
+    function initControlParams() {
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.03;
+      controls.enableZoom = false;
+      controls.enablePan = false;
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 0.5;
+      controls.target.set(0, 0, 0);
+      controls.minPolarAngle = Math.PI / 2;
+      controls.maxPolarAngle = Math.PI / 2;
+    }
+    const controls = new OrbitControls(camera, cellRender.domElement);
+    initControlParams();
+
     let lastScrollY = window.scrollY;
     let scrollTimeout;
+
+    //=======================
 
     const splashArea = document.querySelector('.splash');
     const diveArea = document.querySelector('.dive');
@@ -126,24 +123,20 @@ export function initCellRenderer() {
     const diveHeight = diveAreaRect.height;
     const splashHeight = splashAreaRect.height;
 
+    // offset for possible .announcement banner
+    function checkForAnnouncementElem() {
+      const announcementElement = document.querySelector('.announcement');
+      if (announcementElement) {
+        splashOffsetHeight += announcementElement.getBoundingClientRect().height;
+        announcementElement.getBoundingClientRect().height;
+      }
+      const navElement = document.querySelector('.nav');
+      if (navElement) {
+        splashOffsetHeight += navElement.getBoundingClientRect().height;
+      }
+    }
     let splashOffsetHeight = 0;
-    const announcementElement = document.querySelector('.announcement');
-    if (announcementElement) {
-      splashOffsetHeight += announcementElement.getBoundingClientRect().height;
-      announcementElement.getBoundingClientRect().height
-    }
-    const navElement = document.querySelector('.nav');
-    if (navElement) {
-      splashOffsetHeight += navElement.getBoundingClientRect().height;
-    }
-
-    function smoothLerp(start, end, progress) {
-      return start + (end - start) * smoothstep(progress);
-    }
-
-    function smoothstep(x) {
-      return x * x * (3 - 2 * x);
-    }
+    checkForAnnouncementElem();
 
     window.addEventListener('scroll', function () {
       const scrollY = window.scrollY;
@@ -158,7 +151,7 @@ export function initCellRenderer() {
       controls.autoRotateSpeed = 1.0 + multiplier * multiplierValue;
 
       clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(function () {
+      const newLocal = scrollTimeout = setTimeout(function () {
         controls.autoRotateSpeed = 0.5;
       }, 100);
 
@@ -186,23 +179,25 @@ export function initCellRenderer() {
       lastScrollY = scrollY;
     });
 
-    // Light
-    const ambientLight = new THREE.AmbientLight(0xffffff, 4);
-    scene.add(ambientLight);
+    function initLights() {
+      const ambientLight = new THREE.AmbientLight(0xffffff, 4);
+      scene.add(ambientLight);
 
-    const rgbeLoader = new RGBELoader();
+      const rgbeLoader = new RGBELoader();
 
-    rgbeLoader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/environments/aloe.hdr", function (texture) {
-      // rgbeLoader.load("/assets/environments/ambient.hdr", function (texture) { // PATHCHANGE
-      const pmremGenerator = new PMREMGenerator(cellRender);
-      pmremGenerator.compileEquirectangularShader();
-      const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+      rgbeLoader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/environments/aloe.hdr", function (texture) {
+        // rgbeLoader.load("/assets/environments/ambient.hdr", function (texture) { // PATHCHANGE
+        const pmremGenerator = new PMREMGenerator(cellRender);
+        pmremGenerator.compileEquirectangularShader();
+        const envMap = pmremGenerator.fromEquirectangular(texture).texture;
 
-      scene.environment = envMap;
-      scene.environment.mapping = THREE.EquirectangularReflectionMapping;
-      texture.dispose();
-      pmremGenerator.dispose();
-    });
+        scene.environment = envMap;
+        scene.environment.mapping = THREE.EquirectangularReflectionMapping;
+        texture.dispose();
+        pmremGenerator.dispose();
+      });
+    }
+    initLights();
 
     //===================================================================
 
@@ -228,10 +223,8 @@ export function initCellRenderer() {
       new CellComponent("blob-inner.glb", iridescent, 1)
     ];
 
-    function initInteract() {
-
+    function initSpeckles() {
       const bounds = boundingBoxes[1].max.z * 0.8;
-
       // Create the outer blob
       const waveGeom = new THREE.SphereGeometry(bounds + 2, 32, 32);
       const waveShader = new THREE.ShaderMaterial({
@@ -272,16 +265,14 @@ export function initCellRenderer() {
       const wavingBlob = new THREE.Mesh(waveGeom, waveShader);
       scene.add(wavingBlob);
 
-
       const numSpheresInside = 40;
       const spheres = [];
 
       for (let i = 0; i < numSpheresInside; i++) {
         const randomPosition = getRandomPositionWithinBounds();
 
-
         const sphereGeometry = new THREE.SphereGeometry(0.25, 6, 6);
-        const color = i % 2 === 0 ? 0x333333 : 0x92cb86; // 5.16 TOWO COLORS
+        const color = i % 2 === 0 ? 0x333333 : 0x92cb86; // 5.16 TWO COLORS
         const sphereMaterial = new THREE.MeshBasicMaterial({ color: color });
         const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
 
@@ -308,7 +299,7 @@ export function initCellRenderer() {
         return new THREE.Vector3(x, y, z);
       }
 
-      /*
+      /* DELETE RAYCASTER
        const raycaster = new THREE.Raycaster();
        const mouse = new THREE.Vector2();
        function onClick(event) {
@@ -325,21 +316,17 @@ export function initCellRenderer() {
        cellRender.domElement.addEventListener("click", onClick);
        */
 
-
       function animate() {
         requestAnimationFrame(animate);
 
-        // Update sphere positions
         spheres.forEach(sphere => {
           sphere.position.add(sphere.velocity);
-
-          // If the sphere is outside the bounds, reverse its direction
           if (sphere.position.length() > bounds) {
             sphere.velocity.negate();
           }
         });
 
-        waveShader.uniforms.time.value += 0.01; // Adjust container blob deformation speed
+        waveShader.uniforms.time.value += 0.01; // Adjust container blob deformation rate
 
         controls.update();
         cellRender.render(scene, camera);
@@ -354,8 +341,18 @@ export function initCellRenderer() {
     //===================================================================
 
     Promise.all(loadPromises).then(() => {
-      initInteract();
+      initSpeckles();
       resolve();
     });
   });
+
+  //==================  HELPERS  ================================
+  function smoothLerp(start, end, progress) {
+    return start + (end - start) * smoothstep(progress);
+  }
+
+  function smoothstep(x) {
+    return x * x * (3 - 2 * x);
+  }
+
 }
