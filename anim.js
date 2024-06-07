@@ -1,7 +1,7 @@
 import { initCellRenderer } from './cellInit.js';
 import { initFigureRenderer } from './figureInit.js';
 import { textFadeInit } from './text.js';
-import { scaleTransformRenderer } from './transition-wip.js';
+import { scaleTransformRenderer } from './transition.js';
 
 document.addEventListener('DOMContentLoaded', async function () {
   await Promise.all([initCellRenderer(), initFigureRenderer()]);
