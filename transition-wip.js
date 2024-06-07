@@ -78,5 +78,4 @@ export function scaleTransformRenderer() {
     humanThree.style.transform = 'scale(1) translate3d(0, 0, 0)';
     humanThree.style.position = 'fixed';
     humanThree.style.opacity = '0';
-    cellThree.style.opacity = '1';
 }
