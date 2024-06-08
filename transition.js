@@ -10,11 +10,6 @@ export function scaleTransformRenderer() {
             window.addEventListener('scroll', onScroll);
         } else {
             window.removeEventListener('scroll', onScroll);
-            /*
-            if (window.scrollY < transitionSpacer.offsetTop) {
-                cellThree.style.transform = 'scale(1)';
-            }
-            */
         }
     });
     observer.observe(transitionSpacer);
@@ -54,12 +49,6 @@ export function scaleTransformRenderer() {
         }
 
         /*======================================================================*/
-
-        /*
-        // SCALE: cell
-        const cellScale = 1;
-        cellThree.style.transform = `scale(${Math.max(0.1, cellScale)})`;
-        */
 
         // SCALE: human
         const humanScaleVal = 8 - 7 * progression;
