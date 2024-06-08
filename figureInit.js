@@ -53,7 +53,7 @@ export function initFigureRenderer() {
 
   }
 
-  const materialMap = new THREE.TextureLoader().load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/obj/blue.jpg"); // PATHCHANGE
+  const materialMap = new THREE.TextureLoader().load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/figure/blue.jpg");
 
   const materialBlue = new THREE.MeshStandardMaterial({
     map: materialMap,
@@ -74,7 +74,7 @@ export function initFigureRenderer() {
 
   function figureInit() {
 
-    const shelfSrc = new THREE.TextureLoader().load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/obj/shelf.png"); // PATHCHANGE TO GH
+    const shelfSrc = new THREE.TextureLoader().load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/figure/shelf.png");
     const shelfPlane = new THREE.PlaneGeometry(210, 120);
     const shelfMaterial = new THREE.MeshBasicMaterial({ map: shelfSrc, side: THREE.DoubleSide, transparent: true });
     shelfObj = new THREE.Mesh(shelfPlane, shelfMaterial);
@@ -93,7 +93,7 @@ export function initFigureRenderer() {
     let figureHeight;
     const figureHeights = [];
 
-    loader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets//obj/figure.glb", function (gltf) {
+    loader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/figure/figure.glb", function (gltf) {
 
       figureObject = gltf.scene;
       figureObject.traverse(function (child) {

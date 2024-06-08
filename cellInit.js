@@ -18,7 +18,7 @@ export function initCellRenderer() {
           this.scene = scene;
           this.position = new THREE.Vector3(0, 0, 0);
 
-          this.basePath = 'https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/obj/';
+          this.basePath = 'https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/cell/';
           this.loader = new GLTFLoader();
           const dracoLoader = new DRACOLoader()
 
@@ -150,6 +150,7 @@ export function initCellRenderer() {
       const multiplier = Math.floor(scrollDiff / multiplierDistanceControl);
       controls.autoRotateSpeed = 1.0 + multiplier * multiplierValue;
 
+      // do i need this? 6.8
       clearTimeout(scrollTimeout);
       const newLocal = scrollTimeout = setTimeout(function () {
         controls.autoRotateSpeed = 0.5;
@@ -185,8 +186,7 @@ export function initCellRenderer() {
 
       const rgbeLoader = new RGBELoader();
 
-      rgbeLoader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/environments/aloe.hdr", function (texture) {
-        // rgbeLoader.load("/assets/environments/ambient.hdr", function (texture) { // PATHCHANGE
+      rgbeLoader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/cell/aloe.hdr", function (texture) {
         const pmremGenerator = new PMREMGenerator(cellRender);
         pmremGenerator.compileEquirectangularShader();
         const envMap = pmremGenerator.fromEquirectangular(texture).texture;
@@ -219,14 +219,13 @@ export function initCellRenderer() {
 
     const loadPromises = [
       new CellComponent("blob-outer.gltf", null, 2),
-      new CellComponent("ribbons.glb", grayPurple, 1),
+      new CellComponent("ribbons_full.glb", grayPurple, 1),
       new CellComponent("blob-inner.glb", iridescent, 1)
     ];
 
     function initSpeckles() {
-      const bounds = boundingBoxes[1].max.z * 0.8;
-      // Create the outer blob
-      const waveGeom = new THREE.SphereGeometry(bounds + 2, 32, 32);
+      const bounds = boundingBoxes[1].max.z * 0.7;
+      const waveGeom = new THREE.SphereGeometry(bounds, 32, 32);
       const waveShader = new THREE.ShaderMaterial({
         uniforms: {
           time: { value: 0.0 },
@@ -256,7 +255,7 @@ export function initCellRenderer() {
             `,
         fragmentShader: `
             void main() {
-              gl_FragColor = vec4(0.823, 0.925, 0.749, 0.1); // Set color to #d2ecbf
+              gl_FragColor = vec4(0.823, 0.925, 0.749, 0.12); // Set color to #d2ecbf
             }
           `,
         transparent: true,
@@ -265,14 +264,14 @@ export function initCellRenderer() {
       const wavingBlob = new THREE.Mesh(waveGeom, waveShader);
       scene.add(wavingBlob);
 
-      const numSpheresInside = 40;
+      const numSpheresInside = 80;
       const spheres = [];
 
       for (let i = 0; i < numSpheresInside; i++) {
         const randomPosition = getRandomPositionWithinBounds();
 
         const sphereGeometry = new THREE.SphereGeometry(0.25, 6, 6);
-        const color = i % 2 === 0 ? 0x333333 : 0x92cb86; // 5.16 TWO COLORS
+        const color = i % 3 === 0 ? 0x333333 : 0x92cb86;
         const sphereMaterial = new THREE.MeshBasicMaterial({ color: color });
         const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
 
@@ -290,7 +289,6 @@ export function initCellRenderer() {
         spheres.push(sphereMesh);
       }
 
-      // Helper function to get a random position within bounds. 0.65 prevents freezing at perim
       function getRandomPositionWithinBounds() {
         const x = (Math.random() * 2 - 1) * (bounds * 0.65);
         const y = (Math.random() * 2 - 1) * (bounds * 0.65);
@@ -326,7 +324,7 @@ export function initCellRenderer() {
           }
         });
 
-        waveShader.uniforms.time.value += 0.01; // Adjust container blob deformation rate
+        waveShader.uniforms.time.value += 0.01;
 
         controls.update();
         cellRender.render(scene, camera);
