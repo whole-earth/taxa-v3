@@ -173,6 +173,7 @@ export function initCellRenderer() {
         controls.autoRotate = true;
         const zoomOutProgress = Math.max(0, (scrollY - zoomOutAreaRect.top) / (zoomOutAreaRect.bottom - zoomOutAreaRect.top));
         camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress);
+        /*
         // new 6.20
         if (zoomOutProgress >= 0.4 && zoomOutProgress <= 1) {
           const opacityProgress = (zoomOutProgress - 0.4) / 0.6; // Calculate opacity progress within the range 0.4 to 1
@@ -180,6 +181,9 @@ export function initCellRenderer() {
               waveShader.uniforms.opacity.value = 0.08 + opacityProgress * (1 - 0.08);
           }
       }
+      */
+
+      // each object different rate
       }
 
       camera.updateProjectionMatrix();
