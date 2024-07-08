@@ -173,17 +173,14 @@ export function initCellRenderer() {
         controls.autoRotate = true;
         const zoomOutProgress = Math.max(0, (scrollY - zoomOutAreaRect.top) / (zoomOutAreaRect.bottom - zoomOutAreaRect.top));
         camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress);
-        /*
-        // new 6.20
+
         if (zoomOutProgress >= 0.4 && zoomOutProgress <= 1) {
           const opacityProgress = (zoomOutProgress - 0.4) / 0.6; // Calculate opacity progress within the range 0.4 to 1
           if (waveShader) {
-              waveShader.uniforms.opacity.value = 0.08 + opacityProgress * (1 - 0.08);
+            waveShader.uniforms.opacity.value = 0.08 + opacityProgress * (1 - 0.08);
           }
-      }
-      */
+        }
 
-      // each object different rate
       }
 
       camera.updateProjectionMatrix();
@@ -229,7 +226,7 @@ export function initCellRenderer() {
 
     const loadPromises = [
       new CellComponent("blob-outer.gltf", null, 2),
-      new CellComponent("ribbons_full.glb", grayPurple, 1),
+      new CellComponent("ribbons_0705.glb", grayPurple, 1),
       new CellComponent("blob-inner.glb", iridescent, 1)
     ];
 
@@ -311,23 +308,6 @@ export function initCellRenderer() {
 
         return new THREE.Vector3(x, y, z);
       }
-
-      /* DELETE RAYCASTER
-       const raycaster = new THREE.Raycaster();
-       const mouse = new THREE.Vector2();
-       function onClick(event) {
-         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-         mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-         raycaster.setFromCamera(mouse, camera);
-         const intersects = raycaster.intersectObjects(spheres, true); // Check for intersections with spheres
- 
-         if (intersects.length > 0) {
-           const clickedSphere = intersects[0].object;
-           console.log("Sphere clicked:", clickedSphere);
-         }
-       }
-       cellRender.domElement.addEventListener("click", onClick);
-       */
 
       function animate() {
         requestAnimationFrame(animate);
