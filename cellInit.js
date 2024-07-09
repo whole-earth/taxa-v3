@@ -12,6 +12,8 @@ export function initCellRenderer() {
     let boundingBoxes = [];
     let loadedObjects = [];
 
+    const globalShaders = {};
+
     class CellComponent {
       constructor(gltf, shader = null, renderOrder = 1) {
         return new Promise((resolve) => {
@@ -29,6 +31,10 @@ export function initCellRenderer() {
 
           this.boundingBox = new THREE.Box3();
           boundingBoxes.push(this.boundingBox);
+
+          if (shader) {
+            globalShaders[gltf] = shader;
+          }
 
         });
       }
@@ -175,10 +181,16 @@ export function initCellRenderer() {
         camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress);
 
         if (zoomOutProgress >= 0.4 && zoomOutProgress <= 1) {
-          const opacityProgress = (zoomOutProgress - 0.4) / 0.6; // Calculate opacity progress within the range 0.4 to 1
-          if (waveShader) {
-            waveShader.uniforms.opacity.value = 0.08 + opacityProgress * (1 - 0.08);
+          const opacityProgress = (zoomOutProgress - 0.4) / 0.6;
+
+          // 7.8 isolated layers
+
+          if (globalShaders["blob-inner.glb"]) {
+            let shader = globalShaders["blob-inner.glb"];
+            shader.opacity = 0.08 + opacityProgress * (1 - 0.08);
+            shader.needsUpdate = true;
           }
+
         }
 
       }
@@ -217,17 +229,23 @@ export function initCellRenderer() {
       transmission: 0.6,
       ior: 1.4,
       thickness: 1,
-      envMapIntensity: 1.5
+      envMapIntensity: 1.5,
+      transparent: true,
+      opacity: 1,
+      side: THREE.DoubleSide,
     });
 
     const grayPurple = new THREE.MeshBasicMaterial({
-      color: 0xe7cbef
+      color: 0xe7cbef,
+      transparent: true,
+      opacity: 1,
+      side: THREE.DoubleSide
     });
 
     const loadPromises = [
-      new CellComponent("blob-outer.gltf", null, 2),
+      new CellComponent("blob-outer.gltf", null, 3),
       new CellComponent("ribbons_0705.glb", grayPurple, 1),
-      new CellComponent("blob-inner.glb", iridescent, 1)
+      new CellComponent("blob-inner.glb", iridescent, 2)
     ];
 
     let waveShader;
@@ -272,8 +290,11 @@ export function initCellRenderer() {
           `,
         transparent: true,
         blending: THREE.NormalBlending,
+        depthWrite: false
       });
       const wavingBlob = new THREE.Mesh(waveGeom, waveShader);
+      wavingBlob.renderOrder = 1;
+
       scene.add(wavingBlob);
 
       const numSpheresInside = 80;
@@ -337,6 +358,7 @@ export function initCellRenderer() {
       initSpeckles();
       resolve();
     });
+
   });
 
   //==================  HELPERS  ================================
