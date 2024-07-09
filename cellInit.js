@@ -235,11 +235,27 @@ export function initCellRenderer() {
       side: THREE.DoubleSide,
     });
 
-    const grayPurple = new THREE.MeshBasicMaterial({
+    /* const grayPurple = new THREE.MeshBasicMaterial({
       color: 0xe7cbef,
       transparent: true,
       opacity: 1,
       side: THREE.DoubleSide
+    });
+    */
+
+    const grayPurple = new THREE.MeshPhysicalMaterial({
+      color: new THREE.Color('#e7cbef'),
+      roughness: 0.55,
+      metalness: 0.2,
+      iridescence: 0.85,
+      iridescenceIOR: 1.44,
+      transmission: 0.6,
+      ior: 1.4,
+      thickness: 1,
+      envMapIntensity: 1.5,
+      transparent: true,
+      opacity: 1,
+      side: THREE.DoubleSide,
     });
 
     const loadPromises = [
