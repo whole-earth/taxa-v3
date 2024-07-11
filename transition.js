@@ -22,10 +22,6 @@ export function scaleTransformRenderer() {
         let progression = (window.scrollY + window.innerHeight - transitionSpacer.offsetTop) / (window.innerHeight + transitionSpacer.offsetHeight);
         progression = Math.max(0, Math.min(1, progression));
 
-        // console.log(progression);
-
-        /*======================================================================*/
-
         // POSITIONING
         if (progression < 1) {
             humanThree.style.position = 'fixed';
@@ -33,25 +29,28 @@ export function scaleTransformRenderer() {
             humanThree.style.position = 'sticky';
         }
 
-        /*======================================================================*/
-
         // HUMAN opacity: 0 until progress=0.1, then linear towards progress=1
         const targetOpacity = progression < 0.1 ? 0 : (progression - 0.1) / 0.9;
         humanThree.style.opacity = Math.min(1, targetOpacity);
 
-        // CELL opacity: 1 until progress=0.3, then linear towards 0 until progress=0.7
+        // CELL opacity: 1 until progress=0.3, then linear towards 0 until progress=0.6
         if (progression < 0.3) {
             cellThree.style.opacity = 1;
-        } else if (progression > 0.7) {
+        } else if (progression > 0.6) {
             cellThree.style.opacity = 0;
         } else {
-            cellThree.style.opacity = 1 - ((progression - 0.3) / 0.4);
+            cellThree.style.opacity = 1 - ((progression - 0.3) / 0.3);
         }
 
-        /*======================================================================*/
-
         // SCALE: human
-        const humanScaleVal = 8 - 7 * progression;
+        let humanScaleVal;
+        if (progression > 0 && progression <= 0.2) {
+            humanScaleVal = 20 - 8 * (progression / 0.2);
+        } else if (progression > 0.2 && progression <= 1) {
+            humanScaleVal = 12 - 11 * ((progression - 0.2) / 0.8);
+        } else {
+            humanScaleVal = 1;
+        }
 
         // TRANSLATE: human
         let humanOffsetX, humanOffsetY;

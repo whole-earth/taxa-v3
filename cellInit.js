@@ -183,15 +183,14 @@ export function initCellRenderer() {
         const zoomOutProgress = Math.max(0, (scrollY - zoomOutAreaRect.top) / (zoomOutAreaRect.bottom - zoomOutAreaRect.top));
         camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress);
 
-
         // ==== NEW
 
         if (globalShaders["blob-inner.glb"]) {
           const shader = globalShaders["blob-inner.glb"];
-          if (zoomOutProgress >= 0.05 && zoomOutProgress <= 0.4) {
-            const opacityProgress = 1 - (zoomOutProgress - 0.05) / 0.35;
+          if (zoomOutProgress >= 0.15 && zoomOutProgress <= 0.6) {
+            const opacityProgress = 1 - (zoomOutProgress - 0.15) / 0.45;
             shader.opacity = opacityProgress;
-          } else if (zoomOutProgress < 0.05) {
+          } else if (zoomOutProgress < 0.15) {
             shader.opacity = 1;
           } else {
             shader.opacity = 0;
@@ -201,19 +200,16 @@ export function initCellRenderer() {
 
         if (globalShaders["ribbons-henry_v1.glb"]) {
           const shader = globalShaders["ribbons-henry_v1.glb"];
-          if (zoomOutProgress >= 0.25 && zoomOutProgress <= 0.7) {
-            const opacityProgress = 1 - (zoomOutProgress - 0.25) / 0.45;
+          if (zoomOutProgress >= 0.01 && zoomOutProgress <= 0.35) {
+            const opacityProgress = 1 - (zoomOutProgress - 0.01) / 0.34;
             shader.opacity = opacityProgress;
-          } else if (zoomOutProgress < 0.05) {
+          } else if (zoomOutProgress < 0.01) {
             shader.opacity = 1;
           } else {
             shader.opacity = 0;
           }
           shader.needsUpdate = true;
         }
-      
-
-
 
       // ==== END NEW
 
@@ -256,7 +252,8 @@ export function initCellRenderer() {
     envMapIntensity: 1.5,
     transparent: true,
     opacity: 1,
-    side: THREE.DoubleSide
+    side: THREE.DoubleSide,
+    depthWrite: false
   });
 
   const grayPurple = new THREE.MeshPhysicalMaterial({
@@ -272,23 +269,24 @@ export function initCellRenderer() {
     transparent: true,
     opacity: 1,
     side: THREE.DoubleSide,
+    depthWrite: false
   });
 
   const loadPromises = [
-    new CellComponent("blob-outer.gltf", null, 2),
+    new CellComponent("blob-outer.gltf", null, 3),
     new CellComponent("ribbons-henry_v1.glb", grayPurple, 1),
-    new CellComponent("blob-inner.glb", iridescent, 1)
+    new CellComponent("blob-inner.glb", iridescent, 2)
   ];
   console.log(globalShaders)
 
   let waveShader;
   function initSpeckles() {
-    const bounds = boundingBoxes[1].max.z * 0.7;
+    const bounds = boundingBoxes[1].max.z * 0.85;
     const waveGeom = new THREE.SphereGeometry(bounds, 32, 32);
     waveShader = new THREE.ShaderMaterial({
       uniforms: {
         time: { value: 0.0 },
-        opacity: { value: 0.08 }
+        opacity: { value: 0.1 }
       },
       vertexShader: `
                 varying vec3 vNormal;
