@@ -74,10 +74,7 @@ export function textFadeInit() {
         }
 
         function textOffsetAnnouncement() {
-            // Get current scroll position
             const scrollTop = window.scrollY;
-
-            // Calculate the percentage of .announcement scrolled
             let percentageScrolled;
 
             if (scrollTop <= announcementOffsetTop) {
@@ -88,10 +85,8 @@ export function textFadeInit() {
                 percentageScrolled = (scrollTop - announcementOffsetTop) / announcementHeight;
             }
 
-            // Calculate the value of top property for splash-child
             const topValue = (1 - percentageScrolled) * 8 + percentageScrolled * 5;
 
-            // Update the top property of splash-child
             splashChildElement.style.top = topValue + 'rem';
         }
     }
