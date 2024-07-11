@@ -126,8 +126,6 @@ export function initCellRenderer() {
 
     const splashChild = splashArea.querySelector('.child');
     const diveChild = diveArea.querySelector('.child');
-    const zoomOutChild = zoomOutArea.querySelector('.child');
-
 
     const splashAreaRect = splashArea.getBoundingClientRect();
     const diveAreaRect = diveArea.getBoundingClientRect();
@@ -163,8 +161,7 @@ export function initCellRenderer() {
       controls.autoRotateSpeed = 1.0 + multiplier * multiplierValue;
 
       clearTimeout(scrollTimeout);
-      // const newLocal = scrollTimeout = setTimeout(function () {
-      scrollTimeout = setTimeout(function () {
+      const newLocal = scrollTimeout = setTimeout(function () {
         controls.autoRotateSpeed = 0.5;
       }, 100);
 
@@ -199,7 +196,6 @@ export function initCellRenderer() {
         controls.autoRotate = true;
         const zoomOutProgress = Math.max(0, (scrollY - zoomOutAreaRect.top) / (zoomOutAreaRect.bottom - zoomOutAreaRect.top));
         camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress);
-        zoomOutChild.style.opacity = 1;
 
         if (zoomOutProgress >= 0.4 && zoomOutProgress <= 1) {
           const opacityProgress = (zoomOutProgress - 0.4) / 0.6;
@@ -213,7 +209,6 @@ export function initCellRenderer() {
         }
 
       } else {
-        zoomOutChild.style.opacity = 0;
         if (globalShaders["blob-inner.glb"]) {
           let shader = globalShaders["blob-inner.glb"];
           shader.opacity = 1;
