@@ -183,99 +183,114 @@ export function initCellRenderer() {
         const zoomOutProgress = Math.max(0, (scrollY - zoomOutAreaRect.top) / (zoomOutAreaRect.bottom - zoomOutAreaRect.top));
         camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress);
 
-        if (zoomOutProgress >= 0.4 && zoomOutProgress <= 1) {
-          const opacityProgress = (zoomOutProgress - 0.4) / 0.6;
 
-          if (globalShaders["blob-inner.glb"]) {
-            let shader = globalShaders["blob-inner.glb"];
-            shader.opacity = 0.08 + opacityProgress * (1 - 0.08);
-            shader.needsUpdate = true;
+        // ==== NEW
+
+        if (globalShaders["blob-inner.glb"]) {
+          const shader = globalShaders["blob-inner.glb"];
+          if (zoomOutProgress >= 0.05 && zoomOutProgress <= 0.4) {
+            const opacityProgress = 1 - (zoomOutProgress - 0.05) / 0.35;
+            shader.opacity = opacityProgress;
+          } else if (zoomOutProgress < 0.05) {
+            shader.opacity = 1;
+          } else {
+            shader.opacity = 0;
           }
-
+          shader.needsUpdate = true;
         }
 
-      }
+        if (globalShaders["ribbons-henry_v1.glb"]) {
+          const shader = globalShaders["ribbons-henry_v1.glb"];
+          if (zoomOutProgress >= 0.25 && zoomOutProgress <= 0.7) {
+            const opacityProgress = 1 - (zoomOutProgress - 0.25) / 0.45;
+            shader.opacity = opacityProgress;
+          } else if (zoomOutProgress < 0.05) {
+            shader.opacity = 1;
+          } else {
+            shader.opacity = 0;
+          }
+          shader.needsUpdate = true;
+        }
+      
+
+
+
+      // ==== END NEW
+
+    }
 
       camera.updateProjectionMatrix();
-      lastScrollY = scrollY;
+    lastScrollY = scrollY;
+  });
+
+  function initLights() {
+    const ambientLight = new THREE.AmbientLight(0xffffff, 4);
+    scene.add(ambientLight);
+
+    const rgbeLoader = new RGBELoader();
+
+    rgbeLoader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/cell/aloe.hdr", function (texture) {
+      const pmremGenerator = new PMREMGenerator(cellRender);
+      pmremGenerator.compileEquirectangularShader();
+      const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+
+      scene.environment = envMap;
+      scene.environment.mapping = THREE.EquirectangularReflectionMapping;
+      texture.dispose();
+      pmremGenerator.dispose();
     });
+  }
+  initLights();
 
-    function initLights() {
-      const ambientLight = new THREE.AmbientLight(0xffffff, 4);
-      scene.add(ambientLight);
+  //===================================================================
 
-      const rgbeLoader = new RGBELoader();
+  const iridescent = new THREE.MeshPhysicalMaterial({
+    color: new THREE.Color('#849ed0'),
+    roughness: 0.55,
+    metalness: 0.2,
+    iridescence: 0.85,
+    iridescenceIOR: 1.44,
+    transmission: 0.6,
+    ior: 1.4,
+    thickness: 1,
+    envMapIntensity: 1.5,
+    transparent: true,
+    opacity: 1,
+    side: THREE.DoubleSide
+  });
 
-      rgbeLoader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/cell/aloe.hdr", function (texture) {
-        const pmremGenerator = new PMREMGenerator(cellRender);
-        pmremGenerator.compileEquirectangularShader();
-        const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+  const grayPurple = new THREE.MeshPhysicalMaterial({
+    color: new THREE.Color('#e7cbef'),
+    roughness: 0.55,
+    metalness: 0.2,
+    iridescence: 0.85,
+    iridescenceIOR: 1.44,
+    transmission: 0.6,
+    ior: 1.4,
+    thickness: 1,
+    envMapIntensity: 1.5,
+    transparent: true,
+    opacity: 1,
+    side: THREE.DoubleSide,
+  });
 
-        scene.environment = envMap;
-        scene.environment.mapping = THREE.EquirectangularReflectionMapping;
-        texture.dispose();
-        pmremGenerator.dispose();
-      });
-    }
-    initLights();
+  const loadPromises = [
+    new CellComponent("blob-outer.gltf", null, 2),
+    new CellComponent("ribbons-henry_v1.glb", grayPurple, 1),
+    new CellComponent("blob-inner.glb", iridescent, 1)
+  ];
+  console.log(globalShaders)
 
-    //===================================================================
-
-    const iridescent = new THREE.MeshPhysicalMaterial({
-      color: new THREE.Color('#849ed0'),
-      roughness: 0.55,
-      metalness: 0.2,
-      iridescence: 0.85,
-      iridescenceIOR: 1.44,
-      transmission: 0.6,
-      ior: 1.4,
-      thickness: 1,
-      envMapIntensity: 1.5,
-      transparent: true,
-      opacity: 1,
-      side: THREE.DoubleSide,
-    });
-
-    /* const grayPurple = new THREE.MeshBasicMaterial({
-      color: 0xe7cbef,
-      transparent: true,
-      opacity: 1,
-      side: THREE.DoubleSide
-    });
-    */
-
-    const grayPurple = new THREE.MeshPhysicalMaterial({
-      color: new THREE.Color('#e7cbef'),
-      roughness: 0.55,
-      metalness: 0.2,
-      iridescence: 0.85,
-      iridescenceIOR: 1.44,
-      transmission: 0.6,
-      ior: 1.4,
-      thickness: 1,
-      envMapIntensity: 1.5,
-      transparent: true,
-      opacity: 1,
-      side: THREE.DoubleSide,
-    });
-
-    const loadPromises = [
-      new CellComponent("blob-outer.gltf", null, 3),
-      new CellComponent("compressed.glb", grayPurple, 1),
-      new CellComponent("blob-inner.glb", iridescent, 2)
-    ];
-
-    let waveShader;
-
-    function initSpeckles() {
-      const bounds = boundingBoxes[1].max.z * 0.7;
-      const waveGeom = new THREE.SphereGeometry(bounds, 32, 32);
-      waveShader = new THREE.ShaderMaterial({
-        uniforms: {
-          time: { value: 0.0 },
-          opacity: { value: 0.08 }
-        },
-        vertexShader: `
+  let waveShader;
+  function initSpeckles() {
+    const bounds = boundingBoxes[1].max.z * 0.7;
+    const waveGeom = new THREE.SphereGeometry(bounds, 32, 32);
+    waveShader = new THREE.ShaderMaterial({
+      uniforms: {
+        time: { value: 0.0 },
+        opacity: { value: 0.08 }
+      },
+      vertexShader: `
                 varying vec3 vNormal;
                 varying vec2 vUv;
                 uniform float time;
@@ -298,93 +313,93 @@ export function initCellRenderer() {
                     gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
                 }
             `,
-        fragmentShader: `
+      fragmentShader: `
             uniform float opacity;
 
             void main() {
               gl_FragColor = vec4(0.823, 0.925, 0.749, opacity); // Set color to #d2ecbf
             }
           `,
-        transparent: true,
-        blending: THREE.NormalBlending,
-        depthWrite: false
-      });
-      const wavingBlob = new THREE.Mesh(waveGeom, waveShader);
-      wavingBlob.renderOrder = 1;
+      transparent: true,
+      blending: THREE.NormalBlending,
+      depthWrite: false
+    });
+    const wavingBlob = new THREE.Mesh(waveGeom, waveShader);
+    wavingBlob.renderOrder = 1;
 
-      scene.add(wavingBlob);
+    scene.add(wavingBlob);
 
-      const numSpheresInside = 80;
-      const spheres = [];
+    const numSpheresInside = 80;
+    const spheres = [];
 
-      for (let i = 0; i < numSpheresInside; i++) {
-        const randomPosition = getRandomPositionWithinBounds();
+    for (let i = 0; i < numSpheresInside; i++) {
+      const randomPosition = getRandomPositionWithinBounds();
 
-        const sphereGeometry = new THREE.SphereGeometry(0.25, 6, 6);
-        const color = i % 3 === 0 ? 0x333333 : 0x92cb86;
-        const sphereMaterial = new THREE.MeshBasicMaterial({ color: color });
-        const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+      const sphereGeometry = new THREE.SphereGeometry(0.25, 6, 6);
+      const color = i % 3 === 0 ? 0x333333 : 0x92cb86;
+      const sphereMaterial = new THREE.MeshBasicMaterial({ color: color });
+      const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
 
-        sphereMesh.position.copy(randomPosition);
+      sphereMesh.position.copy(randomPosition);
 
-        const randomDirection = new THREE.Vector3(
-          Math.random() - 0.5,
-          Math.random() - 0.5,
-          Math.random() - 0.5,
-        ).normalize();
-        sphereMesh.velocity = randomDirection.multiplyScalar(0.014);
+      const randomDirection = new THREE.Vector3(
+        Math.random() - 0.5,
+        Math.random() - 0.5,
+        Math.random() - 0.5,
+      ).normalize();
+      sphereMesh.velocity = randomDirection.multiplyScalar(0.014);
 
-        wavingBlob.add(sphereMesh);
+      wavingBlob.add(sphereMesh);
 
-        spheres.push(sphereMesh);
-      }
-
-      function getRandomPositionWithinBounds() {
-        const x = (Math.random() * 2 - 1) * (bounds * 0.65);
-        const y = (Math.random() * 2 - 1) * (bounds * 0.65);
-        const z = (Math.random() * 2 - 1) * (bounds * 0.65);
-
-        return new THREE.Vector3(x, y, z);
-      }
-
-      function animate() {
-        requestAnimationFrame(animate);
-
-        spheres.forEach(sphere => {
-          sphere.position.add(sphere.velocity);
-          if (sphere.position.length() > bounds) {
-            sphere.velocity.negate();
-          }
-        });
-
-        waveShader.uniforms.time.value += 0.01;
-
-        controls.update();
-        cellRender.render(scene, camera);
-
-        window.addEventListener('resize', () => threeSceneResize(cellRender, camera));
-
-      }
-
-      animate();
+      spheres.push(sphereMesh);
     }
 
-    //===================================================================
+    function getRandomPositionWithinBounds() {
+      const x = (Math.random() * 2 - 1) * (bounds * 0.65);
+      const y = (Math.random() * 2 - 1) * (bounds * 0.65);
+      const z = (Math.random() * 2 - 1) * (bounds * 0.65);
 
-    Promise.all(loadPromises).then(() => {
-      initSpeckles();
-      resolve();
-    });
+      return new THREE.Vector3(x, y, z);
+    }
 
+    function animate() {
+      requestAnimationFrame(animate);
+
+      spheres.forEach(sphere => {
+        sphere.position.add(sphere.velocity);
+        if (sphere.position.length() > bounds) {
+          sphere.velocity.negate();
+        }
+      });
+
+      waveShader.uniforms.time.value += 0.01;
+
+      controls.update();
+      cellRender.render(scene, camera);
+
+      window.addEventListener('resize', () => threeSceneResize(cellRender, camera));
+
+    }
+
+    animate();
+  }
+
+  //===================================================================
+
+  Promise.all(loadPromises).then(() => {
+    initSpeckles();
+    resolve();
   });
 
-  //==================  HELPERS  ================================
-  function smoothLerp(start, end, progress) {
-    return start + (end - start) * smoothstep(progress);
-  }
+});
 
-  function smoothstep(x) {
-    return x * x * (3 - 2 * x);
-  }
+//==================  HELPERS  ================================
+function smoothLerp(start, end, progress) {
+  return start + (end - start) * smoothstep(progress);
+}
+
+function smoothstep(x) {
+  return x * x * (3 - 2 * x);
+}
 
 }
