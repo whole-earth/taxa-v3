@@ -253,7 +253,7 @@ export function initCellRenderer() {
     transparent: true,
     opacity: 1,
     side: THREE.DoubleSide,
-    depthWrite: false
+    depthWrite: true
   });
 
   const grayPurple = new THREE.MeshPhysicalMaterial({
@@ -269,15 +269,14 @@ export function initCellRenderer() {
     transparent: true,
     opacity: 1,
     side: THREE.DoubleSide,
-    depthWrite: false
+    depthWrite: true
   });
 
   const loadPromises = [
-    new CellComponent("blob-outer.gltf", null, 3),
-    new CellComponent("ribbons-henry_v1.glb", grayPurple, 1),
-    new CellComponent("blob-inner.glb", iridescent, 2)
+    new CellComponent("blob-outer.gltf", null, 2),
+    new CellComponent("ribbons-henry_v1.glb", grayPurple, 3),
+    new CellComponent("blob-inner.glb", iridescent, 1)
   ];
-  console.log(globalShaders)
 
   let waveShader;
   function initSpeckles() {
