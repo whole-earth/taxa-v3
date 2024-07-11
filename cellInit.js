@@ -123,10 +123,6 @@ export function initCellRenderer() {
     const splashArea = document.querySelector('.splash');
     const diveArea = document.querySelector('.dive');
     const zoomOutArea = document.querySelector('.zoom-out');
-
-    const splashChild = splashArea.querySelector('.child');
-    const diveChild = diveArea.querySelector('.child');
-
     const splashAreaRect = splashArea.getBoundingClientRect();
     const diveAreaRect = diveArea.getBoundingClientRect();
     const zoomOutAreaRect = zoomOutArea.getBoundingClientRect();
@@ -176,22 +172,12 @@ export function initCellRenderer() {
         camera.position.y = rotation * 0.10;
         const splashProgress = Math.max(0, (scrollY - splashAreaRect.top) / (splashAreaRect.bottom - innerHeight - splashOffsetHeight));
         camera.fov = smoothLerp(splashStartFOV, splashEndFOV, splashProgress);
-        splashChild.style.opacity = 1;
-      } else {
-        splashChild.style.opacity = 0;
-      }
-
-      if (diveBool) {
+      } else if (diveBool) {
         console.log("DIVE")
         controls.autoRotate = !(diveHeight * 0.75 + splashHeight < scrollY);
         const diveProgress = Math.max(0, Math.min(1, (scrollY + innerHeight - diveAreaRect.top) / (diveAreaRect.bottom - diveAreaRect.top)));
         camera.fov = smoothLerp(diveStartFOV, diveEndFOV, diveProgress);
-        diveChild.style.opacity = 1;
-      } else {
-        diveChild.style.opacity = 0;
-      }
-
-      if (zoomOutBool) {
+      } else if (zoomOutBool) {
         console.log("ZOOMOUT")
         controls.autoRotate = true;
         const zoomOutProgress = Math.max(0, (scrollY - zoomOutAreaRect.top) / (zoomOutAreaRect.bottom - zoomOutAreaRect.top));
@@ -208,12 +194,6 @@ export function initCellRenderer() {
 
         }
 
-      } else {
-        if (globalShaders["blob-inner.glb"]) {
-          let shader = globalShaders["blob-inner.glb"];
-          shader.opacity = 1;
-          shader.needsUpdate = true;
-        }
       }
 
       camera.updateProjectionMatrix();
