@@ -3,7 +3,7 @@ import { GLTFLoader } from "three/GLTFLoader";
 import { DRACOLoader } from 'three/DracoLoader';
 import { OrbitControls } from "three/OrbitControls";
 import { threeSceneResize } from './anim.js';
-import * as dat from './node_modules/dat.gui/build/dat.gui.module.js';
+import * as dat from 'https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/node_modules/dat.gui/build/dat.gui.module.js';
 
 export function initFigureRenderer() {
 
