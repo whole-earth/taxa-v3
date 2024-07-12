@@ -3,6 +3,7 @@ import { GLTFLoader } from "three/GLTFLoader";
 import { DRACOLoader } from 'three/DracoLoader';
 import { OrbitControls } from "three/OrbitControls";
 import { threeSceneResize } from './anim.js';
+import * as dat from './node_modules/dat.gui/build/dat.gui.module.js';
 
 export function initFigureRenderer() {
 
@@ -154,6 +155,14 @@ export function initFigureRenderer() {
       action.play();
 
       loadLights();
+
+      // Add GUI for materialBlue properties
+      const gui = new dat.GUI();
+      const materialFolder = gui.addFolder('Material Blue');
+      materialFolder.add(materialBlue, 'roughness', 0, 1);
+      materialFolder.add(materialBlue, 'metalness', 0, 1);
+      materialFolder.addColor(materialBlue, 'color');
+      materialFolder.open();
 
     });
   }
