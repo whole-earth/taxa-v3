@@ -157,8 +157,7 @@ export function initFigureRenderer() {
       loadLights();
 
       // Add GUI for materialBlue properties
-      const gui = new dat.GUI( { autoPlace: false } );
-      gui.domElement.id = 'gui';
+      const gui = new dat.GUI();
       const materialFolder = gui.addFolder('Material Blue');
       materialFolder.add(materialBlue, 'roughness', 0, 1);
       materialFolder.add(materialBlue, 'metalness', 0, 1);
