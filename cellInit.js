@@ -274,7 +274,7 @@ export function initCellRenderer() {
 
   const loadPromises = [
     new CellComponent("blob-outer.gltf", null, 2),
-    new CellComponent("ribbons-henry_v1.glb", grayPurple, 3),
+    new CellComponent("ribbons_reduced.glb", grayPurple, 3),
     new CellComponent("blob-inner.glb", iridescent, 1)
   ];
 
