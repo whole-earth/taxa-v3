@@ -20,7 +20,7 @@ export function initCellRenderer() {
           this.scene = scene;
           this.position = new THREE.Vector3(0, 0, 0);
 
-          this.basePath = 'https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/cell/';
+          this.basePath = 'https://cdn.jsdelivr.net/gh/whole-earth/taxa-v3@main/assets/cell/';
           this.loader = new GLTFLoader();
           const dracoLoader = new DRACOLoader()
 
@@ -201,7 +201,7 @@ export function initCellRenderer() {
 
       const rgbeLoader = new RGBELoader();
 
-      rgbeLoader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/assets/cell/aloe.hdr", function (texture) {
+      rgbeLoader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa-v3@main/assets/cell/aloe.hdr", function (texture) {
         const pmremGenerator = new PMREMGenerator(cellRender);
         pmremGenerator.compileEquirectangularShader();
         const envMap = pmremGenerator.fromEquirectangular(texture).texture;
