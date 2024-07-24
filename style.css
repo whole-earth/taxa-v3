@@ -1,0 +1,100 @@
+html {
+  height: 100%;
+  width: 100%;
+  font-family: system-ui;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #FFF5E6;
+  width: 100%;
+}
+
+.announcement {
+  width: 100%;
+  height: 3rem;
+  background-color: #849ed0;
+}
+
+.nav {
+  width: 100%;
+  height: 6rem;
+  border: 2px solid red;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: auto;
+}
+
+.cell {
+  display: block;
+  max-width: 1400px;
+  margin: auto;
+}
+
+.cell-three {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: sticky;
+  bottom: 0vh;
+  height: 100vh;
+  z-index: 1;
+  /* pointer-events: none; */
+  transition: 0.04s linear all;
+}
+
+.cell canvas {
+  touch-action: auto !important;
+}
+
+.splash {
+  position: relative;
+  height: 200vh; /* change 7/23: increase */
+  width: 100%;
+  border: 2px solid #00ff7b;
+}
+
+.dive {
+  position: relative;
+  height: 200vh;
+  width: 100%;
+  border: 2px solid #d1d1d1;
+}
+
+.zoom-out {
+  position: relative;
+  height: 140vh;
+  width: 100%;
+  border: 2px solid #ff2929;
+}
+
+.transition-spacer {
+  height: 50vh;
+}
+
+.product {
+  position: relative;
+  height: 500vh;
+  width: 100%;
+}
+
+.product-three {
+  position: sticky;
+  height: 100vh;
+  top: 0;
+  margin: 0;
+  transition: transform 0.1s linear;
+  opacity: 0;
+}
+
+/* gui interface, tbd */
+.dg.a {
+  margin-top: 400px !important;
+}
