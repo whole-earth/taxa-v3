@@ -4,7 +4,6 @@ import { OrbitControls } from "three/OrbitControls";
 import { GLTFLoader } from "three/GLTFLoader";
 import { DRACOLoader } from 'three/DracoLoader';
 import { threeSceneResize } from './anim.js';
-import * as dat from 'https://cdn.jsdelivr.net/gh/whole-earth/taxa@master/node_modules/dat.gui/build/dat.gui.module.js';
 
 export function initProductRenderer() {
     console.log('package three.js renderer')
