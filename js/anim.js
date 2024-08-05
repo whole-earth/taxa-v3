@@ -1,5 +1,5 @@
 import { initCellRenderer } from './cellInit.js';
-import { textFadeInit } from './text.js';
+// import { textTransitionInit } from './text.js';
 
 document.addEventListener('DOMContentLoaded', async function () {
   await initCellRenderer();
