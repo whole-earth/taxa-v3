@@ -79,9 +79,9 @@ export function initCellRenderer() {
 
     const splashStartFOV = window.innerWidth < 768 ? 90 : 65;
     const splashEndFOV = splashStartFOV * 0.50;
-    const diveStartFOV = splashEndFOV + 0.8; // not sure why this offset
-    const diveEndFOV = splashEndFOV * 1.15;
-    const zoomOutStartFOV = diveEndFOV;
+    const zoomStartFOV = splashEndFOV + 0.8; // not sure why this offset
+    const zoomEndFOV = splashEndFOV * 1.15;
+    const zoomOutStartFOV = zoomEndFOV;
     const zoomOutEndFOV = 160;
 
     const multiplierDistanceControl = 20;
@@ -119,11 +119,11 @@ export function initCellRenderer() {
     //=======================
 
     const splashArea = document.querySelector('.splash');
-    const diveArea = document.querySelector('.dive');
+    const zoomArea = document.querySelector('.zoom');
     const zoomOutArea = document.querySelector('.zoom-out');
     const productArea = document.querySelector('.product');
     const splashAreaRect = splashArea.getBoundingClientRect();
-    const diveAreaRect = diveArea.getBoundingClientRect();
+    const zoomAreaRect = zoomArea.getBoundingClientRect();
     const zoomOutAreaRect = zoomOutArea.getBoundingClientRect();
     const productAreaRect = productArea.getBoundingClientRect();
 
@@ -143,14 +143,14 @@ export function initCellRenderer() {
     checkForAnnouncementElem();
 
     let scrollY, scrollDiff, multiplier;
-    let splashBool, diveBool, zoomOutBool, productBool;
-    let splashProgress, diveProgress, zoomOutProgress, productProgress;
+    let splashBool, zoomBool, zoomOutBool, productBool;
+    let splashProgress, zoomProgress, zoomOutProgress, productProgress;
 
     window.addEventListener('scroll', function () {
       scrollY = window.scrollY;
       scrollDiff = scrollY - lastScrollY;
       splashBool = scrollY > splashOffsetHeight && scrollY < splashAreaRect.bottom - window.innerHeight;
-      diveBool = scrollY > diveAreaRect.top - window.innerHeight && scrollY < diveAreaRect.bottom - window.innerHeight;
+      zoomBool = scrollY > zoomAreaRect.top - window.innerHeight && scrollY < zoomAreaRect.bottom - window.innerHeight;
       zoomOutBool = scrollY > zoomOutAreaRect.top - window.innerHeight && scrollY < zoomOutAreaRect.bottom - this.window.innerHeight;
       productBool = scrollY > productAreaRect.top - window.innerHeight;
 
@@ -173,10 +173,10 @@ export function initCellRenderer() {
         camera.fov = smoothLerp(splashStartFOV, splashEndFOV, splashProgress);
         updateSphereProperties(dotsGreen, 0);
       }
-      else if (diveBool) {
-        //console.log("DIVE")
-        diveProgress = Math.max(0, Math.min(1, (scrollY + window.innerHeight - diveAreaRect.top) / (diveAreaRect.bottom - diveAreaRect.top)));
-        camera.fov = smoothLerp(diveStartFOV, diveEndFOV, diveProgress);
+      else if (zoomBool) {
+        //console.log("ZOOM")
+        zoomProgress = Math.max(0, Math.min(1, (scrollY + window.innerHeight - zoomAreaRect.top) / (zoomAreaRect.bottom - zoomAreaRect.top)));
+        camera.fov = smoothLerp(zoomStartFOV, zoomEndFOV, zoomProgress);
         updateSphereProperties(dotsBlack, 1);
         // divide into three; red, black, blue
       }
