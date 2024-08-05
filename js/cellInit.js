@@ -79,7 +79,7 @@ export function initCellRenderer() {
 
     const splashStartFOV = window.innerWidth < 768 ? 90 : 65;
     const splashEndFOV = splashStartFOV * 0.50;
-    const zoomStartFOV = splashEndFOV + 0.8; // not sure why this offset
+    const zoomStartFOV = splashEndFOV;
     const zoomEndFOV = splashEndFOV * 1.15;
     const zoomOutStartFOV = zoomEndFOV;
     const zoomOutEndFOV = 160;
