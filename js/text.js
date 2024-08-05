@@ -1,14 +1,17 @@
-export function textFadeInit() {
+export function textTransitionInit() {
 
     if (document.querySelector('.child')) {
 
         const splash = document.querySelector('.splash');
-        const dive = document.querySelector('.dive');
-        const human = document.querySelector('.human');
+        const zoom = document.querySelector('.zoom');
+        const zoomOut = document.querySelector('.zoom-out');
+        const product = document.querySelector('.product');
 
-        const splashChild = splash.querySelector('.child');
-        const diveChild = dive.querySelector('.child');
-        const humanChild = human.querySelector('.child');
+        const splashText = splash.querySelector('.child');
+        const zoomChild__One = dive.querySelectorAll('.child')[0];
+        const zoomChild__Two = dive.querySelectorAll('.child')[1];
+        const zoomChild__Three = dive.querySelectorAll('.child')[2];
+        const productText = human.querySelector('.product');
 
         let isScrolling = false;
 

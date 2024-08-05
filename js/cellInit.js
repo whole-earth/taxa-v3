@@ -77,29 +77,27 @@ export function initCellRenderer() {
       }
     }
 
-    const splashStartFOV = window.innerWidth < 768 ? 90 : 65; // 80 for mobile
-    const splashEndFOV = splashStartFOV * 0.50; // 50% increase
-    const diveStartFOV = splashEndFOV;
-    const diveEndFOV = splashEndFOV * 1.15; // 15% decrease
+    const splashStartFOV = window.innerWidth < 768 ? 90 : 65;
+    const splashEndFOV = splashStartFOV * 0.50;
+    const diveStartFOV = splashEndFOV + 0.8; // not sure why this offset
+    const diveEndFOV = splashEndFOV * 1.15;
     const zoomOutStartFOV = diveEndFOV;
     const zoomOutEndFOV = 160;
 
-    const multiplierDistanceControl = 10;
-    const multiplierValue = 10.05;
-    const rotationDegree = 180;
+    const multiplierDistanceControl = 20;
+    const multiplierValue = 10;
 
     const scene = new THREE.Scene();
     const aspectRatio = window.innerWidth / window.innerHeight;
     const camera = new THREE.PerspectiveCamera(splashStartFOV, aspectRatio, 0.5, 2000);
     camera.position.set(0, 0, 60);
 
-    const cellRender = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    cellRender.toneMapping = THREE.ACESFilmicToneMapping;
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
 
-    cellRender.setSize(window.innerWidth, window.innerHeight);
-    cellRender.setPixelRatio(window.devicePixelRatio);
-
-    document.querySelector(".cell-three").appendChild(cellRender.domElement);
+    document.querySelector("#three").appendChild(renderer.domElement);
 
     function initControlParams() {
       controls.enableDamping = true;
@@ -112,7 +110,7 @@ export function initCellRenderer() {
       controls.minPolarAngle = Math.PI / 2;
       controls.maxPolarAngle = Math.PI / 2;
     }
-    const controls = new OrbitControls(camera, cellRender.domElement);
+    const controls = new OrbitControls(camera, renderer.domElement);
     initControlParams();
 
     let lastScrollY = window.scrollY;
@@ -123,11 +121,11 @@ export function initCellRenderer() {
     const splashArea = document.querySelector('.splash');
     const diveArea = document.querySelector('.dive');
     const zoomOutArea = document.querySelector('.zoom-out');
+    const productArea = document.querySelector('.product');
     const splashAreaRect = splashArea.getBoundingClientRect();
     const diveAreaRect = diveArea.getBoundingClientRect();
     const zoomOutAreaRect = zoomOutArea.getBoundingClientRect();
-    const diveHeight = diveAreaRect.height;
-    const splashHeight = splashAreaRect.height;
+    const productAreaRect = productArea.getBoundingClientRect();
 
     // offset for possible .announcement banner
     function checkForAnnouncementElem() {
@@ -144,20 +142,23 @@ export function initCellRenderer() {
     let splashOffsetHeight = 0;
     checkForAnnouncementElem();
 
+    let scrollY, scrollDiff, multiplier;
+    let splashBool, diveBool, zoomOutBool, productBool;
+    let splashProgress, diveProgress, zoomOutProgress, productProgress;
+
     window.addEventListener('scroll', function () {
-      const scrollY = window.scrollY;
-      const scrollDiff = scrollY - lastScrollY;
-      const innerHeight = window.innerHeight;
+      scrollY = window.scrollY;
+      scrollDiff = scrollY - lastScrollY;
+      splashBool = scrollY > splashOffsetHeight && scrollY < splashAreaRect.bottom - window.innerHeight;
+      diveBool = scrollY > diveAreaRect.top - window.innerHeight && scrollY < diveAreaRect.bottom - window.innerHeight;
+      zoomOutBool = scrollY > zoomOutAreaRect.top - window.innerHeight && scrollY < zoomOutAreaRect.bottom - this.window.innerHeight;
+      productBool = scrollY > productAreaRect.top - window.innerHeight;
 
-      const splashBool = scrollY > splashOffsetHeight && scrollY < splashAreaRect.bottom - innerHeight;
-      const diveBool = scrollY > diveAreaRect.top - innerHeight && scrollY < diveAreaRect.bottom - innerHeight;
-      const zoomOutBool = scrollY > zoomOutAreaRect.top - innerHeight && scrollY < zoomOutAreaRect.bottom;
-
-      const multiplier = Math.floor(scrollDiff / multiplierDistanceControl);
-      controls.autoRotateSpeed = 1.0 + multiplier * multiplierValue;
+      multiplier = Math.floor(scrollDiff / multiplierDistanceControl);
+      controls.autoRotateSpeed = 1.0 + (multiplier * multiplierValue);
 
       clearTimeout(scrollTimeout);
-      const newLocal = scrollTimeout = setTimeout(function () {
+      scrollTimeout = setTimeout(function () {
         controls.autoRotateSpeed = 0.5;
       }, 100);
 
@@ -167,28 +168,28 @@ export function initCellRenderer() {
       }
 
       if (splashBool) {
-        console.log("SPLASH")
-        const rotation = rotationDegree / splashHeight;
-        camera.position.y = rotation * 0.10;
-        const splashProgress = Math.max(0, (scrollY - splashAreaRect.top) / (splashAreaRect.bottom - innerHeight - splashOffsetHeight));
+        //console.log("SPLASH")
+        splashProgress = Math.max(0, (scrollY - splashAreaRect.top) / (splashAreaRect.bottom - window.innerHeight - splashOffsetHeight));
         camera.fov = smoothLerp(splashStartFOV, splashEndFOV, splashProgress);
         updateSphereProperties(dotsGreen, 0);
       }
       else if (diveBool) {
-        console.log("DIVE")
-        // controls.autoRotate = !(diveHeight * 0.75 + splashHeight < scrollY);
-        const diveProgress = Math.max(0, Math.min(1, (scrollY + innerHeight - diveAreaRect.top) / (diveAreaRect.bottom - diveAreaRect.top)));
+        //console.log("DIVE")
+        diveProgress = Math.max(0, Math.min(1, (scrollY + window.innerHeight - diveAreaRect.top) / (diveAreaRect.bottom - diveAreaRect.top)));
         camera.fov = smoothLerp(diveStartFOV, diveEndFOV, diveProgress);
         updateSphereProperties(dotsBlack, 1);
         // divide into three; red, black, blue
       }
       else if (zoomOutBool) {
-        console.log("ZOOMOUT")
+        //console.log("ZOOMOUT")
         controls.autoRotate = true;
-        const zoomOutProgress = Math.max(0, (scrollY - zoomOutAreaRect.top) / (zoomOutAreaRect.bottom - zoomOutAreaRect.top));
+        zoomOutProgress = Math.max(0, (scrollY - zoomOutAreaRect.top) / (zoomOutAreaRect.bottom - zoomOutAreaRect.top));
         camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress);
         updateSphereProperties("orange", 0);
-
+      }
+      else if (productBool){
+        productProgress = Math.max(0, ((scrollY - productAreaRect.top) / (productAreaRect.bottom - productAreaRect.top)));
+        console.log((scrollY - productAreaRect.top) / (productAreaRect.bottom - productAreaRect.top));
       }
 
       camera.updateProjectionMatrix();
@@ -202,7 +203,7 @@ export function initCellRenderer() {
       const rgbeLoader = new RGBELoader();
 
       rgbeLoader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa-v3@main/assets/cell/aloe.hdr", function (texture) {
-        const pmremGenerator = new PMREMGenerator(cellRender);
+        const pmremGenerator = new PMREMGenerator(renderer);
         pmremGenerator.compileEquirectangularShader();
         const envMap = pmremGenerator.fromEquirectangular(texture).texture;
 
@@ -356,23 +357,23 @@ export function initCellRenderer() {
         waveShader.uniforms.time.value += 0.01;
 
         controls.update();
-        cellRender.render(scene, camera);
+        renderer.render(scene, camera);
 
-        window.addEventListener('resize', () => threeSceneResize(cellRender, camera));
+        window.addEventListener('resize', () => threeSceneResize(renderer, camera));
 
       }
 
       animate();
     }
 
-      function updateSphereProperties(color, opacity) {
-    spheres.forEach(sphere => {
-      sphere.material.color.set(color);
-      sphere.material.opacity = opacity;
-      sphere.material.transparent = true;
-      sphere.material.needsUpdate = true;
-    });
-  }
+    function updateSphereProperties(color, opacity) {
+      spheres.forEach(sphere => {
+        sphere.material.color.set(color);
+        sphere.material.opacity = opacity;
+        sphere.material.transparent = true;
+        sphere.material.needsUpdate = true;
+      });
+    }
 
     //===================================================================
 
