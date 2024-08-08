@@ -105,7 +105,7 @@ export function initCellRenderer() {
       controls.enableZoom = false;
       controls.enablePan = false;
       controls.autoRotate = true;
-      controls.autoRotateSpeed = 0.5;
+      controls.autoRotateSpeed = 0.2;
       controls.target.set(0, 0, 0);
       controls.minPolarAngle = Math.PI / 2;
       controls.maxPolarAngle = Math.PI / 2;
@@ -144,7 +144,7 @@ export function initCellRenderer() {
 
       clearTimeout(scrollTimeout);
       scrollTimeout = setTimeout(function () {
-        controls.autoRotateSpeed = 0.5;
+        controls.autoRotateSpeed = 0.2;
       }, 100);
 
       if (scrollY > zoomOutAreaRect.bottom) {
