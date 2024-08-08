@@ -105,7 +105,7 @@ export function initCellRenderer() {
       controls.enableZoom = false;
       controls.enablePan = false;
       controls.autoRotate = true;
-      controls.autoRotateSpeed = 0.25;
+      controls.autoRotateSpeed = 0.5;
       controls.target.set(0, 0, 0);
       controls.minPolarAngle = Math.PI / 2;
       controls.maxPolarAngle = Math.PI / 2;
@@ -134,7 +134,7 @@ export function initCellRenderer() {
     window.addEventListener('scroll', function () {
       scrollY = window.scrollY;
       scrollDiff = scrollY - lastScrollY;
-      splashBool = scrollY > splashOffsetHeight && scrollY < splashAreaRect.bottom - window.innerHeight;
+      splashBool = scrollY < splashAreaRect.bottom - window.innerHeight;
       zoomBool = scrollY > zoomAreaRect.top - window.innerHeight && scrollY < zoomAreaRect.bottom - window.innerHeight;
       zoomOutBool = scrollY > zoomOutAreaRect.top - window.innerHeight && scrollY < zoomOutAreaRect.bottom - this.window.innerHeight;
       productBool = scrollY > productAreaRect.top - window.innerHeight;
@@ -154,7 +154,7 @@ export function initCellRenderer() {
 
       if (splashBool) {
         //console.log("SPLASH")
-        splashProgress = Math.max(0, (scrollY - splashAreaRect.top) / (splashAreaRect.bottom - window.innerHeight - splashOffsetHeight));
+        splashProgress = Math.max(0, (scrollY - splashAreaRect.top) / (splashAreaRect.bottom - window.innerHeight));
         camera.fov = smoothLerp(splashStartFOV, splashEndFOV, splashProgress);
         updateSphereProperties(dotsGreen, 0);
       }
