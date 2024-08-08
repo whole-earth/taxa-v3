@@ -1,0 +1,136 @@
+{
+    "asset": {
+        "generator": "glTF-Transform v4.0.2",
+        "version": "2.0"
+    },
+    "accessors": [
+        {
+            "type": "SCALAR",
+            "componentType": 5125,
+            "count": 468396
+        },
+        {
+            "type": "VEC3",
+            "componentType": 5126,
+            "count": 78821,
+            "max": [
+                1625.372802734375,
+                1776.477783203125,
+                1482.4891357421875
+            ],
+            "min": [
+                -1677.70263671875,
+                -1622.020263671875,
+                -1714.9991455078125
+            ]
+        },
+        {
+            "type": "VEC3",
+            "componentType": 5126,
+            "count": 78821
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteOffset": 0,
+            "byteLength": 416666
+        }
+    ],
+    "buffers": [
+        {
+            "uri": "blob-outer_compressed.bin",
+            "byteLength": 416666
+        }
+    ],
+    "materials": [
+        {
+            "name": "GLASS",
+            "alphaMode": "BLEND",
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.7912979403281553,
+                    0.7912979403281553,
+                    0.7912979403281553,
+                    0.85
+                ],
+                "roughnessFactor": 0.01,
+                "metallicFactor": 0
+            },
+            "extensions": {
+                "KHR_materials_ior": {
+                    "ior": 2.0
+                },
+                "KHR_materials_transmission": {
+                    "transmissionFactor": 1
+                },
+                "KHR_materials_volume": {},
+                "KHR_materials_dispersion": {
+                    "dispersion": 5.0
+                }
+            }
+        }
+    ],
+    "meshes": [
+        {
+            "name": "Mesh",
+            "primitives": [
+                {
+                    "attributes": {
+                        "POSITION": 1,
+                        "NORMAL": 2
+                    },
+                    "mode": 4,
+                    "material": 0,
+                    "indices": 0,
+                    "extensions": {
+                        "KHR_draco_mesh_compression": {
+                            "bufferView": 0,
+                            "attributes": {
+                                "POSITION": 0,
+                                "NORMAL": 1
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "name": "blob1Subvided",
+            "rotation": [
+                0.7071068286895752,
+                0,
+                0,
+                0.7071067094802856
+            ],
+            "scale": [
+                0.009999999776482582,
+                0.009999999776482582,
+                0.009999999776482582
+            ],
+            "mesh": 0
+        }
+    ],
+    "scenes": [
+        {
+            "name": "Scene",
+            "nodes": [
+                0
+            ]
+        }
+    ],
+    "scene": 0,
+    "extensionsUsed": [
+        "KHR_materials_ior",
+        "KHR_materials_transmission",
+        "KHR_materials_volume",
+        "KHR_draco_mesh_compression",
+        "KHR_materials_dispersion"
+    ],
+    "extensionsRequired": [
+        "KHR_draco_mesh_compression"
+    ]
+}
