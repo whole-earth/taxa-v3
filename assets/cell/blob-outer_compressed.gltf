@@ -45,7 +45,7 @@
     ],
     "materials": [
         {
-            "name": "GLASS",
+            "name": "blob1",
             "alphaMode": "BLEND",
             "doubleSided": true,
             "pbrMetallicRoughness": {
@@ -55,7 +55,7 @@
                     0.7912979403281553,
                     0.85
                 ],
-                "roughnessFactor": 0.01,
+                "roughnessFactor": 0,
                 "metallicFactor": 0
             },
             "extensions": {
