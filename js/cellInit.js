@@ -105,7 +105,7 @@ export function initCellRenderer() {
       controls.enableZoom = false;
       controls.enablePan = false;
       controls.autoRotate = true;
-      controls.autoRotateSpeed = 0.5;
+      controls.autoRotateSpeed = 0.25;
       controls.target.set(0, 0, 0);
       controls.minPolarAngle = Math.PI / 2;
       controls.maxPolarAngle = Math.PI / 2;
@@ -126,21 +126,6 @@ export function initCellRenderer() {
     const zoomAreaRect = zoomArea.getBoundingClientRect();
     const zoomOutAreaRect = zoomOutArea.getBoundingClientRect();
     const productAreaRect = productArea.getBoundingClientRect();
-
-    // offset for possible .announcement banner
-    function checkForAnnouncementElem() {
-      const announcementElement = document.querySelector('.announcement');
-      if (announcementElement) {
-        splashOffsetHeight += announcementElement.getBoundingClientRect().height;
-        announcementElement.getBoundingClientRect().height;
-      }
-      const navElement = document.querySelector('.nav');
-      if (navElement) {
-        splashOffsetHeight += navElement.getBoundingClientRect().height;
-      }
-    }
-    let splashOffsetHeight = 0;
-    checkForAnnouncementElem();
 
     let scrollY, scrollDiff, multiplier;
     let splashBool, zoomBool, zoomOutBool, productBool;
@@ -250,8 +235,7 @@ export function initCellRenderer() {
     });
 
     const loadPromises = [
-      //new CellComponent("blob-outer.gltf", null, 2),
-      new CellComponent("blob-outer_88.gltf", null, 2),
+      new CellComponent("blob-outer.gltf", null, 2),
       new CellComponent("ribbons.glb", grayPurple, 3),
       new CellComponent("blob-inner.glb", iridescent, 1)
     ];
