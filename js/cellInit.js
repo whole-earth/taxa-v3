@@ -235,7 +235,7 @@ export function initCellRenderer() {
     });
 
     const loadPromises = [
-      new CellComponent("blob-outer.gltf", null, 2),
+      new CellComponent("blob-outer_new.gltf", null, 2),
       new CellComponent("ribbons.glb", grayPurple, 3),
       new CellComponent("blob-inner.glb", iridescent, 1)
     ];
