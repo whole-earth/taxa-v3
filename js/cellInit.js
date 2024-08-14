@@ -240,8 +240,8 @@ export function initCellRenderer() {
 
     const dispersion = new THREE.MeshPhysicalMaterial({
       color: 0xe4e4e4, // 15002857 in hexadecimal
-      roughness: 0.1,
-      metalness: 0.04,
+      roughness: 0.2,
+      metalness: 0.2,
       sheen: 0,
       sheenColor: 0x000000, // 0 in hexadecimal
       sheenRoughness: 0,
@@ -256,8 +256,8 @@ export function initCellRenderer() {
       anisotropy: 0,
       anisotropyRotation: 0,
       envMapIntensity: 1,
-      reflectivity: 0.9998499849985,
-      transmission: 1,
+      reflectivity: 0.25,
+      transmission: 0.9,
       thickness: 0,
       attenuationColor: 0xffffff, // 16777215 in hexadecimal
       side: THREE.DoubleSide, // 2 corresponds to THREE.DoubleSide
