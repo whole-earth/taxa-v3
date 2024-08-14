@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import * as dat from 'dat.gui';
 import { GLTFLoader } from "three/GLTFLoader";
 import { DRACOLoader } from 'three/DracoLoader';
 import { OrbitControls } from "three/OrbitControls";
@@ -20,7 +21,8 @@ export function initCellRenderer() {
           this.scene = scene;
           this.position = new THREE.Vector3(0, 0, 0);
 
-          this.basePath = 'https://cdn.jsdelivr.net/gh/whole-earth/taxa-v3@main/assets/cell/';
+          this.basePath = './assets/cell/';
+          // this.basePath = 'https://cdn.jsdelivr.net/gh/whole-earth/taxa-v3@main/assets/cell/';
           this.loader = new GLTFLoader();
           const dracoLoader = new DRACOLoader()
 
@@ -58,6 +60,7 @@ export function initCellRenderer() {
       }
 
       applyCustomShader(shader) {
+
         if (!shader) {
           return
         };
@@ -88,6 +91,8 @@ export function initCellRenderer() {
     const multiplierValue = 10;
 
     const scene = new THREE.Scene();
+    scene.backgroundBlurriness = 0.5;
+
     const aspectRatio = window.innerWidth / window.innerHeight;
     const camera = new THREE.PerspectiveCamera(splashStartFOV, aspectRatio, 0.5, 2000);
     camera.position.set(0, 0, 60);
@@ -172,7 +177,7 @@ export function initCellRenderer() {
         camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress);
         updateSphereProperties("orange", 0);
       }
-      else if (productBool){
+      else if (productBool) {
         productProgress = Math.max(0, ((scrollY - productAreaRect.top) / (productAreaRect.bottom - productAreaRect.top)));
         console.log((scrollY - productAreaRect.top) / (productAreaRect.bottom - productAreaRect.top));
       }
@@ -191,7 +196,6 @@ export function initCellRenderer() {
         const pmremGenerator = new PMREMGenerator(renderer);
         pmremGenerator.compileEquirectangularShader();
         const envMap = pmremGenerator.fromEquirectangular(texture).texture;
-
         scene.environment = envMap;
         scene.environment.mapping = THREE.EquirectangularReflectionMapping;
         texture.dispose();
@@ -234,8 +238,64 @@ export function initCellRenderer() {
       depthWrite: true
     });
 
+    const dispersion = new THREE.MeshPhysicalMaterial({
+      color: 0xe4e4e4, // 15002857 in hexadecimal
+      roughness: 0.1,
+      metalness: 0.04,
+      sheen: 0,
+      sheenColor: 0x000000, // 0 in hexadecimal
+      sheenRoughness: 0,
+      emissive: 0x000000, // 0 in hexadecimal
+      specularIntensity: 1,
+      specularColor: 0xffffff, // 16777215 in hexadecimal
+      clearcoat: 0.78,
+      clearcoatRoughness: 0.84,
+      iridescence: 0.82,
+      iridescenceIOR: 1,
+      iridescenceThicknessRange: [100, 400],
+      anisotropy: 0,
+      anisotropyRotation: 0,
+      envMapIntensity: 1,
+      reflectivity: 0.9998499849985,
+      transmission: 1,
+      thickness: 0,
+      attenuationColor: 0xffffff, // 16777215 in hexadecimal
+      side: THREE.DoubleSide, // 2 corresponds to THREE.DoubleSide
+      transparent: true,
+      dispersion: 5
+    });
+
+    const gui = new dat.GUI();
+
+    const blobGUI = gui.addFolder('Dispersion Material');
+    blobGUI.addColor(dispersion, 'color').name('Color');
+    blobGUI.add(dispersion, 'roughness', 0, 1).name('Roughness');
+    blobGUI.add(dispersion, 'metalness', 0, 1).name('Metalness');
+    blobGUI.add(dispersion, 'sheen', 0, 1).name('Sheen');
+    blobGUI.addColor(dispersion, 'sheenColor').name('Sheen Color');
+    blobGUI.add(dispersion, 'sheenRoughness', 0, 1).name('Sheen Roughness');
+    blobGUI.addColor(dispersion, 'emissive').name('Emissive');
+    blobGUI.add(dispersion, 'specularIntensity', 0, 1).name('Specular Intensity');
+    blobGUI.addColor(dispersion, 'specularColor').name('Specular Color');
+    blobGUI.add(dispersion, 'clearcoat', 0, 1).name('Clearcoat');
+    blobGUI.add(dispersion, 'clearcoatRoughness', 0, 1).name('Clearcoat Roughness');
+    blobGUI.add(dispersion, 'iridescence', 0, 1).name('Iridescence');
+    blobGUI.add(dispersion, 'iridescenceIOR', 1, 2).name('Iridescence IOR');
+    blobGUI.add(dispersion, 'anisotropy', 0, 1).name('Anisotropy');
+    blobGUI.add(dispersion, 'anisotropyRotation', 0, Math.PI * 2).name('Anisotropy Rotation');
+    blobGUI.add(dispersion, 'envMapIntensity', 0, 10).name('Env Map Intensity');
+    blobGUI.add(dispersion, 'reflectivity', 0, 1).name('Reflectivity');
+    blobGUI.add(dispersion, 'transmission', 0, 1).name('Transmission');
+    blobGUI.add(dispersion, 'thickness', 0, 10).name('Thickness');
+    blobGUI.addColor(dispersion, 'attenuationColor').name('Attenuation Color');
+    blobGUI.add(dispersion, 'side', { FrontSide: THREE.FrontSide, BackSide: THREE.BackSide, DoubleSide: THREE.DoubleSide }).name('Side');
+    blobGUI.add(dispersion, 'transparent').name('Transparent');
+    
+    blobGUI.open();
+
     const loadPromises = [
-      new CellComponent("blob-outer_new.gltf", null, 2),
+      //new CellComponent("blob-outer_new.gltf", null, 2),
+      new CellComponent("blob-outer_compressed.glb", dispersion, 2),
       new CellComponent("ribbons.glb", grayPurple, 3),
       new CellComponent("blob-inner.glb", iridescent, 1)
     ];

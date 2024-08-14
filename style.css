@@ -38,7 +38,7 @@ nav {
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 2;
+  z-index: 0; /* due to dat.gui */
 
   canvas {
     touch-action: auto !important;
@@ -80,4 +80,13 @@ main {
   height: 200vh;
   width: 100%;
   border: 2px solid black;
+}
+
+.dg {
+  z-index: 999999;
+  pointer-events: auto;
+  touch-action: auto;
+  position: fixed;
+  top: 0;
+  right: 0;
 }

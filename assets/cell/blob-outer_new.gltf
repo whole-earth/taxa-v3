@@ -142,14 +142,14 @@
       },
       "extensions": {
         "KHR_materials_ior": {
-          "ior": 5.0
+          "ior": 2.42
         },
         "KHR_materials_transmission": {
           "transmissionFactor": 1
         },
         "KHR_materials_volume": {},
         "KHR_materials_dispersion": {
-          "dispersion": 5.0
+          "dispersion": 2.0
         }
       }
     }
