@@ -265,36 +265,39 @@ export function initCellRenderer() {
       dispersion: 5
     });
 
-    const gui = new dat.GUI();
+    function dispersionGUI() {
+      const gui = new dat.GUI();
 
-    const blobGUI = gui.addFolder('Dispersion Material');
-    blobGUI.addColor(dispersion, 'color').name('Color');
-    blobGUI.add(dispersion, 'roughness', 0, 1).name('Roughness');
-    blobGUI.add(dispersion, 'metalness', 0, 1).name('Metalness');
-    blobGUI.add(dispersion, 'sheen', 0, 1).name('Sheen');
-    blobGUI.addColor(dispersion, 'sheenColor').name('Sheen Color');
-    blobGUI.add(dispersion, 'sheenRoughness', 0, 1).name('Sheen Roughness');
-    blobGUI.addColor(dispersion, 'emissive').name('Emissive');
-    blobGUI.add(dispersion, 'specularIntensity', 0, 1).name('Specular Intensity');
-    blobGUI.addColor(dispersion, 'specularColor').name('Specular Color');
-    blobGUI.add(dispersion, 'clearcoat', 0, 1).name('Clearcoat');
-    blobGUI.add(dispersion, 'clearcoatRoughness', 0, 1).name('Clearcoat Roughness');
-    blobGUI.add(dispersion, 'iridescence', 0, 1).name('Iridescence');
-    blobGUI.add(dispersion, 'iridescenceIOR', 1, 2).name('Iridescence IOR');
-    blobGUI.add(dispersion, 'anisotropy', 0, 1).name('Anisotropy');
-    blobGUI.add(dispersion, 'anisotropyRotation', 0, Math.PI * 2).name('Anisotropy Rotation');
-    blobGUI.add(dispersion, 'envMapIntensity', 0, 10).name('Env Map Intensity');
-    blobGUI.add(dispersion, 'reflectivity', 0, 1).name('Reflectivity');
-    blobGUI.add(dispersion, 'transmission', 0, 1).name('Transmission');
-    blobGUI.add(dispersion, 'thickness', 0, 10).name('Thickness');
-    blobGUI.addColor(dispersion, 'attenuationColor').name('Attenuation Color');
-    blobGUI.add(dispersion, 'side', { FrontSide: THREE.FrontSide, BackSide: THREE.BackSide, DoubleSide: THREE.DoubleSide }).name('Side');
-    blobGUI.add(dispersion, 'transparent').name('Transparent');
-    
-    blobGUI.open();
+      const blobGUI = gui.addFolder('Dispersion Material');
+      blobGUI.addColor(dispersion, 'color').name('Color');
+      blobGUI.add(dispersion, 'roughness', 0, 1).name('Roughness');
+      blobGUI.add(dispersion, 'metalness', 0, 1).name('Metalness');
+      blobGUI.add(dispersion, 'sheen', 0, 1).name('Sheen');
+      blobGUI.addColor(dispersion, 'sheenColor').name('Sheen Color');
+      blobGUI.add(dispersion, 'sheenRoughness', 0, 1).name('Sheen Roughness');
+      blobGUI.addColor(dispersion, 'emissive').name('Emissive');
+      blobGUI.add(dispersion, 'specularIntensity', 0, 1).name('Specular Intensity');
+      blobGUI.addColor(dispersion, 'specularColor').name('Specular Color');
+      blobGUI.add(dispersion, 'clearcoat', 0, 1).name('Clearcoat');
+      blobGUI.add(dispersion, 'clearcoatRoughness', 0, 1).name('Clearcoat Roughness');
+      blobGUI.add(dispersion, 'iridescence', 0, 1).name('Iridescence');
+      blobGUI.add(dispersion, 'iridescenceIOR', 1, 2).name('Iridescence IOR');
+      blobGUI.add(dispersion, 'anisotropy', 0, 1).name('Anisotropy');
+      blobGUI.add(dispersion, 'anisotropyRotation', 0, Math.PI * 2).name('Anisotropy Rotation');
+      blobGUI.add(dispersion, 'envMapIntensity', 0, 10).name('Env Map Intensity');
+      blobGUI.add(dispersion, 'reflectivity', 0, 1).name('Reflectivity');
+      blobGUI.add(dispersion, 'transmission', 0, 1).name('Transmission');
+      blobGUI.add(dispersion, 'thickness', 0, 10).name('Thickness');
+      blobGUI.addColor(dispersion, 'attenuationColor').name('Attenuation Color');
+      blobGUI.add(dispersion, 'side', { FrontSide: THREE.FrontSide, BackSide: THREE.BackSide, DoubleSide: THREE.DoubleSide }).name('Side');
+      blobGUI.add(dispersion, 'transparent').name('Transparent');
+
+      blobGUI.open();
+    }
+
+    dispersionGUI();
 
     const loadPromises = [
-      //new CellComponent("blob-outer_new.gltf", null, 2),
       new CellComponent("blob-outer_compressed.glb", dispersion, 2),
       new CellComponent("ribbons.glb", grayPurple, 3),
       new CellComponent("blob-inner.glb", iridescent, 1)
