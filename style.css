@@ -81,12 +81,3 @@ main {
   width: 100%;
   border: 2px solid black;
 }
-
-.dg {
-  z-index: 999999 !important;
-  pointer-events: auto;
-  touch-action: auto;
-  position: fixed;
-  top: 0;
-  right: 0;
-}

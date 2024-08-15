@@ -158,20 +158,17 @@ export function initCellRenderer() {
       }
 
       if (splashBool) {
-        //console.log("SPLASH")
         splashProgress = Math.max(0, (scrollY - splashAreaRect.top) / (splashAreaRect.bottom - window.innerHeight));
         camera.fov = smoothLerp(splashStartFOV, splashEndFOV, splashProgress);
         updateSphereProperties(dotsGreen, 0);
       }
       else if (zoomBool) {
-        //console.log("ZOOM")
         zoomProgress = Math.max(0, Math.min(1, (scrollY + window.innerHeight - zoomAreaRect.top) / (zoomAreaRect.bottom - zoomAreaRect.top)));
         camera.fov = smoothLerp(zoomStartFOV, zoomEndFOV, zoomProgress);
         updateSphereProperties(dotsBlack, 1);
         // divide into three; red, black, blue
       }
       else if (zoomOutBool) {
-        //console.log("ZOOMOUT")
         controls.autoRotate = true;
         zoomOutProgress = Math.max(0, (scrollY - zoomOutAreaRect.top) / (zoomOutAreaRect.bottom - zoomOutAreaRect.top));
         camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress);
@@ -179,7 +176,7 @@ export function initCellRenderer() {
       }
       else if (productBool) {
         productProgress = Math.max(0, ((scrollY - productAreaRect.top) / (productAreaRect.bottom - productAreaRect.top)));
-        console.log((scrollY - productAreaRect.top) / (productAreaRect.bottom - productAreaRect.top));
+        // console.log((scrollY - productAreaRect.top) / (productAreaRect.bottom - productAreaRect.top));
       }
 
       camera.updateProjectionMatrix();
