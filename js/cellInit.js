@@ -80,7 +80,7 @@ export function initCellRenderer() {
       }
     }
 
-    const splashStartFOV = window.innerWidth < 768 ? 90 : 65;
+    const splashStartFOV = window.innerWidth < 768 ? 90 : 60;
     const splashEndFOV = splashStartFOV * 0.50;
     const zoomStartFOV = splashEndFOV;
     const zoomEndFOV = splashEndFOV * 1.15;
