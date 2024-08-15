@@ -239,15 +239,15 @@ export function initCellRenderer() {
     });
 
     const dispersion = new THREE.MeshPhysicalMaterial({
-      color: 0xe4e4e4, // 15002857 in hexadecimal
+      color: 0xe4e4e4,
       roughness: 0.2,
       metalness: 0.2,
       sheen: 0,
-      sheenColor: 0x000000, // 0 in hexadecimal
+      sheenColor: 0x000000,
       sheenRoughness: 0,
-      emissive: 0x000000, // 0 in hexadecimal
+      emissive: 0x000000,
       specularIntensity: 1,
-      specularColor: 0xffffff, // 16777215 in hexadecimal
+      specularColor: 0xffffff,
       clearcoat: 0.78,
       clearcoatRoughness: 0.84,
       iridescence: 0.82,
@@ -258,25 +258,14 @@ export function initCellRenderer() {
       envMapIntensity: 1,
       reflectivity: 0.25,
       transmission: 0.9,
-      attenuationColor: 0xffffff, // 16777215 in hexadecimal
-      side: THREE.DoubleSide, // 2 corresponds to THREE.DoubleSide
+      attenuationColor: 0xffffff,
+      side: THREE.DoubleSide,
       transparent: true,
       dispersion: 5
     });
 
-    function dispersionGUI() {
-      const gui = new dat.GUI();
-      const blobGUI = gui.addFolder('Pearliness variables');
-      blobGUI.add(dispersion, 'roughness', 0, 1).name('Roughness');
-      blobGUI.add(dispersion, 'metalness', 0, 1).name('Metalness');
-      blobGUI.add(dispersion, 'reflectivity', 0, 1).name('Reflectivity');
-      blobGUI.add(dispersion, 'transmission', 0, 1).name('Transmission');
-      blobGUI.open();
-    }
-    dispersionGUI();
-
     const loadPromises = [
-      new CellComponent("blob-outer_compressed.glb", dispersion, 2),
+      new CellComponent("blob-outer.glb", dispersion, 2),
       new CellComponent("ribbons.glb", grayPurple, 3),
       new CellComponent("blob-inner.glb", iridescent, 1)
     ];
