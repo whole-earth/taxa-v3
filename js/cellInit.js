@@ -21,8 +21,8 @@ export function initCellRenderer() {
           this.scene = scene;
           this.position = new THREE.Vector3(0, 0, 0);
 
-          this.basePath = './assets/cell/';
-          // this.basePath = 'https://cdn.jsdelivr.net/gh/whole-earth/taxa-v3@main/assets/cell/';
+          //this.basePath = './assets/cell/';
+          this.basePath = 'https://cdn.jsdelivr.net/gh/whole-earth/taxa-v3@main/assets/cell/';
           this.loader = new GLTFLoader();
           const dracoLoader = new DRACOLoader()
 
@@ -266,16 +266,13 @@ export function initCellRenderer() {
 
     function dispersionGUI() {
       const gui = new dat.GUI();
-
       const blobGUI = gui.addFolder('Pearliness variables');
       blobGUI.add(dispersion, 'roughness', 0, 1).name('Roughness');
       blobGUI.add(dispersion, 'metalness', 0, 1).name('Metalness');
       blobGUI.add(dispersion, 'reflectivity', 0, 1).name('Reflectivity');
       blobGUI.add(dispersion, 'transmission', 0, 1).name('Transmission');
-
       blobGUI.open();
     }
-
     dispersionGUI();
 
     const loadPromises = [
