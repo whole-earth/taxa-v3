@@ -160,7 +160,7 @@ function updateSphereProperties(spheres, prevColor, targetColor, currentOpacity,
                     sphere.material.needsUpdate = true;
                 }
             });
-            tween.start();
+            tween.play();
         } else {
             if (currentOpacity !== targetOpacity) {
                 const tween = new TinyTween({
@@ -174,7 +174,7 @@ function updateSphereProperties(spheres, prevColor, targetColor, currentOpacity,
                         sphere.material.needsUpdate = true;
                     }
                 });
-                tween.start();
+                tween.play();
             }
         }
     });
