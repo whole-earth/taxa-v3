@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { Tween } from '@tweenjs/tween.js'
 import { GLTFLoader } from 'three/GLTFLoader';
 import { DRACOLoader } from 'three/DracoLoader';
 import { OrbitControls } from 'three/OrbitControls';
@@ -9,8 +10,8 @@ import { animatePage } from './scroll.js';
 
 document.addEventListener('DOMContentLoaded', async () => initCellRenderer());
 
-export let tween = null;
-export function setTween(newTween) { tween = newTween; }
+//export let tween = null;
+//export function setTween(newTween) { tween = newTween; }
 
 export let lastScrollY = 0;
 export function setLastScrollY(value) { lastScrollY = value; }
@@ -201,10 +202,13 @@ function initCellRenderer() {
         function animate() {
             requestAnimationFrame(animate);
 
+            /*
             if (tween) {
                 tween.update();
-                // console.log(tween)
             }
+            */
+
+            Tween.Update();
 
             renderer.render(scene, camera);
             controls.update();

@@ -223,7 +223,8 @@ function updateSphereProperties(spheres, initialColor, targetColor, initialOpaci
             opacity: targetOpacity
         };
 
-        const tweenInstance = new Tween(currentState)
+        //const tweenInstance = new Tween(currentState)
+        new Tween(currentState)
             .to(targetState, 600)
             .easing(Easing.Quadratic.InOut)
             .onUpdate(() => {
@@ -233,7 +234,7 @@ function updateSphereProperties(spheres, initialColor, targetColor, initialOpaci
             })
             .start();
 
-        setTween(tweenInstance);
+        //setTween(tweenInstance);
 
     });
 }
