@@ -205,8 +205,6 @@ function activateZoomChildText(activeElement) {
 function updateSphereProperties(spheres, initialColor, targetColor, initialOpacity, targetOpacity) {
 
     spheres.forEach(sphere => {
-        const material = sphere.material;
-        if (!material.transparent) { material.transparent = true; }
 
         const prevColorObj = new THREE.Color(initialColor);
         const targetColorObj = new THREE.Color(targetColor);
@@ -229,10 +227,9 @@ function updateSphereProperties(spheres, initialColor, targetColor, initialOpaci
             .to(targetState, 600)
             .easing(Easing.Quadratic.InOut)
             .onUpdate(() => {
-                material.color.setRGB(currentState.r, currentState.g, currentState.b);
-                material.opacity = currentState.opacity;
-                material.needsUpdate = true;
-                //console.log(`Current Color: R=${currentState.r}, G=${currentState.g}, B=${currentState.b}`);
+                sphere.material.color.setRGB(currentState.r, currentState.g, currentState.b);
+                sphere.material.opacity = currentState.opacity;
+                sphere.material.needsUpdate = true;
             })
             .start();
 
