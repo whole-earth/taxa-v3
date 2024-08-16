@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Tween, Easing, Group } from 'Tween'
+import { Group } from 'tween'
 import { GLTFLoader } from 'three/GLTFLoader';
 import { DRACOLoader } from 'three/DracoLoader';
 import { OrbitControls } from 'three/OrbitControls';

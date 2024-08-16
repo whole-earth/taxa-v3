@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Tween, Easing, Group } from 'Tween';
+import { Tween, Easing } from 'tween';
 import { lastScrollY, setLastScrollY, tweenGroup } from './anim.js';
 
 const splashStartFOV = window.innerWidth < 768 ? 90 : 60;
