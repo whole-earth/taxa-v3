@@ -1,11 +1,10 @@
 import * as THREE from "three";
-import * as dat from 'dat.gui';
 import { GLTFLoader } from "three/GLTFLoader";
 import { DRACOLoader } from 'three/DracoLoader';
 import { OrbitControls } from "three/OrbitControls";
 import { RGBELoader } from "three/RGBELoader";
 import { PMREMGenerator } from "three";
-import { threeSceneResize } from './anim.js';
+import { threeSceneResize } from '../anim.js';
 
 export function initCellRenderer() {
   return new Promise((resolve) => {
