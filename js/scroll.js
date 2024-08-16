@@ -49,7 +49,6 @@ function scrollLogic(camera, spheres) {
     zoomBool = isVisibleBetweenTopAndBottom(zoomArea);
     zoomOutBool = isVisibleBetweenTopAndBottom(zoomOutArea);
     productBool = isVisibleBetweenTopAndBottom(productArea);
-    const spheres = spheres;
 
     if (splashBool) {
         splashProgress = scrollProgress(splashArea);
@@ -64,15 +63,15 @@ function scrollLogic(camera, spheres) {
         activateText(zoomArea);
         if (zoomFirst && zoomSecond && zoomThird) {
             activateZoomChildText(zoomFirst);
-            updateSphereProperties(null, null, 0, 1.0);
+            updateSphereProperties(spheres, null, null, 0, 1.0);
         }
         else if (zoomProgress >= 1 / 3 && zoomProgress < 2 / 3) {
             activateZoomChildText(zoomSecond);
-            updateSphereProperties(dotsGreen, dotsRed, 1.0, 1.0);
+            updateSphereProperties(spheres, dotsGreen, dotsRed, 1.0, 1.0);
         }
         else if (zoomProgress >= 2 / 3 && zoomProgress <= 1) {
             activateZoomChildText(zoomThird);
-            updateSphereProperties(dotsRed, dotsBlack, 1.0, 1.0);
+            updateSphereProperties(spheres, dotsRed, dotsBlack, 1.0, 1.0);
         }
         else {
             if (!zoomChildTextLogged) {
@@ -88,7 +87,7 @@ function scrollLogic(camera, spheres) {
 
         activateText(zoomOutArea);
 
-        updateSphereProperties(null, null, 1.0, 0);
+        updateSphereProperties(spheres, null, null, 1.0, 0);
 
     }
     else if (productBool) {
@@ -143,7 +142,7 @@ function activateZoomChildText(activeElement) {
     });
 }
 
-function updateSphereProperties(prevColor, targetColor, currentOpacity, targetOpacity) {
+function updateSphereProperties(spheres, prevColor, targetColor, currentOpacity, targetOpacity) {
     spheres.forEach(sphere => {
         if (prevColor && targetColor) {
             const prevColorObj = new THREE.Color(prevColor); // Assuming you're using THREE.js for colors
