@@ -1,9 +1,6 @@
 import * as THREE from 'three';
-import { Tween } from '@tweenjs/tween.js'
+import { Tween, Easing } from '@tweenjs/tween.js'
 import { setTween, lastScrollY, setLastScrollY } from './anim.js';
-
-console.log(Tween)
-
 
 const splashStartFOV = window.innerWidth < 768 ? 90 : 60;
 const splashEndFOV = splashStartFOV * 0.50;
@@ -58,7 +55,7 @@ function scrollLogic(camera, spheres) {
                 if (!zoomFirstAlready) {
                     console.log('#zoomFirst');
                     activateZoomChildText(zoomFirst);
-                    updateSphereProperties(spheres, null, null, 0, 1);
+                    updateSphereProperties(spheres, dotsGreen, dotsGreen, 0, 1);
                     zoomFirstAlready = true;
                     zoomSecondAlready = false;
                     zoomThirdAlready = false;
@@ -93,7 +90,7 @@ function scrollLogic(camera, spheres) {
         if (!zoomOutAlready) {
             //console.log('<zoom-out>');
             activateText(zoomOutArea);
-            updateSphereProperties(spheres, null, null, 1, 0);
+            updateSphereProperties(spheres, dotsBlack, dotsBlack, 1, 0);
             splashAlready = false;
             zoomAlready = false;
             zoomOutAlready = true;
@@ -205,61 +202,44 @@ function activateZoomChildText(activeElement) {
     }
 }
 
-function updateSphereProperties(spheres, prevColor = null, targetColor = null, currentOpacity = 1, targetOpacity = 1) {
+function updateSphereProperties(spheres, initialColor, targetColor, initialOpacity, targetOpacity) {
 
     spheres.forEach(sphere => {
         const material = sphere.material;
+        if (!material.transparent) { material.transparent = true; }
 
-        if (!material.transparent) {
-            material.transparent = true;
-        }
+        const prevColorObj = new THREE.Color(initialColor);
+        const targetColorObj = new THREE.Color(targetColor);
 
-        if (prevColor && targetColor) {
-            const prevColorObj = new THREE.Color(prevColor);
-            const targetColorObj = new THREE.Color(targetColor);
+        const currentState = {
+            r: prevColorObj.r,
+            g: prevColorObj.g,
+            b: prevColorObj.b,
+            opacity: initialOpacity
+        };
 
-            const initialState = {
-                r: prevColorObj.r,
-                g: prevColorObj.g,
-                b: prevColorObj.b,
-                opacity: currentOpacity
-            };
+        const targetState = {
+            r: targetColorObj.r,
+            g: targetColorObj.g,
+            b: targetColorObj.b,
+            opacity: targetOpacity
+        };
 
-            const targetState = {
-                r: targetColorObj.r,
-                g: targetColorObj.g,
-                b: targetColorObj.b,
-                opacity: targetOpacity
-            };
+        const tweenInstance = new Tween(currentState)
+            .to(targetState, 300)
+            .easing(Easing.Quadratic.InOut)
+            .onUpdate(() => {
+                material.color.setRGB(currentState.r, currentState.g, currentState.b);
+                material.opacity = initialState.opacity;
+                material.needsUpdate = true;
 
-            // Create and start the tween
-            const tweenInstance = new Tween.Tween(initialState)
-                .to(targetState, 300)
-                .easing(Tween.Easing.Quadratic.InOut)
-                .onUpdate(() => {
-                    material.color.setRGB(initialState.r, initialState.g, initialState.b);
-                    material.opacity = initialState.opacity;
-                    material.needsUpdate = true;
-                })
-                .start();
+                console.log(`Current Color: R=${currentState.r}, G=${currentState.g}, B=${currentState.b}`);
 
-            setTween(tweenInstance);
+            })
+            .start();
 
-        } else if (currentOpacity !== targetOpacity) {
-            const initialState = { opacity: currentOpacity };
-            const targetState = { opacity: targetOpacity };
+        setTween(tweenInstance);
 
-            const tweenInstance = new Tween.Tween(initialState)
-                .to(targetState, 300)
-                .easing(Tween.Easing.Quadratic.InOut)
-                .onUpdate(() => {
-                    material.opacity = initialState.opacity;
-                    material.needsUpdate = true;
-                })
-                .start();
-
-            setTween(tweenInstance);
-        }
     });
 }
 

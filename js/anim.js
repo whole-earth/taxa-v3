@@ -4,7 +4,6 @@ import { DRACOLoader } from 'three/DracoLoader';
 import { OrbitControls } from 'three/OrbitControls';
 import { RGBELoader } from 'three/RGBELoader';
 import { PMREMGenerator } from 'three';
-import { Tween } from '@tweenjs/tween.js'
 import { dispersion, grayPurple, iridescent } from './materials.js';
 import { animatePage } from './scroll.js';
 
@@ -206,8 +205,7 @@ function initCellRenderer() {
 
             if (tween) {
                 tween.update();
-            } else if (!tween) {
-                console.log("No Tween");
+                console.log(tween)
             }
 
             renderer.render(scene, camera);
