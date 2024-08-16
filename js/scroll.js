@@ -226,15 +226,13 @@ function updateSphereProperties(spheres, initialColor, targetColor, initialOpaci
         };
 
         const tweenInstance = new Tween(currentState)
-            .to(targetState, 300)
+            .to(targetState, 600)
             .easing(Easing.Quadratic.InOut)
             .onUpdate(() => {
                 material.color.setRGB(currentState.r, currentState.g, currentState.b);
                 material.opacity = currentState.opacity;
                 material.needsUpdate = true;
-
-                console.log(`Current Color: R=${currentState.r}, G=${currentState.g}, B=${currentState.b}`);
-
+                //console.log(`Current Color: R=${currentState.r}, G=${currentState.g}, B=${currentState.b}`);
             })
             .start();
 

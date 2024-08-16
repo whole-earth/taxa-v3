@@ -205,7 +205,7 @@ function initCellRenderer() {
 
             if (tween) {
                 tween.update();
-                console.log(tween)
+                // console.log(tween)
             }
 
             renderer.render(scene, camera);
