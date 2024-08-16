@@ -90,14 +90,6 @@ function initCellRenderer() {
         });
     });
 
-    function initCamera() {
-        const splashStartFOV = window.innerWidth < 768 ? 90 : 60;
-        const aspectRatio = window.innerWidth / window.innerHeight;
-        const camera = new THREE.PerspectiveCamera(splashStartFOV, aspectRatio, 0.5, 2000);
-        camera.position.set(0, 0, 60);
-        return camera;
-    }
-
     function initRenderer() {
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -107,18 +99,12 @@ function initCellRenderer() {
         return renderer;
     }
 
-    function initControls(camera, renderer) {
-        controls = new OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.03;
-        controls.enableZoom = false;
-        controls.enablePan = false;
-        controls.autoRotate = true;
-        controls.autoRotateSpeed = 0.2;
-        controls.target.set(0, 0, 0);
-        controls.minPolarAngle = Math.PI / 2;
-        controls.maxPolarAngle = Math.PI / 2;
-        return controls;
+    function initCamera() {
+        const splashStartFOV = window.innerWidth < 768 ? 90 : 60;
+        const aspectRatio = window.innerWidth / window.innerHeight;
+        const camera = new THREE.PerspectiveCamera(splashStartFOV, aspectRatio, 0.5, 2000);
+        camera.position.set(0, 0, 60);
+        return camera;
     }
 
     function initLights(scene, renderer) {
@@ -134,6 +120,20 @@ function initCellRenderer() {
             texture.dispose();
             pmremGenerator.dispose();
         });
+    }
+
+    function initControls(camera, renderer) {
+        controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.03;
+        controls.enableZoom = false;
+        controls.enablePan = false;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.2;
+        controls.target.set(0, 0, 0);
+        controls.minPolarAngle = Math.PI / 2;
+        controls.maxPolarAngle = Math.PI / 2;
+        return controls;
     }
 
     function resizeScene(render, camera) {
@@ -179,7 +179,7 @@ function initCellRenderer() {
         for (let i = 0; i < 80; i++) {
             const randomPosition = getRandomPositionWithinBounds(bounds);
             const sphereGeometry = new THREE.SphereGeometry(0.25, 6, 6);
-            const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x92cb86, opacity: 0, transparent: true });
+            const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x92cb86, opacity: 1, transparent: true });
             const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
             sphereMesh.userData.color = 0x92cb86;
             sphereMesh.userData.opacity = 1;
