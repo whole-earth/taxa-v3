@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { Tween, Easing } from '@tweenjs/tween.js'
-import { lastScrollY, setLastScrollY } from './anim.js';
+import { Tween, Easing, Group } from 'Tween';
+import { lastScrollY, setLastScrollY, tweenGroup } from './anim.js';
 
 const splashStartFOV = window.innerWidth < 768 ? 90 : 60;
 const splashEndFOV = splashStartFOV * 0.50;
@@ -204,8 +204,10 @@ function activateZoomChildText(activeElement) {
 
 function updateSphereProperties(spheres, initialColor, targetColor, initialOpacity, targetOpacity) {
 
-    spheres.forEach(sphere => {
+    // reset array each time its called
+    tweenGroup.removeAll();
 
+    spheres.forEach(sphere => {
         const prevColorObj = new THREE.Color(initialColor);
         const targetColorObj = new THREE.Color(targetColor);
 
@@ -223,8 +225,7 @@ function updateSphereProperties(spheres, initialColor, targetColor, initialOpaci
             opacity: targetOpacity
         };
 
-        //const tweenInstance = new Tween(currentState)
-        new Tween(currentState)
+        const tween = new Tween(currentState)
             .to(targetState, 600)
             .easing(Easing.Quadratic.InOut)
             .onUpdate(() => {
@@ -232,10 +233,11 @@ function updateSphereProperties(spheres, initialColor, targetColor, initialOpaci
                 sphere.material.opacity = currentState.opacity;
                 sphere.material.needsUpdate = true;
             })
-            .start();
-
-        //setTween(tweenInstance);
-
+            .onComplete(() => {
+                tweenGroup.remove(tween);
+            })
+        tweenGroup.add(tween);
+        tween.start();
     });
 }
 
