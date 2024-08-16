@@ -1,6 +1,9 @@
 import * as THREE from 'three';
-import TinyTween from 'tiny-tween';
+import {Tween} from '@tweenjs/tween.js'
 import { lastScrollY, setLastScrollY } from './anim.js';
+
+console.log('TinyTween:', TinyTween); // Log the TinyTween library
+
 
 const splashStartFOV = window.innerWidth < 768 ? 90 : 60;
 const splashEndFOV = splashStartFOV * 0.50;
@@ -215,7 +218,7 @@ function updateSphereProperties(spheres, prevColor = null, targetColor = null, c
             const prevColorObj = new THREE.Color(prevColor);
             const targetColorObj = new THREE.Color(targetColor);
 
-            const tween = new TinyTween({
+            const tween = new Tween({
                 from: { r: prevColorObj.r, g: prevColorObj.g, b: prevColorObj.b, opacity: currentOpacity },
                 to: { r: targetColorObj.r, g: targetColorObj.g, b: targetColorObj.b, opacity: targetOpacity },
                 duration: 300,
@@ -226,10 +229,10 @@ function updateSphereProperties(spheres, prevColor = null, targetColor = null, c
                     material.opacity = state.opacity;
                     material.needsUpdate = true;
                 }
-            });
-            tween.play();
+            })
+            .play();
         } else if (currentOpacity !== targetOpacity) {
-            const tween = new TinyTween({
+            const tween = new Tween({
                 from: { opacity: currentOpacity },
                 to: { opacity: targetOpacity },
                 duration: 300,
@@ -239,12 +242,11 @@ function updateSphereProperties(spheres, prevColor = null, targetColor = null, c
                     material.opacity = state.opacity;
                     material.needsUpdate = true;
                 }
-            });
-            tween.play();
+            })
+            .start();
         }
     });
 }
-
 
 function smoothLerp(start, end, progress) {
     return start + (end - start) * smoothstep(progress);

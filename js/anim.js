@@ -207,8 +207,8 @@ function initCellRenderer() {
             });
             waveShader.uniforms.time.value += 0.01;
             controls.update();
+            tween.update();
             renderer.render(scene, camera);
-            console.log(waveShader.uniforms.time.value)
         }
 
         animate();
