@@ -203,7 +203,7 @@ function activateZoomChildText(activeElement) {
 }
 
 function updateSphereProperties(spheres, prevColor = null, targetColor = null, currentOpacity = 1, targetOpacity = 1) {
-    console.log(spheres)
+    console.log('updateSphereProperties called with:', { prevColor, targetColor, currentOpacity, targetOpacity });
     spheres.forEach(sphere => {
         const material = sphere.material;
 
@@ -214,6 +214,7 @@ function updateSphereProperties(spheres, prevColor = null, targetColor = null, c
         if (prevColor && targetColor) {
             const prevColorObj = new THREE.Color(prevColor);
             const targetColorObj = new THREE.Color(targetColor);
+            console.log('Animating color from', prevColorObj, 'to', targetColorObj);
 
             const tween = new TinyTween({
                 from: { r: prevColorObj.r, g: prevColorObj.g, b: prevColorObj.b, opacity: currentOpacity },
@@ -221,6 +222,7 @@ function updateSphereProperties(spheres, prevColor = null, targetColor = null, c
                 duration: 300,
                 easing: 'easeInOutQuad',
                 step: (state) => {
+                    console.log('Tween step:', state);
                     material.color.setRGB(state.r, state.g, state.b);
                     material.opacity = state.opacity;
                     material.needsUpdate = true;
@@ -228,12 +230,14 @@ function updateSphereProperties(spheres, prevColor = null, targetColor = null, c
             });
             tween.play();
         } else if (currentOpacity !== targetOpacity) {
+            console.log('Animating opacity from', currentOpacity, 'to', targetOpacity);
             const tween = new TinyTween({
                 from: { opacity: currentOpacity },
                 to: { opacity: targetOpacity },
                 duration: 300,
                 easing: 'easeInOutQuad',
                 step: (state) => {
+                    console.log('Tween step:', state);
                     material.opacity = state.opacity;
                     material.needsUpdate = true;
                 }
