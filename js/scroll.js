@@ -97,7 +97,7 @@ function scrollLogic(camera, spheres) {
                     zoomFirst.classList.remove("active");
                 }
                 if (zoomSecond.classList.contains("active")) {
-                    zoomThird.classList.remove("active");
+                    zoomSecond.classList.remove("active");
                 }
             }
         }
@@ -131,6 +131,7 @@ function scrollLogic(camera, spheres) {
 // =====================================================================================
 // =================================== HELPERS =========================================
 // =====================================================================================
+
 
 function isVisibleBetweenTopAndBottom(element) {
     const rect = element.getBoundingClientRect();
