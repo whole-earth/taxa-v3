@@ -34,7 +34,7 @@ function initCellRenderer() {
                 return new Promise((resolve) => {
                     this.scene = scene;
                     this.position = new THREE.Vector3(0, 0, 0);
-                    this.basePath = 'https://cdn.jsdelivr.net/gh/whole-earth/taxa-v3@main/assets/cell/';
+                    this.basePath = 'https://cdn.jsdelivr.net/gh/whole-earth/taxa@main/assets/cell/';
                     this.loader = new GLTFLoader();
                     const dracoLoader = new DRACOLoader();
                     dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.3/');
