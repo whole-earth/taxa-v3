@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { Tween, Easing } from '@tweenjs/tween.js'
-import { setTween, lastScrollY, setLastScrollY } from './anim.js';
+import { lastScrollY, setLastScrollY } from './anim.js';
 
 const splashStartFOV = window.innerWidth < 768 ? 90 : 60;
 const splashEndFOV = splashStartFOV * 0.50;
