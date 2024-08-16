@@ -49,7 +49,7 @@ function scrollLogic(camera, spheres) {
     zoomBool = isVisibleBetweenTopAndBottom(zoomArea);
     zoomOutBool = isVisibleBetweenTopAndBottom(zoomOutArea);
     productBool = isVisibleBetweenTopAndBottom(productArea);
-    // const spheres = spheres;
+    const spheres = spheres;
 
     if (splashBool) {
         splashProgress = scrollProgress(splashArea);
