@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {Tween} from '@tweenjs/tween.js'
+import { TWEEN } from '@tweenjs/tween.js'
 import { lastScrollY, setLastScrollY } from './anim.js';
 
 console.log('TinyTween:', TinyTween); // Log the TinyTween library
@@ -206,7 +206,7 @@ function activateZoomChildText(activeElement) {
 }
 
 function updateSphereProperties(spheres, prevColor = null, targetColor = null, currentOpacity = 1, targetOpacity = 1) {
-    console.log('updateSphereProperties called with:', { prevColor, targetColor, currentOpacity, targetOpacity });
+
     spheres.forEach(sphere => {
         const material = sphere.material;
 
@@ -218,32 +218,42 @@ function updateSphereProperties(spheres, prevColor = null, targetColor = null, c
             const prevColorObj = new THREE.Color(prevColor);
             const targetColorObj = new THREE.Color(targetColor);
 
-            const tween = new Tween({
-                from: { r: prevColorObj.r, g: prevColorObj.g, b: prevColorObj.b, opacity: currentOpacity },
-                to: { r: targetColorObj.r, g: targetColorObj.g, b: targetColorObj.b, opacity: targetOpacity },
-                duration: 300,
-                easing: 'easeInOutQuad',
-                step: (state) => {
-                    console.log('Tween step:', state);
-                    material.color.setRGB(state.r, state.g, state.b);
-                    material.opacity = state.opacity;
+            const initialState = {
+                r: prevColorObj.r,
+                g: prevColorObj.g,
+                b: prevColorObj.b,
+                opacity: currentOpacity
+            };
+
+            const targetState = {
+                r: targetColorObj.r,
+                g: targetColorObj.g,
+                b: targetColorObj.b,
+                opacity: targetOpacity
+            };
+
+            // Create and start the tween
+            const tween = new TWEEN.Tween(initialState)
+                .to(targetState, 300)
+                .easing(TWEEN.Easing.Quadratic.InOut)
+                .onUpdate(() => {
+                    material.color.setRGB(initialState.r, initialState.g, initialState.b);
+                    material.opacity = initialState.opacity;
                     material.needsUpdate = true;
-                }
-            })
-            .play();
+                })
+                .start();
         } else if (currentOpacity !== targetOpacity) {
-            const tween = new Tween({
-                from: { opacity: currentOpacity },
-                to: { opacity: targetOpacity },
-                duration: 300,
-                easing: 'easeInOutQuad',
-                step: (state) => {
-                    console.log('Tween step:', state);
-                    material.opacity = state.opacity;
+            const initialState = { opacity: currentOpacity };
+            const targetState = { opacity: targetOpacity };
+
+            const tween = new TWEEN.Tween(initialState)
+                .to(targetState, 300)
+                .easing(TWEEN.Easing.Quadratic.InOut)
+                .onUpdate(() => {
+                    material.opacity = initialState.opacity;
                     material.needsUpdate = true;
-                }
-            })
-            .start();
+                })
+                .start();
         }
     });
 }

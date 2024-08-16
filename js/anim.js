@@ -199,6 +199,9 @@ function initCellRenderer() {
 
         function animate() {
             requestAnimationFrame(animate);
+            TWEEN.update();
+            renderer.render(scene, camera);
+            controls.update();
             spheres.forEach(sphere => {
                 sphere.position.add(sphere.velocity);
                 if (sphere.position.length() > bounds) {
@@ -206,9 +209,6 @@ function initCellRenderer() {
                 }
             });
             waveShader.uniforms.time.value += 0.01;
-            controls.update();
-            tween.update();
-            renderer.render(scene, camera);
         }
 
         animate();
