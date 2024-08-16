@@ -1,5 +1,5 @@
 import { lastScrollY, setLastScrollY } from './anim.js';
-import * as TinyTween from 'tiny-tween';
+import TinyTween from 'tiny-tween';
 
 const splashArea = document.querySelector('.splash');
 const zoomArea = document.querySelector('.zoom');
