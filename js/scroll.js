@@ -1,8 +1,8 @@
 import * as THREE from 'three';
-import { TWEEN } from '@tweenjs/tween.js'
-import { lastScrollY, setLastScrollY } from './anim.js';
+import { Tween } from '@tweenjs/tween.js'
+import { setTween, lastScrollY, setLastScrollY } from './anim.js';
 
-console.log('TinyTween:', TinyTween); // Log the TinyTween library
+console.log(Tween)
 
 
 const splashStartFOV = window.innerWidth < 768 ? 90 : 60;
@@ -233,27 +233,32 @@ function updateSphereProperties(spheres, prevColor = null, targetColor = null, c
             };
 
             // Create and start the tween
-            const tween = new TWEEN.Tween(initialState)
+            const tweenInstance = new Tween.Tween(initialState)
                 .to(targetState, 300)
-                .easing(TWEEN.Easing.Quadratic.InOut)
+                .easing(Tween.Easing.Quadratic.InOut)
                 .onUpdate(() => {
                     material.color.setRGB(initialState.r, initialState.g, initialState.b);
                     material.opacity = initialState.opacity;
                     material.needsUpdate = true;
                 })
                 .start();
+
+            setTween(tweenInstance);
+
         } else if (currentOpacity !== targetOpacity) {
             const initialState = { opacity: currentOpacity };
             const targetState = { opacity: targetOpacity };
 
-            const tween = new TWEEN.Tween(initialState)
+            const tweenInstance = new Tween.Tween(initialState)
                 .to(targetState, 300)
-                .easing(TWEEN.Easing.Quadratic.InOut)
+                .easing(Tween.Easing.Quadratic.InOut)
                 .onUpdate(() => {
                     material.opacity = initialState.opacity;
                     material.needsUpdate = true;
                 })
                 .start();
+
+            setTween(tweenInstance);
         }
     });
 }
