@@ -25,7 +25,7 @@ const dotsBlue = '#0000ff';
 
 let splashBool, zoomBool, zoomOutBool, productBool;
 let splashProgress, zoomProgress, zoomOutProgress, productProgress;
-let zoomChildTextLogged = false; // remove for prod
+let zoomChildTextLogged = false; // remove in prod
 
 export function animatePage(controls, camera, spheres, scrollTimeout) {
     let scrollY = window.scrollY;
@@ -93,7 +93,7 @@ function scrollLogic(camera, spheres) {
     }
     else if (productBool) {
         productProgress = scrollProgress(productArea);
-        // console.log(`Product ${productProgress}`)
+        console.log(`Product ${productProgress}`)
 
         activateText(productArea);
     }
@@ -152,7 +152,7 @@ function updateSphereProperties(prevColor, targetColor, currentOpacity, targetOp
             const tween = new TinyTween({
                 from: { r: prevColorObj.r, g: prevColorObj.g, b: prevColorObj.b, opacity: currentOpacity },
                 to: { r: targetColorObj.r, g: targetColorObj.g, b: targetColorObj.b, opacity: targetOpacity },
-                duration: 300, // duration in milliseconds
+                duration: 300,
                 easing: 'easeInOutQuad',
                 step: (state) => {
                     sphere.material.color.setRGB(state.r, state.g, state.b);
@@ -167,7 +167,7 @@ function updateSphereProperties(prevColor, targetColor, currentOpacity, targetOp
                 const tween = new TinyTween({
                     from: { opacity: currentOpacity },
                     to: { opacity: targetOpacity },
-                    duration: 300, // duration in milliseconds
+                    duration: 300,
                     easing: 'easeInOutQuad',
                     step: (state) => {
                         sphere.material.opacity = state.opacity;

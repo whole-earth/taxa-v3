@@ -1,9 +1,9 @@
-import * as THREE from "three";
-import { GLTFLoader } from "three/GLTFLoader";
-import { DRACOLoader } from "three/DracoLoader";
-import { OrbitControls } from "three/OrbitControls";
-import { RGBELoader } from "three/RGBELoader";
-import { PMREMGenerator } from "three";
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/GLTFLoader';
+import { DRACOLoader } from 'three/DracoLoader';
+import { OrbitControls } from 'three/OrbitControls';
+import { RGBELoader } from 'three/RGBELoader';
+import { PMREMGenerator } from 'three';
 import { dispersion, grayPurple, iridescent } from './materials.js';
 import { animatePage } from './scroll.js';
 
