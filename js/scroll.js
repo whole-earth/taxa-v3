@@ -81,7 +81,6 @@ function scrollLogic(camera, spheres) {
             else if (zoomProgress >= 1 / 3 && zoomProgress < 2 / 3) {
                 zoomSecond.classList.add("active");
                 updateSphereProperties(spheres, dotsBlack, 1);
-                // clear prev text styling
                 if (zoomFirst.classList.contains("active")) {
                     zoomFirst.classList.remove("active");
                 }
@@ -92,7 +91,6 @@ function scrollLogic(camera, spheres) {
             else if (zoomProgress >= 2 / 3 && zoomProgress <= 1) {
                 zoomThird.classList.add("active");
                 updateSphereProperties(spheres, dotsBlue, 1);
-                // clear prev text styling
                 if (zoomFirst.classList.contains("active")) {
                     zoomFirst.classList.remove("active");
                 }
