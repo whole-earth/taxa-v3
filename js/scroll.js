@@ -1,5 +1,5 @@
 import { lastScrollY, setLastScrollY } from './anim.js';
-import TinyTween from 'tiny-tween';
+import * as TinyTween from 'tiny-tween';
 
 const splashArea = document.querySelector('.splash');
 const zoomArea = document.querySelector('.zoom');
@@ -49,7 +49,7 @@ function scrollLogic(camera, spheres) {
     zoomBool = isVisibleBetweenTopAndBottom(zoomArea);
     zoomOutBool = isVisibleBetweenTopAndBottom(zoomOutArea);
     productBool = isVisibleBetweenTopAndBottom(productArea);
-    const spheres = spheres;
+    // const spheres = spheres;
 
     if (splashBool) {
         splashProgress = scrollProgress(splashArea);
