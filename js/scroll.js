@@ -4,6 +4,7 @@ const splashArea = document.querySelector('.splash');
 const zoomArea = document.querySelector('.zoom');
 const zoomOutArea = document.querySelector('.zoom-out');
 const productArea = document.querySelector('.product');
+const textChildren = document.querySelectorAll('.child');
 const zoomFirst = document.querySelector('#zoomFirst');
 const zoomSecond = document.querySelector('#zoomSecond');
 const zoomThird = document.querySelector('#zoomThird');
@@ -21,7 +22,7 @@ const dotsBlue = 0x0000ff;
 
 let splashBool, zoomBool, zoomOutBool, productBool;
 let splashProgress, zoomProgress, zoomOutProgress, productProgress;
-let zoomChildTextLogged = false;
+let zoomChildTextLogged = false; // remove for prod
 
 export function animatePage(controls, camera, spheres, scrollTimeout) {
     let scrollY = window.scrollY;
@@ -51,8 +52,7 @@ function scrollLogic(camera, spheres) {
         // console.log(`Splash ${splashProgress}`)
         camera.fov = smoothLerp(splashStartFOV, splashEndFOV, splashProgress);
 
-        // set all .child opacities = 0
-        // set splashArea.child opacity = 1
+        activateText(splashArea);
 
         // if not already set?? avoid resetting too much
         updateSphereProperties(spheres, "orange", 0);
@@ -63,8 +63,7 @@ function scrollLogic(camera, spheres) {
         // console.log(`Zoom ${zoomProgress}`)
         camera.fov = smoothLerp(zoomStartFOV, zoomEndFOV, zoomProgress);
 
-        // set all .child opacities = 0
-        // set zoomArea.child opacity = 1
+        activateText(zoomArea);
 
         updateSphereProperties(spheres, dotsBlack, 1);
 
@@ -116,18 +115,16 @@ function scrollLogic(camera, spheres) {
         // console.log(`Zoom ${zoomProgress}`)
         camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress);
 
-        // set all .child opacities = 0
-        // set zoomOutArea.child opacity = 1
+        activateText(zoomOutArea);
+
         updateSphereProperties(spheres, "orange", 0);
 
     }
     else if (productBool) {
-        productProgress = 3; // replace with equation
-        console.log(`Product ${productProgress}`)
-        // productProgress = Math.max(0, ((scrollY - productAreaRect.top) / (productAreaRect.bottom - productAreaRect.top)));
+        productProgress = scrollProgress(productArea);
+        // console.log(`Product ${productProgress}`)
 
-        // set all .child opacities = 0
-        // set productArea.child opacity = 1
+        activateText(productArea);
     }
 }
 
@@ -146,6 +143,22 @@ function scrollProgress(element) {
     const scrolledDistance = Math.max(0, -rect.top);
     const progress = Math.max(0, Math.min(1, scrolledDistance / scrollableDistance));
     return parseFloat(progress).toFixed(4); // here we truncate!
+}
+
+function activateText(parentElement) {
+    let activeText = parentElement.querySelector('.child');
+
+    if (!activeText.classList.contains('active')) {
+        textChildren.forEach(child => {
+            if (child !== activeText && child.classList.contains('active')) {
+                child.classList.remove('active');
+            }
+        });
+
+        if (activeText && !activeText.classList.contains('active')) {
+            activeText.classList.add('active');
+        }
+    }
 }
 
 function updateSphereProperties(spheres, color, opacity) {
