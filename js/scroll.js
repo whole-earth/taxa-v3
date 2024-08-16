@@ -32,6 +32,9 @@ function scrollLogic(camera, spheres) {
             zoomAlready = false;
             zoomOutAlready = false;
             productAlready = false;
+            zoomFirstAlready = false;
+            zoomSecondAlready = false;
+            zoomThirdAlready = false;
         }
     }
     else if (zoomBool) {
@@ -92,6 +95,9 @@ function scrollLogic(camera, spheres) {
             zoomAlready = false;
             zoomOutAlready = true;
             productAlready = false;
+            zoomFirstAlready = false;
+            zoomSecondAlready = false;
+            zoomThirdAlready = false;
         }
 
     }
@@ -197,7 +203,7 @@ function activateZoomChildText(activeElement) {
 }
 
 function updateSphereProperties(spheres, prevColor = null, targetColor = null, currentOpacity = 1, targetOpacity = 1) {
-    console.log('spherefire')
+    console.log(spheres)
     spheres.forEach(sphere => {
         const material = sphere.material;
 
