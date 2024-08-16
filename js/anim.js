@@ -208,7 +208,7 @@ function initCellRenderer() {
             }
             */
 
-            Tween.Update();
+            Tween.update();
 
             renderer.render(scene, camera);
             controls.update();
