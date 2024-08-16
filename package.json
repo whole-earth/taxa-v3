@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "three": "^0.166.1"
+    "three": "^0.166.1",
+    "tiny-tween-js": "^0.9.5"
   }
 }

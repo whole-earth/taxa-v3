@@ -1,4 +1,5 @@
 import { lastScrollY, setLastScrollY } from './anim.js';
+import TinyTween from 'tiny-tween';
 
 const splashArea = document.querySelector('.splash');
 const zoomArea = document.querySelector('.zoom');
@@ -8,6 +9,7 @@ const textChildren = document.querySelectorAll('.child');
 const zoomFirst = document.querySelector('#zoomFirst');
 const zoomSecond = document.querySelector('#zoomSecond');
 const zoomThird = document.querySelector('#zoomThird');
+const zoomElements = [zoomFirst, zoomSecond, zoomThird];
 
 const splashStartFOV = window.innerWidth < 768 ? 90 : 60;
 const splashEndFOV = splashStartFOV * 0.50;
@@ -16,9 +18,10 @@ const zoomEndFOV = splashEndFOV * 1.15;
 const zoomOutStartFOV = zoomEndFOV;
 const zoomOutEndFOV = 160;
 
-const dotsRed = 0xff0000;
-const dotsBlack = 0x000000;
-const dotsBlue = 0x0000ff;
+const dotsGreen = '#92cb86';
+const dotsRed = '#ff0000';
+const dotsBlack = '#000000';
+const dotsBlue = '#0000ff';
 
 let splashBool, zoomBool, zoomOutBool, productBool;
 let splashProgress, zoomProgress, zoomOutProgress, productProgress;
@@ -46,67 +49,37 @@ function scrollLogic(camera, spheres) {
     zoomBool = isVisibleBetweenTopAndBottom(zoomArea);
     zoomOutBool = isVisibleBetweenTopAndBottom(zoomOutArea);
     productBool = isVisibleBetweenTopAndBottom(productArea);
+    const spheres = spheres;
 
     if (splashBool) {
         splashProgress = scrollProgress(splashArea);
         // console.log(`Splash ${splashProgress}`)
         camera.fov = smoothLerp(splashStartFOV, splashEndFOV, splashProgress);
-
         activateText(splashArea);
-
-        // if not already set?? avoid resetting too much
-        updateSphereProperties(spheres, "orange", 0);
-
     }
     else if (zoomBool) {
         zoomProgress = scrollProgress(zoomArea);
         // console.log(`Zoom ${zoomProgress}`)
         camera.fov = smoothLerp(zoomStartFOV, zoomEndFOV, zoomProgress);
-
         activateText(zoomArea);
-
-        updateSphereProperties(spheres, dotsBlack, 1);
-
         if (zoomFirst && zoomSecond && zoomThird) {
-            if (zoomProgress >= 0 && zoomProgress < 1 / 3) {
-                updateSphereProperties(spheres, dotsRed, 1);
-                zoomFirst.classList.add("active");
-                if (zoomSecond.classList.contains("active")) {
-                    zoomSecond.classList.remove("active");
-                }
-                if (zoomThird.classList.contains("active")) {
-                    zoomThird.classList.remove("active");
-                }
-            }
-            else if (zoomProgress >= 1 / 3 && zoomProgress < 2 / 3) {
-                zoomSecond.classList.add("active");
-                updateSphereProperties(spheres, dotsBlack, 1);
-                if (zoomFirst.classList.contains("active")) {
-                    zoomFirst.classList.remove("active");
-                }
-                if (zoomThird.classList.contains("active")) {
-                    zoomThird.classList.remove("active");
-                }
-            }
-            else if (zoomProgress >= 2 / 3 && zoomProgress <= 1) {
-                zoomThird.classList.add("active");
-                updateSphereProperties(spheres, dotsBlue, 1);
-                if (zoomFirst.classList.contains("active")) {
-                    zoomFirst.classList.remove("active");
-                }
-                if (zoomSecond.classList.contains("active")) {
-                    zoomSecond.classList.remove("active");
-                }
-            }
+            activateZoomChildText(zoomFirst);
+            updateSphereProperties(null, null, 0, 1.0);
+        }
+        else if (zoomProgress >= 1 / 3 && zoomProgress < 2 / 3) {
+            activateZoomChildText(zoomSecond);
+            updateSphereProperties(dotsGreen, dotsRed, 1.0, 1.0);
+        }
+        else if (zoomProgress >= 2 / 3 && zoomProgress <= 1) {
+            activateZoomChildText(zoomThird);
+            updateSphereProperties(dotsRed, dotsBlack, 1.0, 1.0);
         }
         else {
             if (!zoomChildTextLogged) {
-                //alert("No zoom child text found");
                 console.log("Alert posted: no zoom children detected.")
                 zoomChildTextLogged = true;
             }
         }
-
     }
     else if (zoomOutBool) {
         zoomOutProgress = scrollProgress(zoomOutArea);
@@ -115,7 +88,7 @@ function scrollLogic(camera, spheres) {
 
         activateText(zoomOutArea);
 
-        updateSphereProperties(spheres, "orange", 0);
+        updateSphereProperties(null, null, 1.0, 0);
 
     }
     else if (productBool) {
@@ -160,12 +133,51 @@ function activateText(parentElement) {
     }
 }
 
-function updateSphereProperties(spheres, color, opacity) {
+function activateZoomChildText(activeElement) {
+    zoomElements.forEach(element => {
+        if (element === activeElement) {
+            element.classList.add("active");
+        } else {
+            element.classList.remove("active");
+        }
+    });
+}
+
+function updateSphereProperties(prevColor, targetColor, currentOpacity, targetOpacity) {
     spheres.forEach(sphere => {
-        sphere.material.color.set(color);
-        sphere.material.opacity = opacity;
-        sphere.material.transparent = true;
-        sphere.material.needsUpdate = true;
+        if (prevColor && targetColor) {
+            const prevColorObj = new THREE.Color(prevColor); // Assuming you're using THREE.js for colors
+            const targetColorObj = new THREE.Color(targetColor);
+
+            const tween = new TinyTween({
+                from: { r: prevColorObj.r, g: prevColorObj.g, b: prevColorObj.b, opacity: currentOpacity },
+                to: { r: targetColorObj.r, g: targetColorObj.g, b: targetColorObj.b, opacity: targetOpacity },
+                duration: 300, // duration in milliseconds
+                easing: 'easeInOutQuad',
+                step: (state) => {
+                    sphere.material.color.setRGB(state.r, state.g, state.b);
+                    sphere.material.opacity = state.opacity;
+                    sphere.material.transparent = true;
+                    sphere.material.needsUpdate = true;
+                }
+            });
+            tween.start();
+        } else {
+            if (currentOpacity !== targetOpacity) {
+                const tween = new TinyTween({
+                    from: { opacity: currentOpacity },
+                    to: { opacity: targetOpacity },
+                    duration: 300, // duration in milliseconds
+                    easing: 'easeInOutQuad',
+                    step: (state) => {
+                        sphere.material.opacity = state.opacity;
+                        sphere.material.transparent = true;
+                        sphere.material.needsUpdate = true;
+                    }
+                });
+                tween.start();
+            }
+        }
     });
 }
 
