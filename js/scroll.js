@@ -230,7 +230,7 @@ function updateSphereProperties(spheres, initialColor, targetColor, initialOpaci
             .easing(Easing.Quadratic.InOut)
             .onUpdate(() => {
                 material.color.setRGB(currentState.r, currentState.g, currentState.b);
-                material.opacity = initialState.opacity;
+                material.opacity = currentState.opacity;
                 material.needsUpdate = true;
 
                 console.log(`Current Color: R=${currentState.r}, G=${currentState.g}, B=${currentState.b}`);
