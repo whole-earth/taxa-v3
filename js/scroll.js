@@ -81,10 +81,11 @@ function scrollLogic(camera, spheres) {
                     } else {
                         tweenDots(spheres, dotsRed, dotsBlack, 1, 1);
                     }
-                    
+
                     zoomFirstAlready = false;
                     zoomSecondAlready = false;
                     zoomThirdAlready = true;
+                    zoomOutBoolScrollFlag = false;
                 }
             }
         }
