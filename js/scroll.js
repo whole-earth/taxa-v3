@@ -8,8 +8,8 @@ const zoomStartFOV = splashEndFOV;
 const zoomEndFOV = splashEndFOV * 1.15;
 const zoomOutStartFOV = zoomEndFOV;
 const zoomOutEndFOV = splashStartFOV;
-const productStartFOV = zoomOutEndFOV;
-const productEndFOV = 150;
+//const productStartFOV = zoomOutEndFOV;
+//const productEndFOV = 150;
 
 const dotsGreen = '#92cb86';
 const dotsRed = '#ff0000';
@@ -28,8 +28,8 @@ function scrollLogic(camera, spheres) {
         camera.fov = smoothLerp(splashStartFOV, splashEndFOV, splashProgress);
 
         if (!splashAlready) {
-            //console.log('<splash>');
             activateText(splashArea);
+            if (zoomBoolScrollFlag) { tweenDots(spheres, dotsGreen, dotsGreen, 1, 0); } //  if i've come from zoomBool, set opacity to 0
             splashAlready = true;
             zoomAlready = false;
             zoomOutAlready = false;
@@ -37,6 +37,7 @@ function scrollLogic(camera, spheres) {
             zoomFirstAlready = false;
             zoomSecondAlready = false;
             zoomThirdAlready = false;
+            zoomBoolScrollFlag = false; // reset
         }
     }
     else if (zoomBool) {
@@ -44,18 +45,17 @@ function scrollLogic(camera, spheres) {
         camera.fov = smoothLerp(zoomStartFOV, zoomEndFOV, zoomProgress);
 
         if (!zoomAlready) {
-            //console.log('<zoom>');
             activateText(zoomArea);
             splashAlready = false;
             zoomAlready = true;
             zoomOutAlready = false;
             productAlready = false;
+            zoomBoolScrollFlag = true; // signify I'm coming from zoomBool
         }
 
         if (zoomFirst && zoomSecond && zoomThird) {
             if (zoomProgress >= 0 && zoomProgress < 1 / 3) {
                 if (!zoomFirstAlready) {
-                    console.log('#zoomFirst');
                     activateZoomChildText(zoomFirst);
                     tweenDots(spheres, dotsGreen, dotsGreen, 0, 1);
                     zoomFirstAlready = true;
@@ -65,7 +65,6 @@ function scrollLogic(camera, spheres) {
             }
             else if (zoomProgress >= 1 / 3 && zoomProgress < 2 / 3) {
                 if (!zoomSecondAlready) {
-                    console.log('#zoomSecond');
                     activateZoomChildText(zoomSecond);
                     tweenDots(spheres, dotsGreen, dotsRed, 1, 1);
                     zoomFirstAlready = false;
@@ -75,9 +74,14 @@ function scrollLogic(camera, spheres) {
             }
             else if (zoomProgress >= 2 / 3 && zoomProgress <= 1) {
                 if (!zoomThirdAlready) {
-                    console.log('#zoomThird');
                     activateZoomChildText(zoomThird);
-                    tweenDots(spheres, dotsRed, dotsBlack, 1, 1);
+
+                    if (zoomOutBoolScrollFlag) { //  if scrolling up
+                        tweenDots(spheres, dotsBlack, dotsBlack, 0, 1);
+                    } else {
+                        tweenDots(spheres, dotsRed, dotsBlack, 1, 1);
+                    }
+                    
                     zoomFirstAlready = false;
                     zoomSecondAlready = false;
                     zoomThirdAlready = true;
@@ -90,9 +94,7 @@ function scrollLogic(camera, spheres) {
         camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress);
 
         if (!zoomOutAlready) {
-            //console.log('<zoom-out>');
             activateText(zoomOutArea);
-            tweenDots(spheres, dotsBlack, dotsBlack, 1, 0);
             splashAlready = false;
             zoomAlready = false;
             zoomOutAlready = true;
@@ -114,6 +116,7 @@ function scrollLogic(camera, spheres) {
             zoomAlready = false;
             zoomOutAlready = false;
             productAlready = true;
+            zoomOutBoolScrollFlag = true;
         }
 
     }
@@ -143,6 +146,8 @@ let productAlready = false;
 let zoomFirstAlready = false;
 let zoomSecondAlready = false;
 let zoomThirdAlready = false;
+let zoomBoolScrollFlag = false;
+let zoomOutBoolScrollFlag = false;
 
 export function animatePage(controls, camera, spheres, scrollTimeout) {
     let scrollY = window.scrollY;
