@@ -7,7 +7,7 @@ const splashEndFOV = splashStartFOV * 0.50;
 const zoomStartFOV = splashEndFOV;
 const zoomEndFOV = splashEndFOV * 1.15;
 const zoomOutStartFOV = zoomEndFOV;
-const zoomOutEndFOV = zoomEndFOV * 0.8;
+const zoomOutEndFOV = splashStartFOV;
 const productStartFOV = zoomOutEndFOV;
 const productEndFOV = 150;
 
