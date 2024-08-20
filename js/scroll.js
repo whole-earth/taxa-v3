@@ -7,7 +7,9 @@ const splashEndFOV = splashStartFOV * 0.50;
 const zoomStartFOV = splashEndFOV;
 const zoomEndFOV = splashEndFOV * 1.15;
 const zoomOutStartFOV = zoomEndFOV;
-const zoomOutEndFOV = 160;
+const zoomOutEndFOV = zoomEndFOV * 0.8;
+const productStartFOV = zoomOutEndFOV;
+const productEndFOV = 150;
 
 const dotsGreen = '#92cb86';
 const dotsRed = '#ff0000';
@@ -55,7 +57,7 @@ function scrollLogic(camera, spheres) {
                 if (!zoomFirstAlready) {
                     console.log('#zoomFirst');
                     activateZoomChildText(zoomFirst);
-                    updateSphereProperties(spheres, dotsGreen, dotsGreen, 0, 1);
+                    tweenDots(spheres, dotsGreen, dotsGreen, 0, 1);
                     zoomFirstAlready = true;
                     zoomSecondAlready = false;
                     zoomThirdAlready = false;
@@ -65,7 +67,7 @@ function scrollLogic(camera, spheres) {
                 if (!zoomSecondAlready) {
                     console.log('#zoomSecond');
                     activateZoomChildText(zoomSecond);
-                    updateSphereProperties(spheres, dotsGreen, dotsRed, 1, 1);
+                    tweenDots(spheres, dotsGreen, dotsRed, 1, 1);
                     zoomFirstAlready = false;
                     zoomSecondAlready = true;
                     zoomThirdAlready = false;
@@ -75,7 +77,7 @@ function scrollLogic(camera, spheres) {
                 if (!zoomThirdAlready) {
                     console.log('#zoomThird');
                     activateZoomChildText(zoomThird);
-                    updateSphereProperties(spheres, dotsRed, dotsBlack, 1, 1);
+                    tweenDots(spheres, dotsRed, dotsBlack, 1, 1);
                     zoomFirstAlready = false;
                     zoomSecondAlready = false;
                     zoomThirdAlready = true;
@@ -90,7 +92,7 @@ function scrollLogic(camera, spheres) {
         if (!zoomOutAlready) {
             //console.log('<zoom-out>');
             activateText(zoomOutArea);
-            updateSphereProperties(spheres, dotsBlack, dotsBlack, 1, 0);
+            tweenDots(spheres, dotsBlack, dotsBlack, 1, 0);
             splashAlready = false;
             zoomAlready = false;
             zoomOutAlready = true;
@@ -202,7 +204,7 @@ function activateZoomChildText(activeElement) {
     }
 }
 
-function updateSphereProperties(spheres, initialColor, targetColor, initialOpacity, targetOpacity) {
+function tweenDots(spheres, initialColor, targetColor, initialOpacity, targetOpacity) {
 
     // reset array each time its called
     tweenGroup.removeAll();
@@ -239,6 +241,26 @@ function updateSphereProperties(spheres, initialColor, targetColor, initialOpaci
         tweenGroup.add(tween);
         tween.start();
     });
+}
+
+// to use, must first add accessor to ribbons variable from /anim.js
+function tweenRibbons(ribbons, initialOpacity, targetOpacity) {
+    const currentState = { opacity: initialOpacity };
+    const targetState = { opacity: targetOpacity };
+
+    const tween = new Tween(currentState)
+        .to(targetState, 400) // 0.4 seconds
+        .easing(Easing.Quadratic.InOut)
+        .onUpdate(() => {
+            ribbons.material.opacity = currentState.opacity;
+            ribbons.material.needsUpdate = true;
+        })
+        .onComplete(() => {
+            tweenGroup.remove(tween);
+        });
+
+    tweenGroup.add(tween);
+    tween.start();
 }
 
 function smoothLerp(start, end, progress) {

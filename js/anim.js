@@ -216,27 +216,5 @@ function initCellRenderer() {
 
         animate();
     }
-    const vertexShader = `
-    varying vec3 vNormal;
-    varying vec2 vUv;
-    uniform float time;
-    float noise(vec3 p) {
-      return sin(p.x * 0.5 + time) * 0.5 + sin(p.y * 0.5 + time) * 0.5 + sin(p.z * 0.5 + time) * 0.5;
-    }
-    void main() {
-      vUv = uv;
-      vNormal = normal;
-      float deformationStrength = 0.6;
-      vec3 newPosition = position + vNormal * noise(position * deformationStrength);
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
-    }
-`;
-
-const fragmentShader = `
-    uniform float opacity;
-    void main() {
-      gl_FragColor = vec4(0.823, 0.925, 0.749, opacity);
-    }
-`;
 
 }
