@@ -14,6 +14,7 @@ const zoomOutEndFOV = splashStartFOV;
 const dotsGreen = '#92cb86';
 const dotsRed = '#ff0000';
 const dotsBlack = '#000000';
+const dotsYellow = '#fcdf03'; // change
 
 function scrollLogic(camera, spheres) {
 
@@ -76,9 +77,9 @@ function scrollLogic(camera, spheres) {
                     activateZoomChildText(zoomThird);
 
                     if (zoomOutBoolScrollFlag) { //  if scrolling up
-                        tweenDots(spheres, dotsBlack, dotsBlack, 0, 1);
+                        tweenDots(spheres, dotsYellow, dotsYellow, 0, 1);
                     } else {
-                        tweenDots(spheres, dotsRed, dotsBlack, 1, 1);
+                        tweenDots(spheres, dotsRed, dotsYellow, 1, 1);
                     }
 
                     zoomFirstAlready = false;
@@ -95,7 +96,7 @@ function scrollLogic(camera, spheres) {
 
         if (!zoomOutAlready) {
             activateText(zoomOutArea);
-            tweenDots(spheres, dotsBlack, dotsBlack, 1, 0);
+            tweenDots(spheres, dotsYellow, dotsYellow, 1, 0);
             splashAlready = false;
             zoomAlready = false;
             zoomOutAlready = true;
