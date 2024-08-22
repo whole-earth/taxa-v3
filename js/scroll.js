@@ -28,7 +28,7 @@ function scrollLogic(controls, camera, spheres) {
 
         if (!splashAlready) {
             activateText(splashArea);
-            if ( comingFrom == 'zoomAreaFirst' ) {
+            if (comingFrom == 'zoomAreaFirst') {
                 tweenDots(spheres, dotsGreen, dotsGreen, 1, 0);
             }
             splashAlready = true;
@@ -57,13 +57,11 @@ function scrollLogic(controls, camera, spheres) {
             if (zoomProgress >= 0 && zoomProgress < 1 / 3) {
                 if (!zoomFirstAlready) {
                     activateZoomChildText(zoomFirst);
-                    
+
                     if (comingFrom == 'splash') {
                         tweenDots(spheres, dotsGreen, dotsGreen, 0, 1);
-                        console.log('green0 -> green1')
                     } else if (comingFrom == 'zoomAreaSecond') {
                         tweenDots(spheres, dotsRed, dotsGreen);
-                        console.log('red1 -> green1')
                     }
 
                     zoomFirstAlready = true;
@@ -75,13 +73,11 @@ function scrollLogic(controls, camera, spheres) {
             else if (zoomProgress >= 1 / 3 && zoomProgress < 2 / 3) {
                 if (!zoomSecondAlready) {
                     activateZoomChildText(zoomSecond);
-                    
+
                     if (comingFrom == 'zoomAreaFirst') {
                         tweenDots(spheres, dotsGreen, dotsRed);
-                        console.log('green1 -> red1')
                     } else if (comingFrom == 'zoomAreaThird') {
                         tweenDots(spheres, dotsYellow, dotsRed);
-                        console.log('yellow1 -> red1')
                     }
 
                     zoomFirstAlready = false;
@@ -97,10 +93,8 @@ function scrollLogic(controls, camera, spheres) {
 
                     if (comingFrom == 'zoomAreaSecond') {
                         tweenDots(spheres, dotsRed, dotsYellow);
-                        console.log('red1 -> yellow1')
                     } else if (comingFrom == 'zoomOutArea') {
                         tweenDots(spheres, dotsYellow, dotsYellow, 0, 1);
-                        console.log('yellow0 -> red1')
                     }
 
                     zoomFirstAlready = false;
@@ -117,12 +111,11 @@ function scrollLogic(controls, camera, spheres) {
 
         if (!zoomOutAlready) {
             activateText(zoomOutArea);
-            
+
             if (comingFrom == 'zoomAreaThird') {
                 tweenDots(spheres, dotsYellow, dotsYellow, 1, 0);
-                console.log('yellow1 -> yellow0')
             }
-            
+
             splashAlready = false;
             zoomAlready = false;
             zoomOutAlready = true;
@@ -135,17 +128,21 @@ function scrollLogic(controls, camera, spheres) {
 
     }
     else if (productBool) {
-        controls.autoRotate = false;
         productProgress = scrollProgress__Last(productArea);
-        // console.log(productProgress)
+        console.log(productProgress)
+        
+        // fov logic
+        // scale logic
 
         if (!productAlready) {
-            //console.log('<product>');
+            controls.autoRotate = false;
+            controls.enableRotate = false;
             activateText(productArea);
             splashAlready = false;
             zoomAlready = false;
             zoomOutAlready = false;
             productAlready = true;
+            comingFrom = 'productArea';
         }
 
     }
