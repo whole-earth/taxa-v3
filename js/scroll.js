@@ -11,10 +11,9 @@ const zoomOutEndFOV = splashStartFOV;
 //const productStartFOV = zoomOutEndFOV;
 //const productEndFOV = 150;
 
-const dotsGreen = '#92cb86';
-const dotsRed = '#ff0000';
-const dotsBlack = '#000000';
-const dotsYellow = '#fcdf03'; // change
+const dotsGreen = '#71ff00';
+const dotsRed = '#ff8e00';
+const dotsYellow = '#f1ff00';
 
 function scrollLogic(camera, spheres) {
 
