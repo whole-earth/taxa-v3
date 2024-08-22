@@ -81,6 +81,58 @@ function initCellRenderer() {
             }
         }
 
+        class productComponent {
+            constructor(gltf, shader = null, renderOrder = 1) {
+                return new Promise((resolve) => {
+                    this.scene = scene;
+                    this.position = new THREE.Vector3(0, 0, 0);
+                    this.basePath = 'https://cdn.jsdelivr.net/gh/whole-earth/taxa@main/assets/product/';
+                    this.loader = new GLTFLoader();
+                    const dracoLoader = new DRACOLoader();
+                    dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.3/');
+                    this.loader.setDRACOLoader(dracoLoader);
+                    this.loadObject(gltf, shader, renderOrder, resolve);
+                    //this.boundingBox = new THREE.Box3();
+                    //boundingBoxes.push(this.boundingBox);
+                    if (shader) globalShaders[gltf] = shader;
+                });
+            }
+
+            loadObject(gltf, shader, renderOrder, resolve) {
+                const fullPath = this.basePath + gltf;
+                this.loader.load(fullPath, (gltf) => {
+                    this.object = gltf.scene;
+                    this.object.position.copy(this.position);
+                    this.scene.add(this.object);
+                    this.centerObject(this.object);
+                    if (shader) this.applyCustomShader(shader);
+                    this.object.renderOrder = renderOrder;
+                    this.boundingBox.setFromObject(this.object);
+                    loadedObjects.push(this.object);
+                    resolve(this.object);
+                });
+            }
+
+            applyCustomShader(shader) {
+                if (!shader) return;
+                this.object.traverse((node) => {
+                    if (node.isMesh) {
+                        node.material = shader;
+                        node.material.opacity = 0;
+                        node.material.transparent = true;
+                        node.material.needsUpdate = true;
+                    }
+                });
+            }
+
+            centerObject(object) {
+                const box = new THREE.Box3().setFromObject(object);
+                const center = box.getCenter(new THREE.Vector3());
+                object.position.sub(center);
+            }
+        }
+
+
         const loadCellObjects = [
             new CellComponent("blob-outer.glb", dispersion, 2),
             new CellComponent("ribbons.glb", grayPurple, 3),
@@ -89,6 +141,7 @@ function initCellRenderer() {
 
         Promise.all(loadCellObjects).then(() => {
             initSpeckles(scene, boundingBoxes);
+            new productComponent("vial_placeholder.glb", null, 4)
             resolve();
         });
     });

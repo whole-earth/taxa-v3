@@ -52,6 +52,8 @@ function scrollLogic(camera, spheres) {
             zoomBoolScrollFlag = true; // signify I'm coming from zoomBool
         }
 
+        // need to add directional condition here as well
+
         if (zoomFirst && zoomSecond && zoomThird) {
             if (zoomProgress >= 0 && zoomProgress < 1 / 3) {
                 if (!zoomFirstAlready) {
