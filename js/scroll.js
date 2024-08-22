@@ -28,9 +28,8 @@ function scrollLogic(controls, camera, spheres) {
 
         if (!splashAlready) {
             activateText(splashArea);
-            if (scrollDirection = 'up') {
+            if ( comingFrom == 'zoomAreaFirst' ) {
                 tweenDots(spheres, dotsGreen, dotsGreen, 1, 0);
-                console.log(scrollDirection);
             }
             splashAlready = true;
             zoomAlready = false;
@@ -39,6 +38,7 @@ function scrollLogic(controls, camera, spheres) {
             zoomFirstAlready = false;
             zoomSecondAlready = false;
             zoomThirdAlready = false;
+            comingFrom = 'splash';
         }
     }
     else if (zoomBool) {
@@ -57,31 +57,37 @@ function scrollLogic(controls, camera, spheres) {
             if (zoomProgress >= 0 && zoomProgress < 1 / 3) {
                 if (!zoomFirstAlready) {
                     activateZoomChildText(zoomFirst);
-                    if (scrollDirection = 'down') {
+                    
+                    if (comingFrom == 'splash') {
                         tweenDots(spheres, dotsGreen, dotsGreen, 0, 1);
                         console.log('green0 -> green1')
-                    } else if (scrollDirection = 'up') {
+                    } else if (comingFrom == 'zoomAreaSecond') {
                         tweenDots(spheres, dotsRed, dotsGreen);
                         console.log('red1 -> green1')
                     }
+
                     zoomFirstAlready = true;
                     zoomSecondAlready = false;
                     zoomThirdAlready = false;
+                    comingFrom = 'zoomAreaFirst';
                 }
             }
             else if (zoomProgress >= 1 / 3 && zoomProgress < 2 / 3) {
                 if (!zoomSecondAlready) {
                     activateZoomChildText(zoomSecond);
-                    if (scrollDirection = 'down') {
+                    
+                    if (comingFrom == 'zoomAreaFirst') {
                         tweenDots(spheres, dotsGreen, dotsRed);
                         console.log('green1 -> red1')
-                    } else if (scrollDirection = 'up') {
+                    } else if (comingFrom == 'zoomAreaThird') {
                         tweenDots(spheres, dotsYellow, dotsRed);
                         console.log('yellow1 -> red1')
                     }
+
                     zoomFirstAlready = false;
                     zoomSecondAlready = true;
                     zoomThirdAlready = false;
+                    comingFrom = 'zoomAreaSecond';
                 }
             }
             else if (zoomProgress >= 2 / 3 && zoomProgress <= 1) {
@@ -89,10 +95,10 @@ function scrollLogic(controls, camera, spheres) {
                     activateZoomChildText(zoomThird);
                     controls.autoRotate = true;
 
-                    if (scrollDirection = 'down') {
+                    if (comingFrom == 'zoomAreaSecond') {
                         tweenDots(spheres, dotsRed, dotsYellow);
                         console.log('red1 -> yellow1')
-                    } else if (scrollDirection = 'up') {
+                    } else if (comingFrom == 'zoomOutArea') {
                         tweenDots(spheres, dotsYellow, dotsYellow, 0, 1);
                         console.log('yellow0 -> red1')
                     }
@@ -100,6 +106,7 @@ function scrollLogic(controls, camera, spheres) {
                     zoomFirstAlready = false;
                     zoomSecondAlready = false;
                     zoomThirdAlready = true;
+                    comingFrom = 'zoomAreaThird';
                 }
             }
         }
@@ -110,10 +117,12 @@ function scrollLogic(controls, camera, spheres) {
 
         if (!zoomOutAlready) {
             activateText(zoomOutArea);
-            if (scrollDirection = 'down') {
+            
+            if (comingFrom == 'zoomAreaThird') {
                 tweenDots(spheres, dotsYellow, dotsYellow, 1, 0);
                 console.log('yellow1 -> yellow0')
             }
+            
             splashAlready = false;
             zoomAlready = false;
             zoomOutAlready = true;
@@ -121,14 +130,14 @@ function scrollLogic(controls, camera, spheres) {
             zoomFirstAlready = false;
             zoomSecondAlready = false;
             zoomThirdAlready = false;
+            comingFrom = 'zoomOutArea';
         }
 
     }
     else if (productBool) {
         controls.autoRotate = false;
         productProgress = scrollProgress__Last(productArea);
-        console.log(productProgress)
-        // the scrollprogress shoudl 
+        // console.log(productProgress)
 
         if (!productAlready) {
             //console.log('<product>');
@@ -155,8 +164,10 @@ const zoomSecond = document.querySelector('#zoomSecond');
 const zoomThird = document.querySelector('#zoomThird');
 const zoomElements = [zoomFirst, zoomSecond, zoomThird];
 
-let splashBool, zoomBool, zoomOutBool, productBool, scrollDirection;
+let splashBool, zoomBool, zoomOutBool, productBool;
 let splashProgress, zoomProgress, zoomOutProgress, productProgress;
+
+let comingFrom = "splash";
 
 let splashAlready = false;
 let zoomAlready = false;
@@ -170,8 +181,6 @@ let zoomThirdAlready = false;
 export function animatePage(controls, camera, spheres, scrollTimeout) {
     let scrollY = window.scrollY;
     let scrollDiff = scrollY - lastScrollY;
-    console.log(scrollDiff)
-    scrollDirection = scrollDiff > 0 ? 'down' : 'up';
     const multiplier = Math.floor(scrollDiff / 20);
     controls.autoRotateSpeed = 1.0 + (multiplier * 10);
 
@@ -203,7 +212,7 @@ function scrollProgress__Last(element) {
     const scrollableDistance = rect.height - window.innerHeight;
     const scrolledDistance = Math.max(0, -rect.top);
     const progress = Math.max(0, Math.min(1, scrolledDistance / scrollableDistance));
-    return parseFloat(progress).toFixed(4); // here we truncate!
+    return parseFloat(progress).toFixed(4);
 }
 
 function activateText(parentElement) {
