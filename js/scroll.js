@@ -8,8 +8,8 @@ const zoomStartFOV = splashEndFOV;
 const zoomEndFOV = splashEndFOV * 1.15;
 const zoomOutStartFOV = zoomEndFOV;
 const zoomOutEndFOV = splashStartFOV;
-//const productStartFOV = zoomOutEndFOV;
-//const productEndFOV = 150;
+const productStartFOV = zoomOutEndFOV;
+const productEndFOV = 150;
 
 const dotsGreen = '#71ff00';
 const dotsRed = '#ff8e00';
@@ -129,10 +129,12 @@ function scrollLogic(controls, camera, spheres) {
     }
     else if (productBool) {
         productProgress = scrollProgress__Last(productArea);
-        console.log(productProgress)
+        //console.log(productProgress)
+
+        camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress);
         
-        // fov logic
-        // scale logic
+        // and the scale() of product must be > inverse of fov
+            // make product accessible
 
         if (!productAlready) {
             controls.autoRotate = false;
