@@ -116,9 +116,8 @@ function initScene() {
                 if (!shader) return;
                 this.object.traverse((node) => {
                     if (node.isMesh) {
-                        node.material = shader;
-                        //node.material.opacity = 0; // init as 0
-                        //node.material.transparent = true;
+                        node.material.transparent = true;
+                        node.material.opacity = 0;
                         node.material.needsUpdate = true;
                     }
                 });
@@ -287,6 +286,10 @@ function initScene() {
                 }
             });
             waveShader.uniforms.time.value += 0.01;
+
+            if (product) {
+                product.lookAt(camera.position);
+            }
         }
 
         animate();

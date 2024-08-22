@@ -114,6 +114,15 @@ function scrollLogic(controls, camera, spheres, product) {
 
             if (comingFrom == 'zoomAreaThird') {
                 tweenDots(spheres, dotsYellow, dotsYellow, 1, 0);
+            } else if (comingFrom == 'productArea'){
+                if (product){
+                    product.traverse((node) => {
+                        if (node.isMesh) {
+                            node.material.opacity = 0;
+                            node.material.needsUpdate = true;
+                        }
+                    });
+                }
             }
 
             splashAlready = false;
@@ -139,8 +148,15 @@ function scrollLogic(controls, camera, spheres, product) {
         if (!productAlready) {
             controls.autoRotate = false;
             controls.enableRotate = false;
-            //product.material.opacity = 1;
-            //product.material.needsUpdate = true;
+
+            if (product){
+                product.traverse((node) => {
+                    if (node.isMesh) {
+                        node.material.opacity = 1;
+                        node.material.needsUpdate = true;
+                    }
+                });
+            }
             console.log(product)
 
             activateText(productArea);
