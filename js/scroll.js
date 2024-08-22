@@ -28,7 +28,10 @@ function scrollLogic(controls, camera, spheres) {
 
         if (!splashAlready) {
             activateText(splashArea);
-            if (scrollDirection = 'up') { tweenDots(spheres, dotsGreen, dotsGreen, 1, 0); } // if scrolling up, opacity = 0
+            if (scrollDirection = 'up') {
+                tweenDots(spheres, dotsGreen, dotsGreen, 1, 0);
+                console.log(scrollDirection);
+            }
             splashAlready = true;
             zoomAlready = false;
             zoomOutAlready = false;
@@ -56,8 +59,10 @@ function scrollLogic(controls, camera, spheres) {
                     activateZoomChildText(zoomFirst);
                     if (scrollDirection = 'down') {
                         tweenDots(spheres, dotsGreen, dotsGreen, 0, 1);
+                        console.log('green0 -> green1')
                     } else if (scrollDirection = 'up') {
-                        tweenDots(spheres, dotsRed, dotsGreen, 1, 1);
+                        tweenDots(spheres, dotsRed, dotsGreen);
+                        console.log('red1 -> green1')
                     }
                     zoomFirstAlready = true;
                     zoomSecondAlready = false;
@@ -68,9 +73,11 @@ function scrollLogic(controls, camera, spheres) {
                 if (!zoomSecondAlready) {
                     activateZoomChildText(zoomSecond);
                     if (scrollDirection = 'down') {
-                        tweenDots(spheres, dotsGreen, dotsRed, 1, 1);
+                        tweenDots(spheres, dotsGreen, dotsRed);
+                        console.log('green1 -> red1')
                     } else if (scrollDirection = 'up') {
-                        tweenDots(spheres, dotsYellow, dotsRed, 1, 1);
+                        tweenDots(spheres, dotsYellow, dotsRed);
+                        console.log('yellow1 -> red1')
                     }
                     zoomFirstAlready = false;
                     zoomSecondAlready = true;
@@ -83,9 +90,11 @@ function scrollLogic(controls, camera, spheres) {
                     controls.autoRotate = true;
 
                     if (scrollDirection = 'down') {
-                        tweenDots(spheres, dotsRed, dotsYellow, 1, 1);
+                        tweenDots(spheres, dotsRed, dotsYellow);
+                        console.log('red1 -> yellow1')
                     } else if (scrollDirection = 'up') {
                         tweenDots(spheres, dotsYellow, dotsYellow, 0, 1);
+                        console.log('yellow0 -> red1')
                     }
 
                     zoomFirstAlready = false;
@@ -101,7 +110,10 @@ function scrollLogic(controls, camera, spheres) {
 
         if (!zoomOutAlready) {
             activateText(zoomOutArea);
-            tweenDots(spheres, dotsYellow, dotsYellow, 1, 0);
+            if (scrollDirection = 'down') {
+                tweenDots(spheres, dotsYellow, dotsYellow, 1, 0);
+                console.log('yellow1 -> yellow0')
+            }
             splashAlready = false;
             zoomAlready = false;
             zoomOutAlready = true;
@@ -224,7 +236,7 @@ function activateZoomChildText(activeElement) {
     }
 }
 
-function tweenDots(spheres, initialColor, targetColor, initialOpacity, targetOpacity) {
+function tweenDots(spheres, initialColor, targetColor, initialOpacity = null, targetOpacity = null) {
 
     // reset array each time its called
     tweenGroup.removeAll();
@@ -237,22 +249,24 @@ function tweenDots(spheres, initialColor, targetColor, initialOpacity, targetOpa
             r: prevColorObj.r,
             g: prevColorObj.g,
             b: prevColorObj.b,
-            opacity: initialOpacity
+            ...(initialOpacity !== null && { opacity: initialOpacity })
         };
 
         const targetState = {
             r: targetColorObj.r,
             g: targetColorObj.g,
             b: targetColorObj.b,
-            opacity: targetOpacity
+            ...(targetOpacity !== null && { opacity: targetOpacity })
         };
 
         const tween = new Tween(currentState)
-            .to(targetState, 600)
+            .to(targetState, 400)
             .easing(Easing.Quadratic.InOut)
             .onUpdate(() => {
                 sphere.material.color.setRGB(currentState.r, currentState.g, currentState.b);
-                sphere.material.opacity = currentState.opacity;
+                if (initialOpacity !== null && targetOpacity !== null) {
+                    sphere.material.opacity = currentState.opacity;
+                }
                 sphere.material.needsUpdate = true;
             })
             .onComplete(() => {
