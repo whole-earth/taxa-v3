@@ -253,7 +253,7 @@ function initScene() {
         wavingBlob.renderOrder = 1;
         scene.add(wavingBlob);
 
-        for (let i = 0; i < 80; i++) {
+        for (let i = 0; i < 140; i++) {
             const randomPosition = getRandomPositionWithinBounds(bounds);
             const sphereGeometry = new THREE.SphereGeometry(0.15, 6, 6);
             const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x92cb86, opacity: 0, transparent: true }); // initialize spheres as 0 opacity
