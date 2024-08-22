@@ -170,6 +170,7 @@ let zoomThirdAlready = false;
 export function animatePage(controls, camera, spheres, scrollTimeout) {
     let scrollY = window.scrollY;
     let scrollDiff = scrollY - lastScrollY;
+    console.log(scrollDiff)
     scrollDirection = scrollDiff > 0 ? 'down' : 'up';
     const multiplier = Math.floor(scrollDiff / 20);
     controls.autoRotateSpeed = 1.0 + (multiplier * 10);
