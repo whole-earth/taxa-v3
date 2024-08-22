@@ -92,8 +92,8 @@ function initCellRenderer() {
                     dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.3/');
                     this.loader.setDRACOLoader(dracoLoader);
                     this.loadObject(gltf, shader, renderOrder, resolve);
-                    //this.boundingBox = new THREE.Box3();
-                    //boundingBoxes.push(this.boundingBox);
+                    // this.boundingBox = new THREE.Box3();
+                    // boundingBoxes.push(this.boundingBox);
                     if (shader) globalShaders[gltf] = shader;
                 });
             }
@@ -107,8 +107,8 @@ function initCellRenderer() {
                     this.centerObject(this.object);
                     if (shader) this.applyCustomShader(shader);
                     this.object.renderOrder = renderOrder;
-                    this.boundingBox.setFromObject(this.object);
-                    loadedObjects.push(this.object);
+                    // this.boundingBox.setFromObject(this.object);
+                    // loadedObjects.push(this.object);
                     resolve(this.object);
                 });
             }
