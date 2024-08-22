@@ -5,17 +5,17 @@ import { DRACOLoader } from 'three/DracoLoader';
 import { OrbitControls } from 'three/OrbitControls';
 import { RGBELoader } from 'three/RGBELoader';
 import { PMREMGenerator } from 'three';
-import { dispersion, grayPurple, iridescent } from './materials.js';
+import { dispersion, grayPurple, iridescent, vialMaterial } from './materials.js';
 import { animatePage } from './scroll.js';
 
-document.addEventListener('DOMContentLoaded', async () => initCellRenderer());
+document.addEventListener('DOMContentLoaded', async () => initScene());
 
 export let tweenGroup = new Group();
 
 export let lastScrollY = 0;
 export function setLastScrollY(value) { lastScrollY = value; }
 
-function initCellRenderer() {
+function initScene() {
     let scene, camera, renderer, controls;
     let scrollTimeout;
     const spheres = [];
@@ -81,6 +81,12 @@ function initCellRenderer() {
             }
         }
 
+        const loadCellObjects = [
+            new CellComponent("blob-outer.glb", dispersion, 2),
+            new CellComponent("ribbons.glb", grayPurple, 3),
+            new CellComponent("blob-inner.glb", iridescent, 1)
+        ];
+
         class productComponent {
             constructor(gltf, shader = null, renderOrder = 1) {
                 return new Promise((resolve) => {
@@ -92,8 +98,6 @@ function initCellRenderer() {
                     dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.3/');
                     this.loader.setDRACOLoader(dracoLoader);
                     this.loadObject(gltf, shader, renderOrder, resolve);
-                    // this.boundingBox = new THREE.Box3();
-                    // boundingBoxes.push(this.boundingBox);
                     if (shader) globalShaders[gltf] = shader;
                 });
             }
@@ -105,10 +109,10 @@ function initCellRenderer() {
                     this.object.position.copy(this.position);
                     this.scene.add(this.object);
                     this.centerObject(this.object);
+                    // want to rotate to top-view: console.log degree calc
+                    // will later manip degree in productBool
                     if (shader) this.applyCustomShader(shader);
                     this.object.renderOrder = renderOrder;
-                    // this.boundingBox.setFromObject(this.object);
-                    // loadedObjects.push(this.object);
                     resolve(this.object);
                 });
             }
@@ -118,7 +122,7 @@ function initCellRenderer() {
                 this.object.traverse((node) => {
                     if (node.isMesh) {
                         node.material = shader;
-                        node.material.opacity = 0;
+                        node.material.opacity = 0; // init as 0
                         node.material.transparent = true;
                         node.material.needsUpdate = true;
                     }
@@ -132,16 +136,9 @@ function initCellRenderer() {
             }
         }
 
-
-        const loadCellObjects = [
-            new CellComponent("blob-outer.glb", dispersion, 2),
-            new CellComponent("ribbons.glb", grayPurple, 3),
-            new CellComponent("blob-inner.glb", iridescent, 1)
-        ];
-
         Promise.all(loadCellObjects).then(() => {
             initSpeckles(scene, boundingBoxes);
-            new productComponent("vial_placeholder.glb", null, 4)
+            new productComponent("vial_placeholder.glb", vialMaterial, 4) // new
             resolve();
         });
     });
@@ -234,7 +231,7 @@ function initCellRenderer() {
 
         for (let i = 0; i < 80; i++) {
             const randomPosition = getRandomPositionWithinBounds(bounds);
-            const sphereGeometry = new THREE.SphereGeometry(0.25, 6, 6);
+            const sphereGeometry = new THREE.SphereGeometry(0.15, 6, 6);
             const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x92cb86, opacity: 0, transparent: true }); // initialize spheres as 0 opacity
             const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
             sphereMesh.position.copy(randomPosition);

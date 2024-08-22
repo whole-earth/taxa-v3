@@ -57,3 +57,19 @@ export const dispersion = new THREE.MeshPhysicalMaterial({
     transparent: true,
     dispersion: 5
 });
+
+export const vialMaterial = new THREE.MeshPhysicalMaterial({
+    color: new THREE.Color('#f1ff00'),
+    roughness: 0.55,
+    metalness: 0.2,
+    iridescence: 0.85,
+    iridescenceIOR: 1.44,
+    transmission: 0.6,
+    ior: 1.4,
+    thickness: 1,
+    envMapIntensity: 1.5,
+    transparent: true,
+    opacity: 1,
+    side: THREE.DoubleSide,
+    depthWrite: true
+});

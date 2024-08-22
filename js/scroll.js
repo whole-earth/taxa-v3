@@ -15,7 +15,7 @@ const dotsGreen = '#71ff00';
 const dotsRed = '#ff8e00';
 const dotsYellow = '#f1ff00';
 
-function scrollLogic(camera, spheres) {
+function scrollLogic(controls, camera, spheres) {
 
     splashBool = isVisibleBetweenTopAndBottom(splashArea);
     zoomBool = isVisibleBetweenTopAndBottom(zoomArea);
@@ -28,7 +28,7 @@ function scrollLogic(camera, spheres) {
 
         if (!splashAlready) {
             activateText(splashArea);
-            if (zoomBoolScrollFlag) { tweenDots(spheres, dotsGreen, dotsGreen, 1, 0); } //  if coming from scrollUp, set opacity to 0
+            if (scrollDirection = 'up') { tweenDots(spheres, dotsGreen, dotsGreen, 1, 0); } // if scrolling up, opacity = 0
             splashAlready = true;
             zoomAlready = false;
             zoomOutAlready = false;
@@ -36,7 +36,6 @@ function scrollLogic(camera, spheres) {
             zoomFirstAlready = false;
             zoomSecondAlready = false;
             zoomThirdAlready = false;
-            zoomBoolScrollFlag = false; // reset
         }
     }
     else if (zoomBool) {
@@ -49,16 +48,17 @@ function scrollLogic(camera, spheres) {
             zoomAlready = true;
             zoomOutAlready = false;
             productAlready = false;
-            zoomBoolScrollFlag = true; // signify I'm coming from zoomBool
         }
-
-        // need to add directional condition here as well
 
         if (zoomFirst && zoomSecond && zoomThird) {
             if (zoomProgress >= 0 && zoomProgress < 1 / 3) {
                 if (!zoomFirstAlready) {
                     activateZoomChildText(zoomFirst);
-                    tweenDots(spheres, dotsGreen, dotsGreen, 0, 1);
+                    if (scrollDirection = 'down') {
+                        tweenDots(spheres, dotsGreen, dotsGreen, 0, 1);
+                    } else if (scrollDirection = 'up') {
+                        tweenDots(spheres, dotsRed, dotsGreen, 1, 1);
+                    }
                     zoomFirstAlready = true;
                     zoomSecondAlready = false;
                     zoomThirdAlready = false;
@@ -67,7 +67,11 @@ function scrollLogic(camera, spheres) {
             else if (zoomProgress >= 1 / 3 && zoomProgress < 2 / 3) {
                 if (!zoomSecondAlready) {
                     activateZoomChildText(zoomSecond);
-                    tweenDots(spheres, dotsGreen, dotsRed, 1, 1);
+                    if (scrollDirection = 'down') {
+                        tweenDots(spheres, dotsGreen, dotsRed, 1, 1);
+                    } else if (scrollDirection = 'up') {
+                        tweenDots(spheres, dotsYellow, dotsRed, 1, 1);
+                    }
                     zoomFirstAlready = false;
                     zoomSecondAlready = true;
                     zoomThirdAlready = false;
@@ -76,17 +80,17 @@ function scrollLogic(camera, spheres) {
             else if (zoomProgress >= 2 / 3 && zoomProgress <= 1) {
                 if (!zoomThirdAlready) {
                     activateZoomChildText(zoomThird);
+                    controls.autoRotate = true;
 
-                    if (zoomOutBoolScrollFlag) { //  if scrolling up
-                        tweenDots(spheres, dotsYellow, dotsYellow, 0, 1);
-                    } else {
+                    if (scrollDirection = 'down') {
                         tweenDots(spheres, dotsRed, dotsYellow, 1, 1);
+                    } else if (scrollDirection = 'up') {
+                        tweenDots(spheres, dotsYellow, dotsYellow, 0, 1);
                     }
 
                     zoomFirstAlready = false;
                     zoomSecondAlready = false;
                     zoomThirdAlready = true;
-                    zoomOutBoolScrollFlag = false;
                 }
             }
         }
@@ -109,8 +113,10 @@ function scrollLogic(camera, spheres) {
 
     }
     else if (productBool) {
-        // productProgress = scrollProgress(productArea);
-        // console.log(`Product ${productProgress}`)
+        controls.autoRotate = false;
+        productProgress = scrollProgress__Last(productArea);
+        console.log(productProgress)
+        // the scrollprogress shoudl 
 
         if (!productAlready) {
             //console.log('<product>');
@@ -119,7 +125,6 @@ function scrollLogic(camera, spheres) {
             zoomAlready = false;
             zoomOutAlready = false;
             productAlready = true;
-            zoomOutBoolScrollFlag = true;
         }
 
     }
@@ -138,7 +143,7 @@ const zoomSecond = document.querySelector('#zoomSecond');
 const zoomThird = document.querySelector('#zoomThird');
 const zoomElements = [zoomFirst, zoomSecond, zoomThird];
 
-let splashBool, zoomBool, zoomOutBool, productBool;
+let splashBool, zoomBool, zoomOutBool, productBool, scrollDirection;
 let splashProgress, zoomProgress, zoomOutProgress, productProgress;
 
 let splashAlready = false;
@@ -149,12 +154,11 @@ let productAlready = false;
 let zoomFirstAlready = false;
 let zoomSecondAlready = false;
 let zoomThirdAlready = false;
-let zoomBoolScrollFlag = false;
-let zoomOutBoolScrollFlag = false;
 
 export function animatePage(controls, camera, spheres, scrollTimeout) {
     let scrollY = window.scrollY;
     let scrollDiff = scrollY - lastScrollY;
+    scrollDirection = scrollDiff > 0 ? 'down' : 'up';
     const multiplier = Math.floor(scrollDiff / 20);
     controls.autoRotateSpeed = 1.0 + (multiplier * 10);
 
@@ -163,7 +167,7 @@ export function animatePage(controls, camera, spheres, scrollTimeout) {
         controls.autoRotateSpeed = 0.2;
     }, 100);
 
-    throttle(() => scrollLogic(camera, spheres), 30)();
+    throttle(() => scrollLogic(controls, camera, spheres), 30)();
     camera.updateProjectionMatrix();
     setLastScrollY(scrollY);
 };
@@ -176,6 +180,14 @@ function isVisibleBetweenTopAndBottom(element) {
 function scrollProgress(element) {
     const rect = element.getBoundingClientRect();
     const scrollableDistance = rect.height;
+    const scrolledDistance = Math.max(0, -rect.top);
+    const progress = Math.max(0, Math.min(1, scrolledDistance / scrollableDistance));
+    return parseFloat(progress).toFixed(4); // here we truncate!
+}
+
+function scrollProgress__Last(element) {
+    const rect = element.getBoundingClientRect();
+    const scrollableDistance = rect.height - window.innerHeight;
     const scrolledDistance = Math.max(0, -rect.top);
     const progress = Math.max(0, Math.min(1, scrolledDistance / scrollableDistance));
     return parseFloat(progress).toFixed(4); // here we truncate!
