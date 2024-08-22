@@ -15,7 +15,7 @@ const dotsGreen = '#71ff00';
 const dotsRed = '#ff8e00';
 const dotsYellow = '#f1ff00';
 
-function scrollLogic(controls, camera, spheres) {
+function scrollLogic(controls, camera, spheres, product) {
 
     splashBool = isVisibleBetweenTopAndBottom(splashArea);
     zoomBool = isVisibleBetweenTopAndBottom(zoomArea);
@@ -129,16 +129,20 @@ function scrollLogic(controls, camera, spheres) {
     }
     else if (productBool) {
         productProgress = scrollProgress__Last(productArea);
-        //console.log(productProgress)
+        console.log(productProgress)
 
-        camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress);
-        
+        camera.fov = smoothLerp(productStartFOV, productEndFOV, productProgress);
+
         // and the scale() of product must be > inverse of fov
-            // make product accessible
+        // make product accessible
 
         if (!productAlready) {
             controls.autoRotate = false;
             controls.enableRotate = false;
+            //product.material.opacity = 1;
+            //product.material.needsUpdate = true;
+            console.log(product)
+
             activateText(productArea);
             splashAlready = false;
             zoomAlready = false;
@@ -177,7 +181,7 @@ let zoomFirstAlready = false;
 let zoomSecondAlready = false;
 let zoomThirdAlready = false;
 
-export function animatePage(controls, camera, spheres, scrollTimeout) {
+export function animatePage(controls, camera, spheres, product, scrollTimeout) {
     let scrollY = window.scrollY;
     let scrollDiff = scrollY - lastScrollY;
     const multiplier = Math.floor(scrollDiff / 20);
@@ -188,7 +192,7 @@ export function animatePage(controls, camera, spheres, scrollTimeout) {
         controls.autoRotateSpeed = 0.2;
     }, 100);
 
-    throttle(() => scrollLogic(controls, camera, spheres), 30)();
+    throttle(() => scrollLogic(controls, camera, spheres, product), 30)();
     camera.updateProjectionMatrix();
     setLastScrollY(scrollY);
 };

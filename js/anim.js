@@ -18,6 +18,7 @@ export function setLastScrollY(value) { lastScrollY = value; }
 function initScene() {
     let scene, camera, renderer, controls;
     let scrollTimeout;
+    let blobInner, blobOuter, ribbons, product;
     const spheres = [];
 
     return new Promise((resolve) => {
@@ -29,7 +30,7 @@ function initScene() {
         renderer = initRenderer();
         controls = initControls(camera, renderer);
         initLights(scene, renderer);
-        window.addEventListener('scroll', () => animatePage(controls, camera, spheres, lastScrollY, scrollTimeout));
+        window.addEventListener('scroll', () => animatePage(controls, camera, spheres, product, lastScrollY, scrollTimeout));
         window.addEventListener('resize', () => resizeScene(renderer, camera));
 
         class CellComponent {
@@ -81,12 +82,6 @@ function initScene() {
             }
         }
 
-        const loadCellObjects = [
-            new CellComponent("blob-outer.glb", dispersion, 2),
-            new CellComponent("ribbons.glb", grayPurple, 3),
-            new CellComponent("blob-inner.glb", iridescent, 1)
-        ];
-
         class productComponent {
             constructor(gltf, shader = null, renderOrder = 1) {
                 return new Promise((resolve) => {
@@ -109,7 +104,7 @@ function initScene() {
                     this.object.position.copy(this.position);
                     this.scene.add(this.object);
                     this.centerObject(this.object);
-                    // want to rotate to top-view: console.log degree calc
+                    // rotate: initialize with top-view: console.log degree calc
                     // will later manip degree in productBool
                     if (shader) this.applyCustomShader(shader);
                     this.object.renderOrder = renderOrder;
@@ -122,8 +117,8 @@ function initScene() {
                 this.object.traverse((node) => {
                     if (node.isMesh) {
                         node.material = shader;
-                        node.material.opacity = 0; // init as 0
-                        node.material.transparent = true;
+                        //node.material.opacity = 0; // init as 0
+                        //node.material.transparent = true;
                         node.material.needsUpdate = true;
                     }
                 });
@@ -136,9 +131,39 @@ function initScene() {
             }
         }
 
+        const loadCellObjects = [
+
+            new CellComponent("blob-inner.glb", iridescent, 1).then((object) => {
+                blobInner = object;
+                //console.log(blobInner)
+                resolve();
+            }),
+
+            new CellComponent("blob-outer.glb", dispersion, 2).then((object) => {
+                blobOuter = object;
+                //console.log(blobOuter)
+                resolve();
+            }),
+
+            new CellComponent("ribbons.glb", grayPurple, 3).then((object) => {
+                ribbons = object;
+                //console.log(ribbons)
+                resolve();
+            })
+
+        ];
+
+        const loadProductObject = [
+            new productComponent("vial_placeholder.glb", vialMaterial, 4).then((createdProduct) => {
+                product = createdProduct;
+                //console.log(product)
+                resolve();
+            })
+        ]
+
         Promise.all(loadCellObjects).then(() => {
             initSpeckles(scene, boundingBoxes);
-            new productComponent("vial_placeholder.glb", vialMaterial, 4) // new
+            loadProductObject;
             resolve();
         });
     });
