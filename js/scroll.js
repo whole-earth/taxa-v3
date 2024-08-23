@@ -14,6 +14,8 @@ const productEndFOV = 150;
 const dotsGreen = '#71ff00';
 const dotsOrange = '#ff8e00';
 const dotsYellow = '#f1ff00';
+const fadeOutDuration = 60;
+const fadeInDuration = 240;
 
 function scrollLogic(controls, camera, spheres, dotBounds, product) {
     splashBool = isVisibleBetweenTopAndBottom(splashArea);
@@ -58,14 +60,14 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
                     activateText__ZoomChild(zoomFirst);
 
                     if (comingFrom == 'splash') {
-                        dotTweenOpacity(spheres, 0, 1, 200);
+                        dotTweenOpacity(spheres, 0, 1, fadeInDuration);
                     } else if (comingFrom == 'zoomAreaSecond') {
-                        dotTweenOpacity(spheres, 1, 0, 200);
+                        dotTweenOpacity(spheres, 1, 0, fadeOutDuration);
                         setTimeout(() => {
                             dotUpdateColors(spheres, dotsGreen);
                             dotRandomizePositions(spheres, dotBounds);
-                            dotTweenOpacity(spheres, 0, 1, 200);
-                        }, 200);
+                            dotTweenOpacity(spheres, 0, 1, fadeInDuration);
+                        }, fadeOutDuration);
                     }
 
                     zoomFirstAlready = true;
@@ -78,13 +80,13 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
                 if (!zoomSecondAlready) {
 
                     activateText__ZoomChild(zoomSecond);
-                    dotTweenOpacity(spheres, 1, 0, 200);
+                    dotTweenOpacity(spheres, 1, 0, fadeOutDuration);
 
                     setTimeout(() => {
                         dotUpdateColors(spheres, dotsOrange);
                         dotRandomizePositions(spheres, dotBounds);
-                        dotTweenOpacity(spheres, 0, 1, 200);
-                    }, 200);
+                        dotTweenOpacity(spheres, 0, 1, fadeInDuration);
+                    }, fadeOutDuration);
 
                     zoomFirstAlready = false;
                     zoomSecondAlready = true;
@@ -97,14 +99,14 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
                     activateText__ZoomChild(zoomThird);
 
                     if (comingFrom == 'zoomAreaSecond') {
-                        dotTweenOpacity(spheres, 1, 0, 200);
+                        dotTweenOpacity(spheres, 1, 0, fadeOutDuration);
                         setTimeout(() => {
                             dotUpdateColors(spheres, dotsYellow);
                             dotRandomizePositions(spheres, dotBounds);
-                            dotTweenOpacity(spheres, 0, 1, 200);
-                        }, 200);
+                            dotTweenOpacity(spheres, 0, 1, fadeInDuration);
+                        }, fadeOutDuration);
                     } else if (comingFrom == 'zoomOutArea') {
-                        dotTweenOpacity(spheres, 0, 1, 200);
+                        dotTweenOpacity(spheres, 0, 1, fadeInDuration);
                     }
 
                     zoomFirstAlready = false;
@@ -123,7 +125,7 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
             activateText(zoomOutArea);
 
             if (comingFrom == 'zoomAreaThird') {
-                dotTweenOpacity(spheres, 1, 0, 200);
+                dotTweenOpacity(spheres, 1, 0, 240); // final fadeout
             } else if (comingFrom == 'productArea') {
                 controls.autoRotate = true;
             }
