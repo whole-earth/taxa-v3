@@ -18,7 +18,7 @@ export function setLastScrollY(value) { lastScrollY = value; }
 function initScene() {
     let scene, camera, renderer, controls;
     let scrollTimeout;
-    let dotBounds, blobInner, blobOuter, ribbons, product;
+    let dotBounds, blobInner, blobOuter, ribbons, product, wavingBlob;
     const spheres = [];
 
     return new Promise((resolve) => {
@@ -249,7 +249,7 @@ function initScene() {
             blending: THREE.NormalBlending,
             depthWrite: false
         });
-        const wavingBlob = new THREE.Mesh(waveGeom, waveShader);
+        wavingBlob = new THREE.Mesh(waveGeom, waveShader);
         wavingBlob.renderOrder = 1;
         scene.add(wavingBlob);
 
