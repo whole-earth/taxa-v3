@@ -29,7 +29,7 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
         if (!splashAlready) {
             activateText(splashArea);
             if (comingFrom == 'zoomAreaFirst') {
-                tweenDots(spheres, dotsGreen, dotsGreen, 1, 0);
+                dotTweenOpacity(1, 0)
             }
             splashAlready = true;
             zoomAlready = false;
@@ -58,10 +58,14 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
                 if (!zoomFirstAlready) {
                     activateZoomChildText(zoomFirst);
 
+                    dotUpdateColors(spheres, dotsGreen);
+                    dotRandomizePositions(spheres, dotBounds);
+
                     if (comingFrom == 'splash') {
-                        tweenDots(spheres, dotsGreen, dotsGreen, 0, 1);
+                        // tweenDots(spheres, dotsGreen, dotsGreen, 0, 1);
+                        dotTweenOpacity(0, 1)
                     } else if (comingFrom == 'zoomAreaSecond') {
-                        tweenDots(spheres, dotsRed, dotsGreen);
+                        //tweenDots(spheres, dotsRed, dotsGreen);
                     }
 
                     zoomFirstAlready = true;
@@ -74,14 +78,14 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
                 if (!zoomSecondAlready) {
                     activateZoomChildText(zoomSecond);
 
+                    dotUpdateColors(spheres, dotsRed);
+                    dotRandomizePositions(spheres, dotBounds);
+
                     if (comingFrom == 'zoomAreaFirst') {
                         // tweenDots(spheres, dotsGreen, dotsRed);
-                        randomizeDotPositions(spheres, dotBounds);
-                        updateDotColors(spheres, dotsRed);
                     } else if (comingFrom == 'zoomAreaThird') {
                         // tweenDots(spheres, dotsYellow, dotsRed);
-                        randomizeDotPositions(spheres, dotBounds);
-                        updateDotColors(spheres, dotsRed);
+
                     }
 
                     zoomFirstAlready = false;
@@ -95,14 +99,13 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
                     activateZoomChildText(zoomThird);
                     controls.autoRotate = true;
 
+                    dotUpdateColors(spheres, dotsYellow);
+                    dotRandomizePositions(spheres, dotBounds);
+
                     if (comingFrom == 'zoomAreaSecond') {
                         // tweenDots(spheres, dotsRed, dotsYellow);
-                        updateDotColors(spheres, dotsYellow);
-                        randomizeDotPositions(spheres, dotBounds);
                     } else if (comingFrom == 'zoomOutArea') {
                         // tweenDots(spheres, dotsYellow, dotsYellow, 0, 1);
-                        updateDotColors(spheres, dotsYellow);
-                        randomizeDotPositions(spheres, dotBounds);
                     }
 
                     zoomFirstAlready = false;
@@ -121,9 +124,8 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
             activateText(zoomOutArea);
 
             if (comingFrom == 'zoomAreaThird') {
-                tweenDots(spheres, dotsYellow, dotsYellow, 1, 0);
-            } else if (comingFrom == 'productArea'){
-
+                tweenDotOpacity(1, 0);
+            } else if (comingFrom == 'productArea') {
             }
 
             splashAlready = false;
@@ -139,7 +141,7 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
     }
     else if (productBool) {
         productProgress = scrollProgress__Last(productArea);
-        console.log(productProgress)
+        // console.log(productProgress)
 
         camera.fov = smoothLerp(productStartFOV, productEndFOV, productProgress);
 
@@ -150,10 +152,10 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
             controls.autoRotate = false;
             controls.enableRotate = false;
 
-            if (product){
+            if (product) {
                 // set opacity to 1
             }
-            console.log(product)
+            // console.log(product)
 
             activateText(productArea);
             splashAlready = false;
@@ -261,62 +263,44 @@ function activateZoomChildText(activeElement) {
     }
 }
 
-function tweenDots(spheres, initialColor, targetColor, initialOpacity = null, targetOpacity = null) {
-
-    // reset array each time its called
+function dotTweenOpacity(spheres, initialOpacity = 1, targetOpacity = 1) {
+    // reset array each time it's called
     tweenGroup.removeAll();
 
     spheres.forEach(sphere => {
-        const prevColorObj = new THREE.Color(initialColor);
-        const targetColorObj = new THREE.Color(targetColor);
-
-        const currentState = {
-            r: prevColorObj.r,
-            g: prevColorObj.g,
-            b: prevColorObj.b,
-            ...(initialOpacity !== null && { opacity: initialOpacity })
-        };
-
-        const targetState = {
-            r: targetColorObj.r,
-            g: targetColorObj.g,
-            b: targetColorObj.b,
-            ...(targetOpacity !== null && { opacity: targetOpacity })
-        };
-
+        const currentState = { opacity: initialOpacity };
+        const targetState = { opacity: targetOpacity };
         const tween = new Tween(currentState)
-            .to(targetState, 400)
+            .to(targetState, 220)
             .easing(Easing.Quadratic.InOut)
             .onUpdate(() => {
-                sphere.material.color.setRGB(currentState.r, currentState.g, currentState.b);
-                if (initialOpacity !== null && targetOpacity !== null) {
-                    sphere.material.opacity = currentState.opacity;
-                }
+                sphere.material.opacity = currentState.opacity;
                 sphere.material.needsUpdate = true;
             })
             .onComplete(() => {
                 tweenGroup.remove(tween);
-            })
+            });
+
         tweenGroup.add(tween);
         tween.start();
     });
 }
 
-function updateDotColors(spheres, color){
+function dotUpdateColors(spheres, color) {
     spheres.forEach(sphere => {
         sphere.material.color = new THREE.Color(color);
         sphere.material.needsUpdate = true;
-        sphere.material.opacity = 1;
     });
 }
 
-function randomizeDotPositions(spheres, dotBounds){
+function dotRandomizePositions(spheres, dotBounds) {
     spheres.forEach(sphere => {
         const randomPosition = getRandomPositionWithinBounds(dotBounds);
         sphere.position.copy(randomPosition);
         const randomDirection = new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize();
         sphere.velocity = randomDirection.multiplyScalar(0.014);
         sphere.position.needsUpdate = true;
+        sphere.velocity.needsUpdate = true;
     });
 
     function getRandomPositionWithinBounds(bounds) {
@@ -327,32 +311,13 @@ function randomizeDotPositions(spheres, dotBounds){
     }
 }
 
-function tweenRibbonOpacity(initial, final) {
-    const currentState = { opacity: initial };
-    const targetState = { opacity: final };
-
-    const tween = new Tween(currentState)
-        .to(targetState, 400) // 0.4 seconds
-        .easing(Easing.Quadratic.InOut)
-        .onUpdate(() => {
-            ribbons.material.opacity = currentState.opacity;
-            ribbons.material.needsUpdate = true;
-        })
-        .onComplete(() => {
-            tweenGroup.remove(tween);
-        });
-
-    tweenGroup.add(tween);
-    tween.start();
-}
-
 // to use, must first add accessor to ribbons variable from /anim.js
 function tweenRibbons(ribbons, initialOpacity, targetOpacity) {
     const currentState = { opacity: initialOpacity };
     const targetState = { opacity: targetOpacity };
 
     const tween = new Tween(currentState)
-        .to(targetState, 400) // 0.4 seconds
+        .to(targetState, 300) // 0.4 seconds
         .easing(Easing.Quadratic.InOut)
         .onUpdate(() => {
             ribbons.material.opacity = currentState.opacity;
