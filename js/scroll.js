@@ -15,7 +15,7 @@ const dotsGreen = '#71ff00';
 const dotsRed = '#ff8e00';
 const dotsYellow = '#f1ff00';
 
-function scrollLogic(controls, camera, spheres, product) {
+function scrollLogic(controls, camera, spheres, dotBounds, product) {
 
     splashBool = isVisibleBetweenTopAndBottom(splashArea);
     zoomBool = isVisibleBetweenTopAndBottom(zoomArea);
@@ -75,9 +75,10 @@ function scrollLogic(controls, camera, spheres, product) {
                     activateZoomChildText(zoomSecond);
 
                     if (comingFrom == 'zoomAreaFirst') {
-                        tweenDots(spheres, dotsGreen, dotsRed);
+                        // tweenDots(spheres, dotsGreen, dotsRed);
+                        updateDotColors(spheres, dotsRed)
                     } else if (comingFrom == 'zoomAreaThird') {
-                        tweenDots(spheres, dotsYellow, dotsRed);
+                        // tweenDots(spheres, dotsYellow, dotsRed);
                     }
 
                     zoomFirstAlready = false;
@@ -197,7 +198,7 @@ let zoomFirstAlready = false;
 let zoomSecondAlready = false;
 let zoomThirdAlready = false;
 
-export function animatePage(controls, camera, spheres, product, scrollTimeout) {
+export function animatePage(controls, camera, spheres, dotBounds, product, scrollTimeout) {
     let scrollY = window.scrollY;
     let scrollDiff = scrollY - lastScrollY;
     const multiplier = Math.floor(scrollDiff / 20);
@@ -208,7 +209,7 @@ export function animatePage(controls, camera, spheres, product, scrollTimeout) {
         controls.autoRotateSpeed = 0.2;
     }, 100);
 
-    throttle(() => scrollLogic(controls, camera, spheres, product), 30)();
+    throttle(() => scrollLogic(controls, camera, spheres, dotBounds, product), 30)();
     camera.updateProjectionMatrix();
     setLastScrollY(scrollY);
 };
@@ -304,6 +305,36 @@ function tweenDots(spheres, initialColor, targetColor, initialOpacity = null, ta
         tweenGroup.add(tween);
         tween.start();
     });
+}
+
+function updateDotColors(spheres, color){
+    spheres.forEach(sphere => {
+        sphere.material.color = new THREE.Color(color);
+        sphere.material.needsUpdate = true;
+    });
+}
+
+function randomizeDotPositions(spheres, dotBounds){
+
+}
+
+function tweenRibbonOpacity(initial, final) {
+    const currentState = { opacity: initial };
+    const targetState = { opacity: final };
+
+    const tween = new Tween(currentState)
+        .to(targetState, 400) // 0.4 seconds
+        .easing(Easing.Quadratic.InOut)
+        .onUpdate(() => {
+            ribbons.material.opacity = currentState.opacity;
+            ribbons.material.needsUpdate = true;
+        })
+        .onComplete(() => {
+            tweenGroup.remove(tween);
+        });
+
+    tweenGroup.add(tween);
+    tween.start();
 }
 
 // to use, must first add accessor to ribbons variable from /anim.js

@@ -18,7 +18,7 @@ export function setLastScrollY(value) { lastScrollY = value; }
 function initScene() {
     let scene, camera, renderer, controls;
     let scrollTimeout;
-    let blobInner, blobOuter, ribbons, product;
+    let dotBounds, blobInner, blobOuter, ribbons, product;
     const spheres = [];
 
     return new Promise((resolve) => {
@@ -220,8 +220,8 @@ function initScene() {
     }
 
     function initSpeckles(scene, boundingBoxes) {
-        const bounds = boundingBoxes[1].max.z * 0.85;
-        const waveGeom = new THREE.SphereGeometry(bounds, 32, 32);
+        dotBounds = boundingBoxes[1].max.z * 0.85;
+        const waveGeom = new THREE.SphereGeometry(dotBounds, 32, 32);
         const waveShader = new THREE.ShaderMaterial({
             uniforms: { time: { value: 0.0 }, opacity: { value: 0.1 } },
             vertexShader: `
@@ -253,8 +253,8 @@ function initScene() {
         wavingBlob.renderOrder = 1;
         scene.add(wavingBlob);
 
-        for (let i = 0; i < 140; i++) {
-            const randomPosition = getRandomPositionWithinBounds(bounds);
+        for (let i = 0; i < 180; i++) {
+            const randomPosition = getRandomPositionWithinBounds(dotBounds);
             const sphereGeometry = new THREE.SphereGeometry(0.15, 6, 6);
             const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x92cb86, opacity: 0, transparent: true }); // initialize spheres as 0 opacity
             const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
@@ -281,7 +281,7 @@ function initScene() {
             controls.update();
             spheres.forEach(sphere => {
                 sphere.position.add(sphere.velocity);
-                if (sphere.position.length() > bounds) {
+                if (sphere.position.length() > dotBounds) {
                     sphere.velocity.negate();
                 }
             });
