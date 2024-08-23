@@ -76,12 +76,12 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
 
                     if (comingFrom == 'zoomAreaFirst') {
                         // tweenDots(spheres, dotsGreen, dotsRed);
-                        updateDotColors(spheres, dotsRed);
                         randomizeDotPositions(spheres, dotBounds);
+                        updateDotColors(spheres, dotsRed);
                     } else if (comingFrom == 'zoomAreaThird') {
                         // tweenDots(spheres, dotsYellow, dotsRed);
-                        updateDotColors(spheres, dotsRed);
                         randomizeDotPositions(spheres, dotBounds);
+                        updateDotColors(spheres, dotsRed);
                     }
 
                     zoomFirstAlready = false;
@@ -306,6 +306,7 @@ function updateDotColors(spheres, color){
     spheres.forEach(sphere => {
         sphere.material.color = new THREE.Color(color);
         sphere.material.needsUpdate = true;
+        sphere.material.opacity = 1;
     });
 }
 
