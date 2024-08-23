@@ -45,7 +45,6 @@ function scrollLogic(controls, camera, wavingBlob, spheres, dotBounds, product) 
     else if (zoomBool) {
         zoomProgress = scrollProgress(zoomArea);
         camera.fov = smoothLerp(zoomStartFOV, zoomEndFOV, zoomProgress);
-        console.log(zoomProgress)
 
         if (!zoomAlready) {
             activateText(zoomArea);
@@ -200,7 +199,7 @@ let zoomThirdAlready = false;
 
 export function animatePage(controls, camera, spheres, wavingBlob, dotBounds, product, scrollTimeout) {
     let scrollY = window.scrollY;
-    let scrollDiff = scrollY - lastScrollY;w
+    let scrollDiff = scrollY - lastScrollY;
     const multiplier = Math.floor(scrollDiff / 20);
     controls.autoRotateSpeed = 1.0 + (multiplier * 10);
 
