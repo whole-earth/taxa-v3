@@ -16,7 +16,6 @@ const dotsOrange = '#ff8e00';
 const dotsYellow = '#f1ff00';
 
 function scrollLogic(controls, camera, spheres, dotBounds, product) {
-
     splashBool = isVisibleBetweenTopAndBottom(splashArea);
     zoomBool = isVisibleBetweenTopAndBottom(zoomArea);
     zoomOutBool = isVisibleBetweenTopAndBottom(zoomOutArea);
@@ -56,16 +55,17 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
         if (zoomFirst && zoomSecond && zoomThird) {
             if (zoomProgress >= 0 && zoomProgress < 1 / 3) {
                 if (!zoomFirstAlready) {
-                    activateZoomChildText(zoomFirst);
-
-                    dotUpdateColors(spheres, dotsGreen);
-                    dotRandomizePositions(spheres, dotBounds);
+                    activateText__ZoomChild(zoomFirst);
 
                     if (comingFrom == 'splash') {
-                        // tweenDots(spheres, dotsGreen, dotsGreen, 0, 1);
-                        dotTweenOpacity(spheres, 0, 1);
+                        dotTweenOpacity(spheres, 0, 1, 200);
                     } else if (comingFrom == 'zoomAreaSecond') {
-                        //tweenDots(spheres, dotsOrange, dotsGreen);
+                        dotTweenOpacity(spheres, 1, 0, 200);
+                        setTimeout(() => {
+                            dotUpdateColors(spheres, dotsGreen);
+                            dotRandomizePositions(spheres, dotBounds);
+                            dotTweenOpacity(spheres, 0, 1, 200);
+                        }, 200);
                     }
 
                     zoomFirstAlready = true;
@@ -76,17 +76,15 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
             }
             else if (zoomProgress >= 1 / 3 && zoomProgress < 2 / 3) {
                 if (!zoomSecondAlready) {
-                    activateZoomChildText(zoomSecond);
 
-                    dotUpdateColors(spheres, dotsOrange);
-                    dotRandomizePositions(spheres, dotBounds);
+                    activateText__ZoomChild(zoomSecond);
+                    dotTweenOpacity(spheres, 1, 0, 200);
 
-                    if (comingFrom == 'zoomAreaFirst') {
-                        // tweenDots(spheres, dotsGreen, dotsOrange);
-                    } else if (comingFrom == 'zoomAreaThird') {
-                        // tweenDots(spheres, dotsYellow, dotsOrange);
-
-                    }
+                    setTimeout(() => {
+                        dotUpdateColors(spheres, dotsOrange);
+                        dotRandomizePositions(spheres, dotBounds);
+                        dotTweenOpacity(spheres, 0, 1, 200);
+                    }, 200);
 
                     zoomFirstAlready = false;
                     zoomSecondAlready = true;
@@ -96,16 +94,17 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
             }
             else if (zoomProgress >= 2 / 3 && zoomProgress <= 1) {
                 if (!zoomThirdAlready) {
-                    activateZoomChildText(zoomThird);
-                    controls.autoRotate = true;
-
-                    dotUpdateColors(spheres, dotsYellow);
-                    dotRandomizePositions(spheres, dotBounds);
+                    activateText__ZoomChild(zoomThird);
 
                     if (comingFrom == 'zoomAreaSecond') {
-                        // tweenDots(spheres, dotsOrange, dotsYellow);
+                        dotTweenOpacity(spheres, 1, 0, 200);
+                        setTimeout(() => {
+                            dotUpdateColors(spheres, dotsYellow);
+                            dotRandomizePositions(spheres, dotBounds);
+                            dotTweenOpacity(spheres, 0, 1, 200);
+                        }, 200);
                     } else if (comingFrom == 'zoomOutArea') {
-                        dotTweenOpacity(spheres, 0, 1);
+                        dotTweenOpacity(spheres, 0, 1, 200);
                     }
 
                     zoomFirstAlready = false;
@@ -124,8 +123,9 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
             activateText(zoomOutArea);
 
             if (comingFrom == 'zoomAreaThird') {
-                dotTweenOpacity(spheres, 1, 0);
+                dotTweenOpacity(spheres, 1, 0, 200);
             } else if (comingFrom == 'productArea') {
+                controls.autoRotate = true;
             }
 
             splashAlready = false;
@@ -251,7 +251,7 @@ function activateText(parentElement) {
     }
 }
 
-function activateZoomChildText(activeElement) {
+function activateText__ZoomChild(activeElement) {
     if (activeElement) {
         zoomElements.forEach(element => {
             if (element === activeElement) {
@@ -263,15 +263,34 @@ function activateZoomChildText(activeElement) {
     }
 }
 
-function dotTweenOpacity(spheres, initialOpacity = 1, targetOpacity = 1) {
-    // reset array each time it's called
+// to use, must first add accessor to ribbons variable from /anim.js
+function ribbonTweenOpacity(ribbons, initialOpacity, targetOpacity) {
+    const currentState = { opacity: initialOpacity };
+    const targetState = { opacity: targetOpacity };
+
+    const tween = new Tween(currentState)
+        .to(targetState, 300) // 0.4 seconds
+        .easing(Easing.Quadratic.InOut)
+        .onUpdate(() => {
+            ribbons.material.opacity = currentState.opacity;
+            ribbons.material.needsUpdate = true;
+        })
+        .onComplete(() => {
+            tweenGroup.remove(tween);
+        });
+
+    tweenGroup.add(tween);
+    tween.start();
+}
+
+function dotTweenOpacity(spheres, initialOpacity, targetOpacity, duration = 300) {
     tweenGroup.removeAll();
 
     spheres.forEach(sphere => {
         const currentState = { opacity: initialOpacity };
         const targetState = { opacity: targetOpacity };
         const tween = new Tween(currentState)
-            .to(targetState, 220)
+            .to(targetState, duration)
             .easing(Easing.Quadratic.InOut)
             .onUpdate(() => {
                 sphere.material.opacity = currentState.opacity;
@@ -309,26 +328,6 @@ function dotRandomizePositions(spheres, dotBounds) {
         const z = (Math.random() * 2 - 1) * (bounds * 0.65);
         return new THREE.Vector3(x, y, z);
     }
-}
-
-// to use, must first add accessor to ribbons variable from /anim.js
-function ribbonTweenOpacity(ribbons, initialOpacity, targetOpacity) {
-    const currentState = { opacity: initialOpacity };
-    const targetState = { opacity: targetOpacity };
-
-    const tween = new Tween(currentState)
-        .to(targetState, 300) // 0.4 seconds
-        .easing(Easing.Quadratic.InOut)
-        .onUpdate(() => {
-            ribbons.material.opacity = currentState.opacity;
-            ribbons.material.needsUpdate = true;
-        })
-        .onComplete(() => {
-            tweenGroup.remove(tween);
-        });
-
-    tweenGroup.add(tween);
-    tween.start();
 }
 
 function smoothLerp(start, end, progress) {
