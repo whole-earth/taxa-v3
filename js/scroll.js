@@ -12,7 +12,7 @@ const productStartFOV = zoomOutEndFOV;
 const productEndFOV = 150;
 
 const dotsGreen = '#71ff00';
-const dotsRed = '#ff8e00';
+const dotsOrange = '#ff8e00';
 const dotsYellow = '#f1ff00';
 
 function scrollLogic(controls, camera, spheres, dotBounds, product) {
@@ -29,7 +29,7 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
         if (!splashAlready) {
             activateText(splashArea);
             if (comingFrom == 'zoomAreaFirst') {
-                dotTweenOpacity(1, 0)
+                dotTweenOpacity(spheres, 1, 0);
             }
             splashAlready = true;
             zoomAlready = false;
@@ -63,9 +63,9 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
 
                     if (comingFrom == 'splash') {
                         // tweenDots(spheres, dotsGreen, dotsGreen, 0, 1);
-                        dotTweenOpacity(0, 1)
+                        dotTweenOpacity(spheres, 0, 1);
                     } else if (comingFrom == 'zoomAreaSecond') {
-                        //tweenDots(spheres, dotsRed, dotsGreen);
+                        //tweenDots(spheres, dotsOrange, dotsGreen);
                     }
 
                     zoomFirstAlready = true;
@@ -78,13 +78,13 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
                 if (!zoomSecondAlready) {
                     activateZoomChildText(zoomSecond);
 
-                    dotUpdateColors(spheres, dotsRed);
+                    dotUpdateColors(spheres, dotsOrange);
                     dotRandomizePositions(spheres, dotBounds);
 
                     if (comingFrom == 'zoomAreaFirst') {
-                        // tweenDots(spheres, dotsGreen, dotsRed);
+                        // tweenDots(spheres, dotsGreen, dotsOrange);
                     } else if (comingFrom == 'zoomAreaThird') {
-                        // tweenDots(spheres, dotsYellow, dotsRed);
+                        // tweenDots(spheres, dotsYellow, dotsOrange);
 
                     }
 
@@ -103,9 +103,9 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
                     dotRandomizePositions(spheres, dotBounds);
 
                     if (comingFrom == 'zoomAreaSecond') {
-                        // tweenDots(spheres, dotsRed, dotsYellow);
+                        // tweenDots(spheres, dotsOrange, dotsYellow);
                     } else if (comingFrom == 'zoomOutArea') {
-                        // tweenDots(spheres, dotsYellow, dotsYellow, 0, 1);
+                        dotTweenOpacity(spheres, 0, 1);
                     }
 
                     zoomFirstAlready = false;
@@ -124,7 +124,7 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
             activateText(zoomOutArea);
 
             if (comingFrom == 'zoomAreaThird') {
-                tweenDotOpacity(1, 0);
+                dotTweenOpacity(spheres, 1, 0);
             } else if (comingFrom == 'productArea') {
             }
 
@@ -312,7 +312,7 @@ function dotRandomizePositions(spheres, dotBounds) {
 }
 
 // to use, must first add accessor to ribbons variable from /anim.js
-function tweenRibbons(ribbons, initialOpacity, targetOpacity) {
+function ribbonTweenOpacity(ribbons, initialOpacity, targetOpacity) {
     const currentState = { opacity: initialOpacity };
     const targetState = { opacity: targetOpacity };
 

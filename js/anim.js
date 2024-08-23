@@ -30,7 +30,7 @@ function initScene() {
         renderer = initRenderer();
         controls = initControls(camera, renderer);
         initLights(scene, renderer);
-        window.addEventListener('scroll', () => animatePage(controls, camera, spheres, product, lastScrollY, scrollTimeout));
+        window.addEventListener('scroll', () => animatePage(controls, camera, spheres, dotBounds, product, lastScrollY, scrollTimeout));
         window.addEventListener('resize', () => resizeScene(renderer, camera));
 
         class CellComponent {
