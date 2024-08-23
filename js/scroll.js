@@ -123,14 +123,7 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
             if (comingFrom == 'zoomAreaThird') {
                 tweenDots(spheres, dotsYellow, dotsYellow, 1, 0);
             } else if (comingFrom == 'productArea'){
-                if (product){
-                    product.traverse((node) => {
-                        if (node.isMesh) {
-                            node.material.opacity = 0;
-                            node.material.needsUpdate = true;
-                        }
-                    });
-                }
+
             }
 
             splashAlready = false;
@@ -158,12 +151,7 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
             controls.enableRotate = false;
 
             if (product){
-                product.traverse((node) => {
-                    if (node.isMesh) {
-                        node.material.opacity = 1;
-                        node.material.needsUpdate = true;
-                    }
-                });
+                // set opacity to 1
             }
             console.log(product)
 
