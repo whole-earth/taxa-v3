@@ -125,7 +125,7 @@ function scrollLogic(controls, camera, spheres, wavingBlob, dotBounds, product) 
             activateText(zoomOutArea);
 
             if (comingFrom == 'zoomAreaThird') {
-                dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeInDuration); // final fadeout
+                dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
             } else if (comingFrom == 'productArea') {
                 controls.autoRotate = true;
             }
@@ -309,66 +309,14 @@ function dotTweenOpacity(spheres, initialOpacity, targetOpacity, wavingBlob, sca
     });
 
     if (scale) {
-        const initialScale = { scale: 0.7 };
+        const initialScale = { scale: 0.8 };
         const targetScale = { scale: 1.0 };
 
         const scaleTween = new Tween(initialScale)
-            .to(targetScale, (duration*1.5))
+            .to(targetScale, (duration*1.2))
             .easing(Easing.Quadratic.InOut)
             .onUpdate(() => {
                 wavingBlob.scale.set(initialScale.scale, initialScale.scale, initialScale.scale);
-                //wavingBlob.parent.scale.set(initialScale.scale, initialScale.scale, initialScale.scale);
-            })
-            .onComplete(() => {
-                tweenGroup.remove(scaleTween);
-            });
-
-        tweenGroup.add(scaleTween);
-        scaleTween.start();
-    }
-}
-
-function dotTweenOpacityEx(spheres, initialOpacity, targetOpacity, wavingBlob, scale = false, duration = 300) {
-    // Reset array each time it's called
-    tweenGroup.removeAll();
-
-    spheres.forEach(sphere => {
-        const currentState = { 
-            opacity: initialOpacity,
-            scale: scale ? 0.7 : sphere.scale.x
-        };
-        const targetState = { 
-            opacity: targetOpacity,
-            scale: scale ? 1.0 : sphere.scale.x
-        };
-
-        const tween = new Tween(currentState)
-            .to(targetState, duration)
-            .easing(Easing.Quadratic.InOut)
-            .onUpdate(() => {
-                if (scale) {
-                    sphere.scale.set(currentState.scale, currentState.scale, currentState.scale);
-                }
-                sphere.material.opacity = currentState.opacity;
-                sphere.material.needsUpdate = true;
-            })
-            .onComplete(() => {
-                tweenGroup.remove(tween);
-            });
-        
-        tweenGroup.add(tween);
-        tween.start();
-    });
-
-    if (scale) {
-        const initialScale = { scale: 0.7 };
-        const targetScale = { scale: 1.0 };
-
-        const scaleTween = new Tween(initialScale)
-            .to(targetScale, (duration*1.5))
-            .easing(Easing.Quadratic.InOut)
-            .onUpdate(() => {
-                wavingBlob.parent.scale.set(initialScale.scale, initialScale.scale, initialScale.scale);
             })
             .onComplete(() => {
                 tweenGroup.remove(scaleTween);
