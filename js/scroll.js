@@ -336,7 +336,7 @@ function dotTweenOpacity(wavingBlob, spheres, initialOpacity, targetOpacity, sca
         scale: targetScale
     };
 
-    const tween = new Tween(currentState)
+    const tween = new Tween(spheres, currentState)
         .to(targetState, duration)
         .easing(Easing.Quadratic.InOut)
         .onUpdate(() => {
