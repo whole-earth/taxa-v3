@@ -30,7 +30,7 @@ function scrollLogic(controls, camera, wavingBlob, spheres, dotBounds, product) 
         if (!splashAlready) {
             activateText(splashArea);
             if (comingFrom == 'zoomAreaFirst') {
-                dotTweenOpacity(wavingBlob, spheres, 1, 0);
+                dotTweenOpacity(spheres, 1, 0);
             }
             splashAlready = true;
             zoomAlready = false;
@@ -45,6 +45,7 @@ function scrollLogic(controls, camera, wavingBlob, spheres, dotBounds, product) 
     else if (zoomBool) {
         zoomProgress = scrollProgress(zoomArea);
         camera.fov = smoothLerp(zoomStartFOV, zoomEndFOV, zoomProgress);
+        //(zoomProgress)
 
         if (!zoomAlready) {
             activateText(zoomArea);
@@ -60,13 +61,13 @@ function scrollLogic(controls, camera, wavingBlob, spheres, dotBounds, product) 
                     activateText__ZoomChild(zoomFirst);
 
                     if (comingFrom == 'splash') {
-                        dotTweenOpacity(wavingBlob, spheres, 0, 1, true, fadeInDuration); // true = scale
+                        dotTweenOpacity(spheres, 0, 1, true, fadeInDuration); // true = scale
                     } else if (comingFrom == 'zoomAreaSecond') {
-                        dotTweenOpacity(wavingBlob, spheres, 1, 0, fadeOutDuration);
+                        dotTweenOpacity(spheres, 1, 0, fadeOutDuration);
                         setTimeout(() => {
                             dotUpdateColors(spheres, dotsGreen);
                             dotRandomizePositions(spheres, dotBounds);
-                            dotTweenOpacity(wavingBlob, spheres, 0, 1, true, fadeInDuration);
+                            dotTweenOpacity(spheres, 0, 1, fadeInDuration);
                         }, fadeOutDuration);
                     }
 
@@ -80,12 +81,12 @@ function scrollLogic(controls, camera, wavingBlob, spheres, dotBounds, product) 
                 if (!zoomSecondAlready) {
 
                     activateText__ZoomChild(zoomSecond);
-                    dotTweenOpacity(wavingBlob, spheres, 1, 0, fadeOutDuration);
+                    dotTweenOpacity(spheres, 1, 0, fadeOutDuration);
 
                     setTimeout(() => {
                         dotUpdateColors(spheres, dotsOrange);
                         dotRandomizePositions(spheres, dotBounds);
-                        dotTweenOpacity(wavingBlob, spheres, 0, 1, true, fadeInDuration);
+                        dotTweenOpacity(spheres, 0, 1, true, fadeInDuration);
                     }, fadeOutDuration);
 
                     zoomFirstAlready = false;
@@ -99,14 +100,14 @@ function scrollLogic(controls, camera, wavingBlob, spheres, dotBounds, product) 
                     activateText__ZoomChild(zoomThird);
 
                     if (comingFrom == 'zoomAreaSecond') {
-                        dotTweenOpacity(wavingBlob, spheres, 1, 0, fadeOutDuration);
+                        dotTweenOpacity(spheres, 1, 0, fadeOutDuration);
                         setTimeout(() => {
                             dotUpdateColors(spheres, dotsYellow);
                             dotRandomizePositions(spheres, dotBounds);
-                            dotTweenOpacity(wavingBlob, spheres, 0, 1, true, fadeInDuration);
+                            dotTweenOpacity(spheres, 0, 1, true, fadeInDuration);
                         }, fadeOutDuration);
                     } else if (comingFrom == 'zoomOutArea') {
-                        dotTweenOpacity(wavingBlob, spheres, 0, 1, true, fadeInDuration);
+                        dotTweenOpacity(spheres, 0, 1, true, fadeInDuration);
                     }
 
                     zoomFirstAlready = false;
@@ -125,7 +126,7 @@ function scrollLogic(controls, camera, wavingBlob, spheres, dotBounds, product) 
             activateText(zoomOutArea);
 
             if (comingFrom == 'zoomAreaThird') {
-                dotTweenOpacity(wavingBlob, spheres, 1, 0, 240); // final fadeout
+                dotTweenOpacity(spheres, 1, 0, 240); // final fadeout
             } else if (comingFrom == 'productArea') {
                 controls.autoRotate = true;
             }
@@ -285,11 +286,43 @@ function ribbonTweenOpacity(ribbons, initialOpacity, targetOpacity) {
     tween.start();
 }
 
-function dotTweenOpacity(spheres, wavingBlob, initialOpacity, targetOpacity, scale = false, duration = 280) {
+function dotTweenOpacityPrev(spheres, initialOpacity, targetOpacity, scale = false, duration = 280) {
     // Reset array each time it's called
     tweenGroup.removeAll();
 
-    console.log(wavingBlob)
+    const initialScale = 0.7;
+    const targetScale  = 1.0;
+
+    spheres.forEach(sphere => {
+        const currentState = {
+            opacity: initialOpacity,
+            scale: initialScale
+        };
+
+        const targetState = {
+            opacity: targetOpacity,
+            scale: targetScale
+        };
+
+        const tween = new Tween(currentState)
+            .to(targetState, duration)
+            .easing(Easing.Quadratic.InOut)
+            .onUpdate(() => {
+                sphere.material.opacity = currentState.opacity;
+                if (scale) { sphere.scale.set(currentState.scale, currentState.scale, currentState.scale); }
+                sphere.material.needsUpdate = true;
+            })
+            .onComplete(() => {
+                tweenGroup.remove(tween);
+            });
+        tweenGroup.add(tween);
+        tween.start();
+    });
+}
+
+function dotTweenOpacity(wavingBlob, initialOpacity, targetOpacity, scale = false, duration = 280) {
+    // Reset array each time it's called
+    tweenGroup.removeAll();
 
     const initialScale = 0.7;
     const targetScale  = 1.0;
@@ -308,27 +341,17 @@ function dotTweenOpacity(spheres, wavingBlob, initialOpacity, targetOpacity, sca
         .to(targetState, duration)
         .easing(Easing.Quadratic.InOut)
         .onUpdate(() => {
-            spheres.forEach(sphere => {
+            wavingBlob.children.forEach(sphere => {
                 sphere.material.opacity = currentState.opacity;
-                if (scale) {
-                    sphere.scale.set(currentState.scale, currentState.scale, currentState.scale);
-                }
                 sphere.material.needsUpdate = true;
             });
-
-            if (scale && wavingBlob) {
-                // Ensure wavingBlob is defined and has a scale property
-                if (wavingBlob.scale) {
-                    wavingBlob.scale.set(currentState.scale, currentState.scale, currentState.scale);
-                } else {
-                    console.error('wavingBlob does not have a scale property');
-                }
+            if (scale) {
+                wavingBlob.scale.set(currentState.scale, currentState.scale, currentState.scale);
             }
         })
         .onComplete(() => {
             tweenGroup.remove(tween);
         });
-
     tweenGroup.add(tween);
     tween.start();
 }
