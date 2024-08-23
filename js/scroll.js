@@ -290,6 +290,9 @@ function dotTweenOpacity(spheres, initialOpacity, targetOpacity, duration = 300)
     // Reset array each time it's called
     tweenGroup.removeAll();
 
+    const initialScale = 0.7;
+    const targetScale  = 1.0;
+
     spheres.forEach(sphere => {
         const currentState = {
             opacity: initialOpacity,
@@ -302,11 +305,10 @@ function dotTweenOpacity(spheres, initialOpacity, targetOpacity, duration = 300)
         };
 
         const tween = new Tween(currentState)
-            .to(targetState, 400)
+            .to(targetState, duration)
             .easing(Easing.Quadratic.InOut)
             .onUpdate(() => {
                 sphere.material.opacity = currentState.opacity;
-                sphere.scale.set(currentState.scale, currentState.scale, currentState.scale);
                 sphere.material.needsUpdate = true;
             })
             .onComplete(() => {
