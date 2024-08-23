@@ -30,7 +30,7 @@ function scrollLogic(controls, camera, wavingBlob, spheres, dotBounds, product) 
         if (!splashAlready) {
             activateText(splashArea);
             if (comingFrom == 'zoomAreaFirst') {
-                dotTweenOpacity(wavingBlob, 1, 0);
+                dotTweenOpacity(wavingBlob, spheres, 1, 0);
             }
             splashAlready = true;
             zoomAlready = false;
@@ -60,13 +60,13 @@ function scrollLogic(controls, camera, wavingBlob, spheres, dotBounds, product) 
                     activateText__ZoomChild(zoomFirst);
 
                     if (comingFrom == 'splash') {
-                        dotTweenOpacity(wavingBlob, 0, 1, true, fadeInDuration); // true = scale
+                        dotTweenOpacity(wavingBlob, spheres, 0, 1, true, fadeInDuration); // true = scale
                     } else if (comingFrom == 'zoomAreaSecond') {
-                        dotTweenOpacity(wavingBlob, 1, 0, fadeOutDuration);
+                        dotTweenOpacity(wavingBlob, spheres, 1, 0, fadeOutDuration);
                         setTimeout(() => {
                             dotUpdateColors(spheres, dotsGreen);
                             dotRandomizePositions(spheres, dotBounds);
-                            dotTweenOpacity(wavingBlob, 0, 1, fadeInDuration);
+                            dotTweenOpacity(wavingBlob, spheres, 0, 1, fadeInDuration);
                         }, fadeOutDuration);
                     }
 
@@ -80,12 +80,12 @@ function scrollLogic(controls, camera, wavingBlob, spheres, dotBounds, product) 
                 if (!zoomSecondAlready) {
 
                     activateText__ZoomChild(zoomSecond);
-                    dotTweenOpacity(wavingBlob, 1, 0, fadeOutDuration);
+                    dotTweenOpacity(wavingBlob, spheres, 1, 0, fadeOutDuration);
 
                     setTimeout(() => {
                         dotUpdateColors(spheres, dotsOrange);
                         dotRandomizePositions(spheres, dotBounds);
-                        dotTweenOpacity(wavingBlob, 0, 1, true, fadeInDuration);
+                        dotTweenOpacity(wavingBlob, spheres, 0, 1, true, fadeInDuration);
                     }, fadeOutDuration);
 
                     zoomFirstAlready = false;
@@ -99,14 +99,14 @@ function scrollLogic(controls, camera, wavingBlob, spheres, dotBounds, product) 
                     activateText__ZoomChild(zoomThird);
 
                     if (comingFrom == 'zoomAreaSecond') {
-                        dotTweenOpacity(wavingBlob, 1, 0, fadeOutDuration);
+                        dotTweenOpacity(wavingBlob, spheres, 1, 0, fadeOutDuration);
                         setTimeout(() => {
                             dotUpdateColors(spheres, dotsYellow);
                             dotRandomizePositions(spheres, dotBounds);
-                            dotTweenOpacity(wavingBlob, 0, 1, true, fadeInDuration);
+                            dotTweenOpacity(wavingBlob, spheres, 0, 1, true, fadeInDuration);
                         }, fadeOutDuration);
                     } else if (comingFrom == 'zoomOutArea') {
-                        dotTweenOpacity(wavingBlob, 0, 1, true, fadeInDuration);
+                        dotTweenOpacity(wavingBlob, spheres, 0, 1, true, fadeInDuration);
                     }
 
                     zoomFirstAlready = false;
@@ -125,7 +125,7 @@ function scrollLogic(controls, camera, wavingBlob, spheres, dotBounds, product) 
             activateText(zoomOutArea);
 
             if (comingFrom == 'zoomAreaThird') {
-                dotTweenOpacity(wavingBlob, 1, 0, 240); // final fadeout
+                dotTweenOpacity(wavingBlob, spheres, 1, 0, 240); // final fadeout
             } else if (comingFrom == 'productArea') {
                 controls.autoRotate = true;
             }
@@ -319,7 +319,7 @@ function dotTweenOpacityPrev(spheres, initialOpacity, targetOpacity, scale = fal
     });
 }
 
-function dotTweenOpacity(wavingBlob, initialOpacity, targetOpacity, scale = false, duration = 280) {
+function dotTweenOpacity(wavingBlob, spheres, initialOpacity, targetOpacity, scale = false, duration = 280) {
     // Reset array each time it's called
     tweenGroup.removeAll();
 
@@ -340,7 +340,7 @@ function dotTweenOpacity(wavingBlob, initialOpacity, targetOpacity, scale = fals
         .to(targetState, duration)
         .easing(Easing.Quadratic.InOut)
         .onUpdate(() => {
-            wavingBlob.children.forEach(sphere => {
+            spheres.forEach(sphere => {
                 sphere.material.opacity = currentState.opacity;
                 sphere.material.needsUpdate = true;
             });
