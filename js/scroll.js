@@ -17,7 +17,7 @@ const dotsYellow = '#f1ff00';
 const fadeOutDuration = 60;
 const fadeInDuration = 280;
 
-function scrollLogic(controls, camera, spheres, dotBounds, product) {
+function scrollLogic(controls, camera, spheres, wavingBlob, dotBounds, product) {
     splashBool = isVisibleBetweenTopAndBottom(splashArea);
     zoomBool = isVisibleBetweenTopAndBottom(zoomArea);
     zoomOutBool = isVisibleBetweenTopAndBottom(zoomOutArea);
@@ -30,7 +30,7 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
         if (!splashAlready) {
             activateText(splashArea);
             if (comingFrom == 'zoomAreaFirst') {
-                dotTweenOpacity(spheres, 1, 0);
+                dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
             }
             splashAlready = true;
             zoomAlready = false;
@@ -45,7 +45,8 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
     else if (zoomBool) {
         zoomProgress = scrollProgress(zoomArea);
         camera.fov = smoothLerp(zoomStartFOV, zoomEndFOV, zoomProgress);
-        console.log(zoomProgress)
+
+        //console.log(wavingBlob.parent.scale)
 
         if (!zoomAlready) {
             activateText(zoomArea);
@@ -61,13 +62,13 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
                     activateText__ZoomChild(zoomFirst);
 
                     if (comingFrom == 'splash') {
-                        dotTweenOpacity(spheres, 0, 1, fadeInDuration);
+                        dotTweenOpacity(spheres, 0, 1, wavingBlob, true, fadeInDuration);
                     } else if (comingFrom == 'zoomAreaSecond') {
-                        dotTweenOpacity(spheres, 1, 0, fadeOutDuration);
+                        dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
                         setTimeout(() => {
                             dotUpdateColors(spheres, dotsGreen);
                             dotRandomizePositions(spheres, dotBounds);
-                            dotTweenOpacity(spheres, 0, 1, fadeInDuration);
+                            dotTweenOpacity(spheres, 0, 1, wavingBlob, true, fadeInDuration);
                         }, fadeOutDuration);
                     }
 
@@ -81,12 +82,12 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
                 if (!zoomSecondAlready) {
 
                     activateText__ZoomChild(zoomSecond);
-                    dotTweenOpacity(spheres, 1, 0, fadeOutDuration);
+                    dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
 
                     setTimeout(() => {
                         dotUpdateColors(spheres, dotsOrange);
                         dotRandomizePositions(spheres, dotBounds);
-                        dotTweenOpacity(spheres, 0, 1, fadeInDuration);
+                        dotTweenOpacity(spheres, 0, 1, wavingBlob, true, fadeInDuration);
                     }, fadeOutDuration);
 
                     zoomFirstAlready = false;
@@ -100,14 +101,14 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
                     activateText__ZoomChild(zoomThird);
 
                     if (comingFrom == 'zoomAreaSecond') {
-                        dotTweenOpacity(spheres, 1, 0, fadeOutDuration);
+                        dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
                         setTimeout(() => {
                             dotUpdateColors(spheres, dotsYellow);
                             dotRandomizePositions(spheres, dotBounds);
-                            dotTweenOpacity(spheres, 0, 1, fadeInDuration);
+                            dotTweenOpacity(spheres, 0, 1, wavingBlob, true, fadeInDuration);
                         }, fadeOutDuration);
                     } else if (comingFrom == 'zoomOutArea') {
-                        dotTweenOpacity(spheres, 0, 1, fadeInDuration);
+                        dotTweenOpacity(spheres, 0, 1, wavingBlob, true, fadeInDuration);
                     }
 
                     zoomFirstAlready = false;
@@ -126,7 +127,7 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
             activateText(zoomOutArea);
 
             if (comingFrom == 'zoomAreaThird') {
-                dotTweenOpacity(spheres, 1, 0, 240); // final fadeout
+                dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeInDuration); // final fadeout
             } else if (comingFrom == 'productArea') {
                 controls.autoRotate = true;
             }
@@ -198,7 +199,7 @@ let zoomFirstAlready = false;
 let zoomSecondAlready = false;
 let zoomThirdAlready = false;
 
-export function animatePage(controls, camera, spheres, dotBounds, product, scrollTimeout) {
+export function animatePage(controls, camera, spheres, wavingBlob, dotBounds, product, scrollTimeout) {
     let scrollY = window.scrollY;
     let scrollDiff = scrollY - lastScrollY;
     const multiplier = Math.floor(scrollDiff / 20);
@@ -209,7 +210,7 @@ export function animatePage(controls, camera, spheres, dotBounds, product, scrol
         controls.autoRotateSpeed = 0.2;
     }, 100);
 
-    throttle(() => scrollLogic(controls, camera, spheres, dotBounds, product), 30)();
+    throttle(() => scrollLogic(controls, camera, spheres, wavingBlob, dotBounds, product), 30)();
     camera.updateProjectionMatrix();
     setLastScrollY(scrollY);
 };
@@ -267,7 +268,7 @@ function activateText__ZoomChild(activeElement) {
 }
 
 // to use, must first add accessor to ribbons variable from /anim.js
-function ribbonTweenOpacity(ribbons, initialOpacity, targetOpacity) {
+function ribbonTweenOpacity(ribbons, wavingBlob, initialOpacity, targetOpacity) {
     const currentState = { opacity: initialOpacity };
     const targetState = { opacity: targetOpacity };
 
@@ -286,23 +287,13 @@ function ribbonTweenOpacity(ribbons, initialOpacity, targetOpacity) {
     tween.start();
 }
 
-function dotTweenOpacity(spheres, initialOpacity, targetOpacity, duration = 300) {
+function dotTweenOpacity(spheres, initialOpacity, targetOpacity, wavingBlob, scale = false, duration = 300) {
     // Reset array each time it's called
     tweenGroup.removeAll();
 
-    const initialScale = 0.7;
-    const targetScale  = 1.0;
-
     spheres.forEach(sphere => {
-        const currentState = {
-            opacity: initialOpacity,
-            scale: initialScale
-        };
-
-        const targetState = {
-            opacity: targetOpacity,
-            scale: targetScale
-        };
+        const currentState = { opacity: initialOpacity };
+        const targetState = { opacity: targetOpacity };
 
         const tween = new Tween(currentState)
             .to(targetState, duration)
@@ -318,6 +309,24 @@ function dotTweenOpacity(spheres, initialOpacity, targetOpacity, duration = 300)
         tweenGroup.add(tween);
         tween.start();
     });
+
+    if (scale) {
+        const initialScale = { scale: 0.7 };
+        const targetScale = { scale: 1.0 };
+
+        const scaleTween = new Tween(initialScale)
+            .to(targetScale, (duration*1.5))
+            .easing(Easing.Quadratic.InOut)
+            .onUpdate(() => {
+                wavingBlob.parent.scale.set(initialScale.scale, initialScale.scale, initialScale.scale);
+            })
+            .onComplete(() => {
+                tweenGroup.remove(scaleTween);
+            });
+
+        tweenGroup.add(scaleTween);
+        scaleTween.start();
+    }
 }
 
 function dotUpdateColors(spheres, color) {
