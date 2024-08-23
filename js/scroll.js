@@ -9,13 +9,20 @@ const zoomEndFOV = splashEndFOV * 1.15;
 const zoomOutStartFOV = zoomEndFOV;
 const zoomOutEndFOV = splashStartFOV;
 const productStartFOV = zoomOutEndFOV;
-const productEndFOV = 150;
+const productEndFOV = 100;
 
 const dotsGreen = '#71ff00';
 const dotsOrange = '#ff8e00';
 const dotsYellow = '#f1ff00';
 const fadeOutDuration = 60;
 const fadeInDuration = 280;
+
+// ============================
+
+const productStartScale = 20;
+const productEndScale = 5;
+
+// ============================
 
 function scrollLogic(controls, camera, spheres, wavingBlob, dotBounds, product) {
     splashBool = isVisibleBetweenTopAndBottom(splashArea);
@@ -128,6 +135,13 @@ function scrollLogic(controls, camera, spheres, wavingBlob, dotBounds, product) 
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
             } else if (comingFrom == 'productArea') {
                 controls.autoRotate = true;
+
+                product.children.forEach(child => {
+                    if (child.material) {
+                        child.material.opacity = 0;
+                        child.material.needsUpdate = true;
+                    }
+                });
             }
 
             splashAlready = false;
@@ -142,23 +156,32 @@ function scrollLogic(controls, camera, spheres, wavingBlob, dotBounds, product) 
 
     }
     else if (productBool) {
+
         productProgress = scrollProgress__Last(productArea);
-        // console.log(productProgress)
 
         camera.fov = smoothLerp(productStartFOV, productEndFOV, productProgress);
 
-        // and the scale() of product must be > inverse of fov
-        // make product accessible
+        if (product && product.children) {
+
+            // product opacity
+            product.children.forEach(child => {
+                if (child.material) {
+                    child.material.opacity = productProgress;
+                    child.material.needsUpdate = true;
+                }
+            });
+
+            // product scale
+            const scale = smoothLerp(productStartScale, productEndScale, productProgress);
+            product.scale.set(scale, scale, scale);
+
+            // cell scale -> decrease a bit to support scale
+
+        }
 
         if (!productAlready) {
             controls.autoRotate = false;
             controls.enableRotate = false;
-
-            if (product) {
-                // set opacity to 1
-            }
-            // console.log(product)
-
             activateText(productArea);
             splashAlready = false;
             zoomAlready = false;
@@ -265,30 +288,8 @@ function activateText__ZoomChild(activeElement) {
     }
 }
 
-// to use, must first add accessor to ribbons variable from /anim.js
-function ribbonTweenOpacity(ribbons, wavingBlob, initialOpacity, targetOpacity) {
-    const currentState = { opacity: initialOpacity };
-    const targetState = { opacity: targetOpacity };
-
-    const tween = new Tween(currentState)
-        .to(targetState, 300) // 0.4 seconds
-        .easing(Easing.Quadratic.InOut)
-        .onUpdate(() => {
-            ribbons.material.opacity = currentState.opacity;
-            ribbons.material.needsUpdate = true;
-        })
-        .onComplete(() => {
-            tweenGroup.remove(tween);
-        });
-
-    tweenGroup.add(tween);
-    tween.start();
-}
-
 function dotTweenOpacity(spheres, initialOpacity, targetOpacity, wavingBlob, scale = false, duration = 300) {
-    // Reset array each time it's called
     tweenGroup.removeAll();
-
     spheres.forEach(sphere => {
         const currentState = { opacity: initialOpacity };
         const targetState = { opacity: targetOpacity };
@@ -303,7 +304,7 @@ function dotTweenOpacity(spheres, initialOpacity, targetOpacity, wavingBlob, sca
             .onComplete(() => {
                 tweenGroup.remove(sphereTween);
             });
-        
+
         tweenGroup.add(sphereTween);
         sphereTween.start();
     });
@@ -313,7 +314,7 @@ function dotTweenOpacity(spheres, initialOpacity, targetOpacity, wavingBlob, sca
         const targetScale = { scale: 1.0 };
 
         const scaleTween = new Tween(initialScale)
-            .to(targetScale, (duration*1.2))
+            .to(targetScale, (duration * 1.2))
             .easing(Easing.Quadratic.InOut)
             .onUpdate(() => {
                 wavingBlob.scale.set(initialScale.scale, initialScale.scale, initialScale.scale);
