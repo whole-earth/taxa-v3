@@ -15,7 +15,7 @@ const dotsGreen = '#71ff00';
 const dotsOrange = '#ff8e00';
 const dotsYellow = '#f1ff00';
 const fadeOutDuration = 60;
-const fadeInDuration = 240;
+const fadeInDuration = 280;
 
 function scrollLogic(controls, camera, spheres, dotBounds, product) {
     splashBool = isVisibleBetweenTopAndBottom(splashArea);
@@ -45,6 +45,7 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
     else if (zoomBool) {
         zoomProgress = scrollProgress(zoomArea);
         camera.fov = smoothLerp(zoomStartFOV, zoomEndFOV, zoomProgress);
+        console.log(zoomProgress)
 
         if (!zoomAlready) {
             activateText(zoomArea);
