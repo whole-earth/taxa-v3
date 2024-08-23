@@ -18,7 +18,8 @@ export function setLastScrollY(value) { lastScrollY = value; }
 function initScene() {
     let scene, camera, renderer, controls;
     let scrollTimeout;
-    let dotBounds, blobInner, blobOuter, ribbons, product, wavingBlob;
+    let dotBounds, blobInner, blobOuter, ribbons, wavingBlob;
+    let productAnchor, product;
     const spheres = [];
 
     return new Promise((resolve) => {
@@ -102,10 +103,8 @@ function initScene() {
                 this.loader.load(fullPath, (gltf) => {
                     this.object = gltf.scene;
                     this.object.position.copy(this.position);
-                    this.scene.add(this.object);
                     this.centerObject(this.object);
-                    // rotate: initialize with top-view: console.log degree calc
-                    // will later manip degree in productBool
+                    this.object.rotation.x = Math.PI / 2;
                     if (shader) this.applyCustomShader(shader);
                     this.object.renderOrder = renderOrder;
                     resolve(this.object);
@@ -134,19 +133,16 @@ function initScene() {
 
             new CellComponent("blob-inner.glb", iridescent, 1).then((object) => {
                 blobInner = object;
-                //console.log(blobInner)
                 resolve();
             }),
 
             new CellComponent("blob-outer.glb", dispersion, 2).then((object) => {
                 blobOuter = object;
-                //console.log(blobOuter)
                 resolve();
             }),
 
             new CellComponent("ribbons.glb", grayPurple, 3).then((object) => {
                 ribbons = object;
-                //console.log(ribbons)
                 resolve();
             })
 
@@ -155,7 +151,9 @@ function initScene() {
         const loadProductObject = [
             new productComponent("vial_placeholder.glb", vialMaterial, 4).then((createdProduct) => {
                 product = createdProduct;
-                //console.log(product)
+                productAnchor = new THREE.Object3D();
+                productAnchor.add(product);
+                scene.add(productAnchor);
                 resolve();
             })
         ]
@@ -256,7 +254,7 @@ function initScene() {
         for (let i = 0; i < 180; i++) {
             const randomPosition = getRandomPositionWithinBounds(dotBounds);
             const sphereGeometry = new THREE.SphereGeometry(0.15, 6, 6);
-            const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x92cb86, opacity: 0, transparent: true }); // initialize spheres as 0 opacity
+            const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x92cb86, opacity: 0, transparent: true });
             const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
             sphereMesh.position.copy(randomPosition);
             const randomDirection = new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize();
@@ -287,8 +285,8 @@ function initScene() {
             });
             waveShader.uniforms.time.value += 0.01;
 
-            if (product) {
-                product.lookAt(camera.position);
+            if (productAnchor) {
+                productAnchor.lookAt(camera.position);
             }
         }
 

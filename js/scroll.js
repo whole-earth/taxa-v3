@@ -157,11 +157,24 @@ function scrollLogic(controls, camera, spheres, wavingBlob, dotBounds, product) 
     }
     else if (productBool) {
 
-        productProgress = scrollProgress__Last(productArea);
+        if (!productAlready) {
+            controls.autoRotate = false;
+            controls.enableRotate = false;
+            controls.autoRotateSpeed = 0;
+            activateText(productArea);
+            splashAlready = false;
+            zoomAlready = false;
+            zoomOutAlready = false;
+            productAlready = true;
+            comingFrom = 'productArea';
+        }
 
+        productProgress = scrollProgress__Last(productArea);
         camera.fov = smoothLerp(productStartFOV, productEndFOV, productProgress);
 
         if (product && product.children) {
+
+            // cell scale -> decrease a bit to support scale
 
             // product opacity
             product.children.forEach(child => {
@@ -175,19 +188,18 @@ function scrollLogic(controls, camera, spheres, wavingBlob, dotBounds, product) 
             const scale = smoothLerp(productStartScale, productEndScale, productProgress);
             product.scale.set(scale, scale, scale);
 
-            // cell scale -> decrease a bit to support scale
+            // product transform
+            if (productProgress < 1 / 3) {
+                const rotationProgress = productProgress * 3;
+                const startRotation = Math.PI / 2; // 90deg
+                const endRotation = 0;
+                product.rotation.x = smoothLerp(startRotation, endRotation, rotationProgress);
+            } else if (productProgress < 2 / 3) {
+                product.rotation.x = 0;
+            } else {
+                //x
+            }
 
-        }
-
-        if (!productAlready) {
-            controls.autoRotate = false;
-            controls.enableRotate = false;
-            activateText(productArea);
-            splashAlready = false;
-            zoomAlready = false;
-            zoomOutAlready = false;
-            productAlready = true;
-            comingFrom = 'productArea';
         }
 
     }
