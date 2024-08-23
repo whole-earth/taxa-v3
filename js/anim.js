@@ -223,7 +223,7 @@ function initScene() {
         dotBounds = boundingBoxes[1].max.z * 0.85;
         const waveGeom = new THREE.SphereGeometry(dotBounds, 32, 32);
         const waveShader = new THREE.ShaderMaterial({
-            uniforms: { time: { value: 0.0 }, opacity: { value: 0.1 } },
+            uniforms: { time: { value: 0.0 }, opacity: { value: 0.0 } },
             vertexShader: `
         varying vec3 vNormal;
         varying vec2 vUv;
