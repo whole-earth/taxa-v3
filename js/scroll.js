@@ -76,9 +76,10 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
 
                     if (comingFrom == 'zoomAreaFirst') {
                         // tweenDots(spheres, dotsGreen, dotsRed);
-                        updateDotColors(spheres, dotsRed)
+                        updateDotColors(spheres, dotsRed);
                     } else if (comingFrom == 'zoomAreaThird') {
                         // tweenDots(spheres, dotsYellow, dotsRed);
+                        updateDotColors(spheres, dotsRed)
                     }
 
                     zoomFirstAlready = false;
@@ -93,9 +94,11 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
                     controls.autoRotate = true;
 
                     if (comingFrom == 'zoomAreaSecond') {
-                        tweenDots(spheres, dotsRed, dotsYellow);
+                        // tweenDots(spheres, dotsRed, dotsYellow);
+                        updateDotColors(spheres, dotsYellow);
                     } else if (comingFrom == 'zoomOutArea') {
-                        tweenDots(spheres, dotsYellow, dotsYellow, 0, 1);
+                        // tweenDots(spheres, dotsYellow, dotsYellow, 0, 1);
+                        updateDotColors(spheres, dotsYellow);
                     }
 
                     zoomFirstAlready = false;
