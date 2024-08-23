@@ -77,9 +77,11 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
                     if (comingFrom == 'zoomAreaFirst') {
                         // tweenDots(spheres, dotsGreen, dotsRed);
                         updateDotColors(spheres, dotsRed);
+                        randomizeDotPositions(spheres, dotBounds);
                     } else if (comingFrom == 'zoomAreaThird') {
                         // tweenDots(spheres, dotsYellow, dotsRed);
-                        updateDotColors(spheres, dotsRed)
+                        updateDotColors(spheres, dotsRed);
+                        randomizeDotPositions(spheres, dotBounds);
                     }
 
                     zoomFirstAlready = false;
@@ -96,9 +98,11 @@ function scrollLogic(controls, camera, spheres, dotBounds, product) {
                     if (comingFrom == 'zoomAreaSecond') {
                         // tweenDots(spheres, dotsRed, dotsYellow);
                         updateDotColors(spheres, dotsYellow);
+                        randomizeDotPositions(spheres, dotBounds);
                     } else if (comingFrom == 'zoomOutArea') {
                         // tweenDots(spheres, dotsYellow, dotsYellow, 0, 1);
                         updateDotColors(spheres, dotsYellow);
+                        randomizeDotPositions(spheres, dotBounds);
                     }
 
                     zoomFirstAlready = false;
@@ -318,7 +322,20 @@ function updateDotColors(spheres, color){
 }
 
 function randomizeDotPositions(spheres, dotBounds){
+    spheres.forEach(sphere => {
+        const randomPosition = getRandomPositionWithinBounds(dotBounds);
+        sphere.position.copy(randomPosition);
+        const randomDirection = new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize();
+        sphere.velocity = randomDirection.multiplyScalar(0.014);
+        sphere.position.needsUpdate = true;
+    });
 
+    function getRandomPositionWithinBounds(bounds) {
+        const x = (Math.random() * 2 - 1) * (bounds * 0.65);
+        const y = (Math.random() * 2 - 1) * (bounds * 0.65);
+        const z = (Math.random() * 2 - 1) * (bounds * 0.65);
+        return new THREE.Vector3(x, y, z);
+    }
 }
 
 function tweenRibbonOpacity(initial, final) {
