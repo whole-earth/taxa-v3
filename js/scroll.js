@@ -66,7 +66,7 @@ function scrollLogic(controls, camera, wavingBlob, spheres, dotBounds, product) 
                         setTimeout(() => {
                             dotUpdateColors(spheres, dotsGreen);
                             dotRandomizePositions(spheres, dotBounds);
-                            dotTweenOpacity(wavingBlob, spheres, 0, 1, fadeInDuration);
+                            dotTweenOpacity(wavingBlob, spheres, 0, 1, true, fadeInDuration);
                         }, fadeOutDuration);
                     }
 
@@ -285,41 +285,7 @@ function ribbonTweenOpacity(ribbons, initialOpacity, targetOpacity) {
     tween.start();
 }
 
-function dotTweenOpacityPrev(spheres, initialOpacity, targetOpacity, scale = false, duration = 280) {
-    // Reset array each time it's called
-    tweenGroup.removeAll();
-
-    const initialScale = 0.7;
-    const targetScale  = 1.0;
-
-    spheres.forEach(sphere => {
-        const currentState = {
-            opacity: initialOpacity,
-            scale: initialScale
-        };
-
-        const targetState = {
-            opacity: targetOpacity,
-            scale: targetScale
-        };
-
-        const tween = new Tween(currentState)
-            .to(targetState, duration)
-            .easing(Easing.Quadratic.InOut)
-            .onUpdate(() => {
-                sphere.material.opacity = currentState.opacity;
-                if (scale) { sphere.scale.set(currentState.scale, currentState.scale, currentState.scale); }
-                sphere.material.needsUpdate = true;
-            })
-            .onComplete(() => {
-                tweenGroup.remove(tween);
-            });
-        tweenGroup.add(tween);
-        tween.start();
-    });
-}
-
-function dotTweenOpacity(wavingBlob, spheres, initialOpacity, targetOpacity, scale = false, duration = 280) {
+function dotTweenOpacity(spheres, wavingBlob, initialOpacity, targetOpacity, scale = false, duration = 280) {
     // Reset array each time it's called
     tweenGroup.removeAll();
 
@@ -336,21 +302,26 @@ function dotTweenOpacity(wavingBlob, spheres, initialOpacity, targetOpacity, sca
         scale: targetScale
     };
 
-    const tween = new Tween(spheres, currentState)
+    const tween = new Tween(currentState)
         .to(targetState, duration)
         .easing(Easing.Quadratic.InOut)
         .onUpdate(() => {
             spheres.forEach(sphere => {
                 sphere.material.opacity = currentState.opacity;
+                if (scale) {
+                    sphere.scale.set(currentState.scale, currentState.scale, currentState.scale);
+                }
                 sphere.material.needsUpdate = true;
             });
-            if (scale) {
+
+            if (scale && wavingBlob) {
                 wavingBlob.scale.set(currentState.scale, currentState.scale, currentState.scale);
             }
         })
         .onComplete(() => {
             tweenGroup.remove(tween);
         });
+
     tweenGroup.add(tween);
     tween.start();
 }
