@@ -289,6 +289,8 @@ function dotTweenOpacity(spheres, wavingBlob, initialOpacity, targetOpacity, sca
     // Reset array each time it's called
     tweenGroup.removeAll();
 
+    console.log(wavingBlob)
+
     const initialScale = 0.7;
     const targetScale  = 1.0;
 
@@ -315,7 +317,12 @@ function dotTweenOpacity(spheres, wavingBlob, initialOpacity, targetOpacity, sca
             });
 
             if (scale && wavingBlob) {
-                wavingBlob.scale.set(currentState.scale, currentState.scale, currentState.scale);
+                // Ensure wavingBlob is defined and has a scale property
+                if (wavingBlob.scale) {
+                    wavingBlob.scale.set(currentState.scale, currentState.scale, currentState.scale);
+                } else {
+                    console.error('wavingBlob does not have a scale property');
+                }
             }
         })
         .onComplete(() => {
