@@ -301,11 +301,11 @@ function dotTweenOpacity(spheres, initialOpacity, targetOpacity, wavingBlob, sca
                 sphere.material.needsUpdate = true;
             })
             .onComplete(() => {
-                tweenGroup.remove(tween);
+                tweenGroup.remove(sphereTween);
             });
         
         tweenGroup.add(sphereTween);
-        tween.start();
+        sphereTween.start();
     });
 
     if (scale) {
