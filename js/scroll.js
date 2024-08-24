@@ -21,6 +21,8 @@ const fadeInDuration = 280;
 
 const productStartScale = 6;
 const productEndScale = 4;
+const cellStartScale = 1;
+const cellEndScale = 0.05;
 
 // ============================
 
@@ -174,6 +176,11 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
 
         if (product && product.children) {
 
+            //cell scale
+            const cellScale = smoothLerp(cellStartScale, cellEndScale, productProgress);
+            cellObject.scale.set(cellScale, cellScale, cellScale);
+
+            // cell opacity
             cellObject.children.forEach(child => {
                 child.traverse(innerChild => {
                     if (innerChild.material) {
@@ -192,8 +199,8 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
             });
 
             // product scale
-            const scale = smoothLerp(productStartScale, productEndScale, productProgress);
-            product.scale.set(scale, scale, scale);
+            const productScale = smoothLerp(productStartScale, productEndScale, productProgress);
+            product.scale.set(productScale, productScale, productScale);
 
             // product transform
             if (0 < productProgress && productProgress <= 0.4) {
