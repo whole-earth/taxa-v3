@@ -18,7 +18,8 @@ export function setLastScrollY(value) { lastScrollY = value; }
 function initScene() {
     let scene, camera, renderer, controls;
     let scrollTimeout;
-    let dotBounds, blobInner, blobOuter, ribbons, wavingBlob;
+    let cellObject, blobInner, blobOuter, ribbons;
+    let dotBounds, wavingBlob;
     let productAnchor, product;
     const spheres = [];
 
@@ -30,8 +31,9 @@ function initScene() {
         camera = initCamera();
         renderer = initRenderer();
         controls = initControls(camera, renderer);
+        cellObject = new THREE.Object3D();
         initLights(scene, renderer);
-        window.addEventListener('scroll', () => animatePage(controls, camera, spheres, wavingBlob, dotBounds, product, lastScrollY, scrollTimeout));
+        window.addEventListener('scroll', () => animatePage(controls, camera, cellObject, spheres, wavingBlob, dotBounds, product, lastScrollY, scrollTimeout));
         window.addEventListener('resize', () => resizeScene(renderer, camera));
 
         class CellComponent {
@@ -56,7 +58,8 @@ function initScene() {
                 this.loader.load(fullPath, (gltf) => {
                     this.object = gltf.scene;
                     this.object.position.copy(this.position);
-                    this.scene.add(this.object);
+                    //this.scene.add(this.object);
+                    cellObject.add(this.object);
                     this.centerObject(this.object);
                     if (shader) this.applyCustomShader(shader);
                     this.object.renderOrder = renderOrder;
@@ -117,6 +120,8 @@ function initScene() {
                     if (node.isMesh) {
                         node.material.transparent = true;
                         node.material.opacity = 0;
+                        node.material.depthWrite = false;
+                        node.material.depthTest = false;
                         node.material.needsUpdate = true;
                     }
                 });
@@ -149,7 +154,7 @@ function initScene() {
         ];
 
         const loadProductObject = [
-            new productComponent("vial_placeholder.glb", vialMaterial, 4).then((createdProduct) => {
+            new productComponent("vial_placeholder.glb", vialMaterial, 200).then((createdProduct) => {
                 product = createdProduct;
                 productAnchor = new THREE.Object3D();
                 productAnchor.add(product);
@@ -159,6 +164,7 @@ function initScene() {
         ]
 
         Promise.all(loadCellObjects).then(() => {
+            scene.add(cellObject);
             initSpeckles(scene, boundingBoxes);
             loadProductObject;
             resolve();
@@ -220,34 +226,8 @@ function initScene() {
     function initSpeckles(scene, boundingBoxes) {
         dotBounds = boundingBoxes[1].max.z * 0.85;
         const waveGeom = new THREE.SphereGeometry(dotBounds, 32, 32);
-        const waveShader = new THREE.ShaderMaterial({
-            uniforms: { time: { value: 0.0 }, opacity: { value: 0.0 } },
-            vertexShader: `
-        varying vec3 vNormal;
-        varying vec2 vUv;
-        uniform float time;
-        float noise(vec3 p) {
-          return sin(p.x * 0.5 + time) * 0.5 + sin(p.y * 0.5 + time) * 0.5 + sin(p.z * 0.5 + time) * 0.5;
-        }
-        void main() {
-          vUv = uv;
-          vNormal = normal;
-          float deformationStrength = 0.6;
-          vec3 newPosition = position + vNormal * noise(position * deformationStrength);
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
-        }
-      `,
-            fragmentShader: `
-        uniform float opacity;
-        void main() {
-          gl_FragColor = vec4(0.823, 0.925, 0.749, opacity);
-        }
-      `,
-            transparent: true,
-            blending: THREE.NormalBlending,
-            depthWrite: false
-        });
-        wavingBlob = new THREE.Mesh(waveGeom, waveShader);
+        const waveMaterial = new THREE.MeshBasicMaterial({ color: 0x92cb86, opacity: 0, transparent: true });
+        wavingBlob = new THREE.Mesh(waveGeom, waveMaterial);
         wavingBlob.renderOrder = 1;
         scene.add(wavingBlob);
 
@@ -283,7 +263,6 @@ function initScene() {
                     sphere.velocity.negate();
                 }
             });
-            waveShader.uniforms.time.value += 0.01;
 
             if (productAnchor) {
                 productAnchor.lookAt(camera.position);

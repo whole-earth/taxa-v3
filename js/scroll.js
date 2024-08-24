@@ -20,11 +20,11 @@ const fadeInDuration = 280;
 // ============================
 
 const productStartScale = 6;
-const productEndScale = 5;
+const productEndScale = 4;
 
 // ============================
 
-function scrollLogic(controls, camera, spheres, wavingBlob, dotBounds, product) {
+function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBounds, product) {
     splashBool = isVisibleBetweenTopAndBottom(splashArea);
     zoomBool = isVisibleBetweenTopAndBottom(zoomArea);
     zoomOutBool = isVisibleBetweenTopAndBottom(zoomOutArea);
@@ -174,7 +174,14 @@ function scrollLogic(controls, camera, spheres, wavingBlob, dotBounds, product) 
 
         if (product && product.children) {
 
-            // cell scale -> decrease a bit to support scale
+            cellObject.children.forEach(child => {
+                child.traverse(innerChild => {
+                    if (innerChild.material) {
+                        innerChild.material.opacity = 1 - productProgress;
+                        innerChild.material.needsUpdate = true;
+                    }
+                });
+            });
 
             // product opacity
             product.children.forEach(child => {
@@ -189,26 +196,24 @@ function scrollLogic(controls, camera, spheres, wavingBlob, dotBounds, product) 
             product.scale.set(scale, scale, scale);
 
             // product transform
-            if (0 < productProgress && productProgress <= 0.2) {
-                console.log('first 20%');
+            if (0 < productProgress && productProgress <= 0.4) {
                 product.rotation.x = Math.PI / 2;
-            } else if (0.2 < productProgress && productProgress <= 0.6) {
-                const rotationProgress = (productProgress - 0.2) / 0.4;
+            } else if (0.4 < productProgress && productProgress <= 0.8) {
+                const rotationProgress = (productProgress - 0.4) / 0.4;
                 const startRotation = Math.PI / 2;
                 const endRotation = 0;
                 product.rotation.x = smoothLerp(startRotation, endRotation, rotationProgress);
                 product.rotation.z = 0;
-            } else if (0.6 < productProgress && productProgress <= 1) {
+            } else if (0.8 < productProgress && productProgress <= 1) {
+
                 product.rotation.x = 0;
-                const rotationProgress = (productProgress - 0.6) / 0.4;
+                const rotationProgress = (productProgress - 0.8) / 0.2;
                 const startRotation = 0;
-                const endRotation = -Math.PI / 6;
+                const endRotation = -Math.PI / 5;
                 product.rotation.z = smoothLerp(startRotation, endRotation, rotationProgress);
             }
         }
-
     }
-
 }
 
 // =====================================================================================
@@ -238,7 +243,7 @@ let zoomFirstAlready = false;
 let zoomSecondAlready = false;
 let zoomThirdAlready = false;
 
-export function animatePage(controls, camera, spheres, wavingBlob, dotBounds, product, scrollTimeout) {
+export function animatePage(controls, camera, cellObject, spheres, wavingBlob, dotBounds, product, scrollTimeout) {
     let scrollY = window.scrollY;
     let scrollDiff = scrollY - lastScrollY;
     const multiplier = Math.floor(scrollDiff / 20);
@@ -249,7 +254,7 @@ export function animatePage(controls, camera, spheres, wavingBlob, dotBounds, pr
         controls.autoRotateSpeed = 0.2;
     }, 100);
 
-    throttle(() => scrollLogic(controls, camera, spheres, wavingBlob, dotBounds, product), 30)();
+    throttle(() => scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBounds, product), 30)();
     camera.updateProjectionMatrix();
     setLastScrollY(scrollY);
 };
