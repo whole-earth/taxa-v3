@@ -19,7 +19,7 @@ const fadeInDuration = 280;
 
 // ============================
 
-const productStartScale = 20;
+const productStartScale = 6;
 const productEndScale = 5;
 
 // ============================
@@ -189,20 +189,26 @@ function scrollLogic(controls, camera, spheres, wavingBlob, dotBounds, product) 
             product.scale.set(scale, scale, scale);
 
             // product transform
-            if (productProgress < 1 / 3) {
-                const rotationProgress = productProgress * 3;
-                const startRotation = Math.PI / 2; // 90deg
+            if (0 < productProgress && productProgress <= 0.2) {
+                console.log('first 20%');
+                product.rotation.x = Math.PI / 2;
+            } else if (0.2 < productProgress && productProgress <= 0.6) {
+                const rotationProgress = (productProgress - 0.2) / 0.4;
+                const startRotation = Math.PI / 2;
                 const endRotation = 0;
                 product.rotation.x = smoothLerp(startRotation, endRotation, rotationProgress);
-            } else if (productProgress < 2 / 3) {
+                product.rotation.z = 0;
+            } else if (0.6 < productProgress && productProgress <= 1) {
                 product.rotation.x = 0;
-            } else {
-                //x
+                const rotationProgress = (productProgress - 0.6) / 0.4;
+                const startRotation = 0;
+                const endRotation = -Math.PI / 6;
+                product.rotation.z = smoothLerp(startRotation, endRotation, rotationProgress);
             }
-
         }
 
     }
+
 }
 
 // =====================================================================================
