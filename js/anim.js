@@ -11,8 +11,8 @@ import { animatePage } from './scroll.js';
 document.addEventListener('DOMContentLoaded', async () => initScene());
 
 export let dotTweenGroup = new Group();
-export let zoomBlobColorTween; // next
-export let zoomBlobOpacityTween = new Group();
+export let zoomBlobTween = new Group();
+export let zoomBlobOpacityTween = new Group(); // delete
 
 export let lastScrollY = 0;
 export function setLastScrollY(value) { lastScrollY = value; }
@@ -222,7 +222,7 @@ function initScene() {
 
     function initZoomShape() {
         const geometry = new THREE.SphereGeometry(5, 32, 32); // Example geometry, you can change it as needed
-        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, opacity: 0, transparent: true }); // Set initial opacity to 0 and make it transparent
+        const material = new THREE.MeshBasicMaterial({ color: 0x71ff00, opacity: 0, transparent: true }); // Set initial opacity to 0 and make it transparent
         zoomShape = new THREE.Mesh(geometry, material);
         zoomShape.position.set(0, 0, 40);
 
@@ -267,7 +267,6 @@ function initScene() {
             if (zoomBlobOpacityTween) {
                 zoomBlobOpacityTween.update();
             }
-            //zoomBlobColorTween.update();
 
             if (zoomShapeAnchor) {
                 zoomShapeAnchor.lookAt(camera.position);

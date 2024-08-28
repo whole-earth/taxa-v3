@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { Tween, Easing } from 'tween';
-import { lastScrollY, setLastScrollY, dotTweenGroup, zoomBlobOpacityTween, zoomBlobColorTween } from './anim.js';
+import { lastScrollY, setLastScrollY, dotTweenGroup, zoomBlobTween } from './anim.js';
 
 const splashStartFOV = window.innerWidth < 768 ? 90 : 60;
 const splashEndFOV = splashStartFOV * 0.50;
@@ -40,6 +40,8 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
             activateText(splashArea);
             if (comingFrom == 'zoomAreaFirst') {
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
+                // zoomChildBlob__tweenOpacity(zoomShape, 1, 0);
+                zoomChildBlobTween(zoomShape, dotsGreen, dotsGreen, 1, 0);
             }
             splashAlready = true;
             zoomAlready = false;
@@ -70,9 +72,11 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
 
                     if (comingFrom == 'splash') {
                         dotTweenOpacity(spheres, 0, 1, wavingBlob, true, fadeInDuration);
-                        zoomChildBlob__tweenOpacity(zoomShape, 0, 1);
+                        zoomChildBlobTween(zoomShape, dotsGreen, dotsGreen, 0, 1);
+                        // zoomChildBlob__tweenOpacity(zoomShape, 0, 1);
                     } else if (comingFrom == 'zoomAreaSecond') {
                         dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
+                        zoomChildBlobTween(zoomShape, dotsOrange, dotsGreen);
                         setTimeout(() => {
                             dotUpdateColors(spheres, dotsGreen);
                             dotRandomizePositions(spheres, dotBounds);
@@ -92,6 +96,12 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
                     activateText__ZoomChild(zoomSecond);
                     dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
 
+                    if (comingFrom == 'zoomAreaFirst') {
+                        zoomChildBlobTween(zoomShape, dotsGreen, dotsOrange);
+                    } else if (comingFrom == 'zoomAreaThird'){
+                        zoomChildBlobTween(zoomShape, dotsYellow, dotsOrange);
+                    }
+
                     setTimeout(() => {
                         dotUpdateColors(spheres, dotsOrange);
                         dotRandomizePositions(spheres, dotBounds);
@@ -110,13 +120,15 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
 
                     if (comingFrom == 'zoomAreaSecond') {
                         dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
+                        zoomChildBlobTween(zoomShape, dotsOrange, dotsYellow);
                         setTimeout(() => {
                             dotUpdateColors(spheres, dotsYellow);
                             dotRandomizePositions(spheres, dotBounds);
                             dotTweenOpacity(spheres, 0, 1, wavingBlob, true, fadeInDuration);
                         }, fadeOutDuration);
                     } else if (comingFrom == 'zoomOutArea') {
-                        zoomChildBlob__tweenOpacity(zoomShape, 0, 1);
+                        // zoomChildBlob__tweenOpacity(zoomShape, 0, 1);
+                        zoomChildBlobTween(zoomShape, dotsYellow, dotsYellow, 0, 1);
                         dotTweenOpacity(spheres, 0, 1, wavingBlob, true, fadeInDuration);
                     }
 
@@ -136,8 +148,9 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
             activateText(zoomOutArea);
 
             if (comingFrom == 'zoomAreaThird') {
-                zoomChildBlob__tweenOpacity(zoomShape, 1, 0);
+                // zoomChildBlob__tweenOpacity(zoomShape, 1, 0);
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
+                zoomChildBlobTween(zoomShape, dotsYellow, dotsYellow, 1, 0);
             } else if (comingFrom == 'productArea') {
                 controls.autoRotate = true;
 
@@ -412,29 +425,30 @@ function zoomChildBlob__tweenOpacity(shape, init, target) {
     opacityTween.start();
 }
 
-function zoomChildBlob__tweenColor(shape, prev, target, startOpacity = 1, targetOpacity = 1) {
-    zoomBlobColorTween.null;
+function zoomChildBlobTween(shape, initColor, targetColor, initOpacity = 1, targetOpacity = 1) {
+    zoomBlobTween.removeAll();
 
-    const currentState = { opacity: startOpacity, color: prev.material.color.getHex() };
-    const targetState = { opacity: targetOpacity, color: target.material.color.getHex() };
+    const currentState = { opacity: initOpacity, color: new THREE.Color(initColor).getHex()};
+    const targetState = { opacity: targetOpacity, color: new THREE.Color(targetColor).getHex()};
 
-    zoomBlobColorTween = new Tween(currentState)
-        .to(targetState, fadeInDuration)
+    const tweens = [];
+
+    const colorTween = new Tween(currentState)
+        .to({ color: targetState.color }, fadeInDuration)
         .easing(Easing.Quadratic.InOut)
         .onUpdate(() => {
             shape.material.color.setHex(currentState.color);
             shape.material.needsUpdate = true;
         })
         .onComplete(() => {
-            zoomBlobColorTween = null;
+            zoomBlobTween.remove(colorTween);
         });
 
-    zoomBlobColorTween.start();
+    tweens.push(colorTween);
 
-    /*
-    if (startOpacity !== 1 || targetOpacity !== 1) {
+    if (initOpacity !== targetOpacity) {
         const opacityTween = new Tween(currentState)
-            .to(targetState, fadeOutDuration)
+            .to({ opacity: targetState.opacity }, fadeInDuration)
             .easing(Easing.Quadratic.InOut)
             .onUpdate(() => {
                 shape.material.opacity = currentState.opacity;
@@ -444,10 +458,13 @@ function zoomChildBlob__tweenColor(shape, prev, target, startOpacity = 1, target
                 zoomBlobTween.remove(opacityTween);
             });
 
-        zoomBlobTween.add(opacityTween);
-        opacityTween.start();
+        tweens.push(opacityTween);
     }
-    */
+
+    tweens.forEach(tween => {
+        zoomBlobTween.add(tween);
+        tween.start();
+    });
 }
 
 //=======================================================================
