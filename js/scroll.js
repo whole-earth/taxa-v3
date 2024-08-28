@@ -98,7 +98,7 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
 
                     if (comingFrom == 'zoomAreaFirst') {
                         zoomChildBlobTween(zoomShape, dotsGreen, dotsOrange);
-                    } else if (comingFrom == 'zoomAreaThird'){
+                    } else if (comingFrom == 'zoomAreaThird') {
                         zoomChildBlobTween(zoomShape, dotsYellow, dotsOrange);
                     }
 
@@ -426,45 +426,36 @@ function zoomChildBlob__tweenOpacity(shape, init, target) {
 }
 
 function zoomChildBlobTween(shape, initColor, targetColor, initOpacity = 1, targetOpacity = 1) {
+    console.log("CALLED")
     zoomBlobTween.removeAll();
 
-    const currentState = { opacity: initOpacity, color: new THREE.Color(initColor).getHex()};
-    const targetState = { opacity: targetOpacity, color: new THREE.Color(targetColor).getHex()};
+    const currentState = {
+        opacity: initOpacity,
+        r: initColor.r,
+        g: initColor.g,
+        b: initColor.b
+    };
+    const targetState = {
+        opacity: targetOpacity,
+        r: targetColor.r,
+        g: targetColor.g,
+        b: targetColor.b
+    };
 
-    const tweens = [];
-
-    const colorTween = new Tween(currentState)
-        .to({ color: targetState.color }, fadeInDuration)
+    const tween = new Tween(currentState)
+        .to(targetState, fadeInDuration)
         .easing(Easing.Quadratic.InOut)
         .onUpdate(() => {
-            shape.material.color.setHex(currentState.color);
+            shape.material.color.setRGB(currentState.r, currentState.g, currentState.b);
+            shape.material.opacity = currentState.opacity;
             shape.material.needsUpdate = true;
         })
         .onComplete(() => {
-            zoomBlobTween.remove(colorTween);
+            zoomBlobTween.remove(tween);
         });
 
-    tweens.push(colorTween);
-
-    if (initOpacity !== targetOpacity) {
-        const opacityTween = new Tween(currentState)
-            .to({ opacity: targetState.opacity }, fadeInDuration)
-            .easing(Easing.Quadratic.InOut)
-            .onUpdate(() => {
-                shape.material.opacity = currentState.opacity;
-                shape.material.needsUpdate = true;
-            })
-            .onComplete(() => {
-                zoomBlobTween.remove(opacityTween);
-            });
-
-        tweens.push(opacityTween);
-    }
-
-    tweens.forEach(tween => {
-        zoomBlobTween.add(tween);
-        tween.start();
-    });
+    zoomBlobTween.add(tween);
+    tween.start();
 }
 
 //=======================================================================
