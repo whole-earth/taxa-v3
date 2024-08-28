@@ -61,7 +61,6 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
             zoomAlready = true;
             zoomOutAlready = false;
             productAlready = false;
-            zoomChildBlob__opacity(zoomShape, 0, 1);
         }
 
         if (zoomFirst && zoomSecond && zoomThird) {
@@ -71,6 +70,7 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
 
                     if (comingFrom == 'splash') {
                         dotTweenOpacity(spheres, 0, 1, wavingBlob, true, fadeInDuration);
+                        zoomChildBlob__opacity(zoomShape, 0, 1);
                     } else if (comingFrom == 'zoomAreaSecond') {
                         dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
                         setTimeout(() => {
@@ -394,7 +394,7 @@ function dotRandomizePositions(spheres, dotBounds) {
 function zoomChildBlob__opacity(shape, init, target) {
     const currentState = { opacity: init };
     const targetState = { opacity: target };
-    console.log("Called")
+    console.log(`Tweening opacity from ${init} to ${target}`);
 
     const opacityTween = new Tween(currentState)
         .to(targetState, fadeInDuration)
@@ -402,9 +402,10 @@ function zoomChildBlob__opacity(shape, init, target) {
         .onUpdate(() => {
             shape.material.opacity = currentState.opacity;
             shape.material.needsUpdate = true;
+            console.log(`Current opacity: ${currentState.opacity}`);
         })
         .onComplete(() => {
-            // clear here
+            console.log('Tween complete');
         });
 
     opacityTween.start();

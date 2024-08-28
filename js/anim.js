@@ -227,6 +227,7 @@ function initScene() {
 
         zoomShapeAnchor = new THREE.Object3D();
         zoomShapeAnchor.add(zoomShape);
+        console.log(zoomShape)
 
         scene.add(zoomShapeAnchor);
     }
