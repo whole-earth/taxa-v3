@@ -426,7 +426,6 @@ function zoomChildBlob__tweenOpacity(shape, init, target) {
 }
 
 function zoomChildBlobTween(shape, initColor, targetColor, initOpacity = 1, targetOpacity = 1) {
-    console.log("CALLED")
     zoomBlobTween.removeAll();
 
     const currentState = {
@@ -449,6 +448,7 @@ function zoomChildBlobTween(shape, initColor, targetColor, initOpacity = 1, targ
             shape.material.color.setRGB(currentState.r, currentState.g, currentState.b);
             shape.material.opacity = currentState.opacity;
             shape.material.needsUpdate = true;
+            console.log(shape.material.opacity);
         })
         .onComplete(() => {
             zoomBlobTween.remove(tween);

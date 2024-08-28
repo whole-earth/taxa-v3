@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', async () => initScene());
 
 export let dotTweenGroup = new Group();
 export let zoomBlobTween = new Group();
-export let zoomBlobOpacityTween = new Group(); // delete
 
 export let lastScrollY = 0;
 export function setLastScrollY(value) { lastScrollY = value; }
@@ -264,8 +263,8 @@ function initScene() {
 
             dotTweenGroup.update();
 
-            if (zoomBlobOpacityTween) {
-                zoomBlobOpacityTween.update();
+            if (zoomBlobTween) {
+                zoomBlobTween.update();
             }
 
             if (zoomShapeAnchor) {
