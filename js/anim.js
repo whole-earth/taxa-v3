@@ -5,7 +5,7 @@ import { DRACOLoader } from 'three/DracoLoader';
 import { OrbitControls } from 'three/OrbitControls';
 import { RGBELoader } from 'three/RGBELoader';
 import { PMREMGenerator } from 'three';
-import { dispersion, grayPurple, iridescent, vialMaterial } from './materials.js';
+import { dispersion, grayPurple, iridescent, vialMaterial, textBlobMaterial } from './materials.js';
 import { animatePage } from './scroll.js';
 
 document.addEventListener('DOMContentLoaded', async () => initScene());
@@ -220,12 +220,14 @@ function initScene() {
     }
 
     function initZoomShape() {
-        const geometry = new THREE.CapsuleGeometry(1.4, 4, 10, 24); // radius, length, capSegments, radialSegments
-        const material = new THREE.MeshBasicMaterial({ color: 0x71ff00, opacity: 0, transparent: true }); // for prod, set back to 0 opacity
-        zoomShape = new THREE.Mesh(geometry, material);
+        const geometry = new THREE.CapsuleGeometry(1, 4, 10, 24); // radius, length, capSegments, radialSegments
+        zoomShape = new THREE.Mesh(geometry, textBlobMaterial);
 
-        zoomShape.position.set(3, -2.4, 40);
+        zoomShape.position.set(4, -3.6, 40);
         zoomShape.rotation.z = Math.PI / 1.8;
+
+        zoomShape.material.opacity = 0;
+        zoomShape.material.needsUpdate = true;
 
         zoomShapeAnchor = new THREE.Object3D();
         zoomShapeAnchor.add(zoomShape);

@@ -40,7 +40,6 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
             activateText(splashArea);
             if (comingFrom == 'zoomAreaFirst') {
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
-                // zoomChildBlob__tweenOpacity(zoomShape, 1, 0);
                 zoomChildBlobTween(zoomShape, dotsGreen, dotsGreen, 1, 0);
             }
             splashAlready = true;
@@ -73,7 +72,6 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
                     if (comingFrom == 'splash') {
                         dotTweenOpacity(spheres, 0, 1, wavingBlob, true, fadeInDuration);
                         zoomChildBlobTween(zoomShape, dotsGreen, dotsGreen, 0, 1);
-                        // zoomChildBlob__tweenOpacity(zoomShape, 0, 1);
                     } else if (comingFrom == 'zoomAreaSecond') {
                         dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
                         zoomChildBlobTween(zoomShape, dotsOrange, dotsGreen);
@@ -127,7 +125,6 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
                             dotTweenOpacity(spheres, 0, 1, wavingBlob, true, fadeInDuration);
                         }, fadeOutDuration);
                     } else if (comingFrom == 'zoomOutArea') {
-                        // zoomChildBlob__tweenOpacity(zoomShape, 0, 1);
                         zoomChildBlobTween(zoomShape, dotsYellow, dotsYellow, 0, 1);
                         dotTweenOpacity(spheres, 0, 1, wavingBlob, true, fadeInDuration);
                     }
@@ -148,7 +145,6 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
             activateText(zoomOutArea);
 
             if (comingFrom == 'zoomAreaThird') {
-                // zoomChildBlob__tweenOpacity(zoomShape, 1, 0);
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
                 zoomChildBlobTween(zoomShape, dotsYellow, dotsYellow, 1, 0);
             } else if (comingFrom == 'productArea') {
