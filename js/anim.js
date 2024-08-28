@@ -10,7 +10,8 @@ import { animatePage } from './scroll.js';
 
 document.addEventListener('DOMContentLoaded', async () => initScene());
 
-export let tweenGroup = new Group();
+export let dotTweenGroup = new Group();
+export let zoomBlobTween = new Group();
 
 export let lastScrollY = 0;
 export function setLastScrollY(value) { lastScrollY = value; }
@@ -20,6 +21,7 @@ function initScene() {
     let scrollTimeout;
     let cellObject, blobInner, blobOuter, ribbons;
     let dotBounds, wavingBlob;
+    let zoomShapeAnchor, zoomShape;
     let productAnchor, product;
     const spheres = [];
 
@@ -33,7 +35,7 @@ function initScene() {
         controls = initControls(camera, renderer);
         cellObject = new THREE.Object3D();
         initLights(scene, renderer);
-        window.addEventListener('scroll', () => animatePage(controls, camera, cellObject, spheres, wavingBlob, dotBounds, product, lastScrollY, scrollTimeout));
+        window.addEventListener('scroll', () => animatePage(controls, camera, cellObject, spheres, zoomShape, wavingBlob, dotBounds, product, lastScrollY, scrollTimeout));
         window.addEventListener('resize', () => resizeScene(renderer, camera));
 
         class CellComponent {
@@ -58,7 +60,6 @@ function initScene() {
                 this.loader.load(fullPath, (gltf) => {
                     this.object = gltf.scene;
                     this.object.position.copy(this.position);
-                    //this.scene.add(this.object);
                     cellObject.add(this.object);
                     this.centerObject(this.object);
                     if (shader) this.applyCustomShader(shader);
@@ -166,6 +167,7 @@ function initScene() {
         Promise.all(loadCellObjects).then(() => {
             scene.add(cellObject);
             initSpeckles(scene, boundingBoxes);
+            initZoomShape();
             loadProductObject;
             resolve();
         });
@@ -217,10 +219,16 @@ function initScene() {
         return controls;
     }
 
-    function resizeScene(render, camera) {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        render.setSize(window.innerWidth, window.innerHeight);
+    function initZoomShape() {
+        const geometry = new THREE.SphereGeometry(5, 32, 32); // Example geometry, you can change it as needed
+        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, opacity: 0, transparent: true }); // Set initial opacity to 0 and make it transparent
+        zoomShape = new THREE.Mesh(geometry, material);
+        zoomShape.position.set(0, 0, 40);
+
+        zoomShapeAnchor = new THREE.Object3D();
+        zoomShapeAnchor.add(zoomShape);
+
+        scene.add(zoomShapeAnchor);
     }
 
     function initSpeckles(scene, boundingBoxes) {
@@ -253,7 +261,16 @@ function initScene() {
         function animate() {
             requestAnimationFrame(animate);
 
-            tweenGroup.update();
+            dotTweenGroup.update();
+            zoomBlobTween.update();
+
+            if (zoomShapeAnchor) {
+                zoomShapeAnchor.lookAt(camera.position);
+            }
+
+            if (productAnchor) {
+                productAnchor.lookAt(camera.position);
+            }
 
             renderer.render(scene, camera);
             controls.update();
@@ -264,12 +281,15 @@ function initScene() {
                 }
             });
 
-            if (productAnchor) {
-                productAnchor.lookAt(camera.position);
-            }
         }
 
         animate();
+    }
+
+    function resizeScene(render, camera) {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        render.setSize(window.innerWidth, window.innerHeight);
     }
 
 }
