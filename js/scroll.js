@@ -392,10 +392,11 @@ function dotRandomizePositions(spheres, dotBounds) {
 //=======================================================================
 
 function zoomChildBlob__tweenOpacity(shape, init, target) {
+    zoomBlobOpacityTween.removeAll();
     const currentState = { opacity: init };
     const targetState = { opacity: target };
 
-    zoomBlobOpacityTween = new Tween(currentState)
+    opacityTween = new Tween(currentState)
         .to(targetState, fadeInDuration)
         .easing(Easing.Quadratic.InOut)
         .onUpdate(() => {
@@ -404,10 +405,11 @@ function zoomChildBlob__tweenOpacity(shape, init, target) {
             console.log(`Current opacity: ${currentState.opacity}`);
         })
         .onComplete(() => {
-            // console.log()
+            zoomBlobOpacityTween.remove(opacityTween);
         });
 
-    zoomBlobOpacityTween.start();
+    zoomBlobOpacityTween.add(opacityTween);
+    opacityTween.start();
 }
 
 function zoomChildBlob__tweenColor(shape, prev, target, startOpacity = 1, targetOpacity = 1) {

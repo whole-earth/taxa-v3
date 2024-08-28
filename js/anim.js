@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => initScene());
 
 export let dotTweenGroup = new Group();
 export let zoomBlobColorTween; // next
-export let zoomBlobOpacityTween;
+export let zoomBlobOpacityTween = new Group();
 
 export let lastScrollY = 0;
 export function setLastScrollY(value) { lastScrollY = value; }
