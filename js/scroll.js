@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { Tween, Easing } from 'tween';
-import { lastScrollY, setLastScrollY, dotTweenGroup, zoomBlobTween } from './anim.js';
+import { lastScrollY, setLastScrollY, dotTweenGroup, zoomBlobOpacityTween, zoomBlobColorTween } from './anim.js';
 
 const splashStartFOV = window.innerWidth < 768 ? 90 : 60;
 const splashEndFOV = splashStartFOV * 0.50;
@@ -392,11 +392,11 @@ function dotRandomizePositions(spheres, dotBounds) {
 //=======================================================================
 
 function zoomChildBlob__opacity(shape, init, target) {
+    zoomBlobOpacityTween = null;
     const currentState = { opacity: init };
     const targetState = { opacity: target };
-    console.log(`Tweening opacity from ${init} to ${target}`);
 
-    const opacityTween = new Tween(currentState)
+    zoomBlobOpacityTween = new Tween(currentState)
         .to(targetState, fadeInDuration)
         .easing(Easing.Quadratic.InOut)
         .onUpdate(() => {
@@ -406,13 +406,14 @@ function zoomChildBlob__opacity(shape, init, target) {
         })
         .onComplete(() => {
             console.log('Tween complete');
+            zoomBlobOpacityTween = null;
         });
 
-    opacityTween.start();
+        zoomBlobOpacityTween.start();
 }
 
 function zoomChildBlob__TweenColor(shape, prev, target, startOpacity = 1, targetOpacity = 1) {
-    zoomBlobTween.removeAll();
+    zoomBlobColorTween.removeAll();
 
     const currentState = { opacity: startOpacity, color: prev.material.color.getHex() };
     const targetState = { opacity: targetOpacity, color: target.material.color.getHex() };
@@ -425,10 +426,10 @@ function zoomChildBlob__TweenColor(shape, prev, target, startOpacity = 1, target
             shape.material.needsUpdate = true;
         })
         .onComplete(() => {
-            zoomBlobTween.remove(colorTween);
+            zoomBlobColorTween.remove(colorTween);
         });
 
-    zoomBlobTween.add(colorTween);
+    zoomBlobColorTween.add(colorTween);
     colorTween.start();
 
     if (startOpacity !== 1 || targetOpacity !== 1) {

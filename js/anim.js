@@ -11,7 +11,8 @@ import { animatePage } from './scroll.js';
 document.addEventListener('DOMContentLoaded', async () => initScene());
 
 export let dotTweenGroup = new Group();
-export let zoomBlobTween = new Group();
+export let zoomBlobColorTween = null; // next
+export let zoomBlobOpacityTween = null;
 
 export let lastScrollY = 0;
 export function setLastScrollY(value) { lastScrollY = value; }
@@ -263,7 +264,8 @@ function initScene() {
             requestAnimationFrame(animate);
 
             dotTweenGroup.update();
-            zoomBlobTween.update();
+            zoomBlobOpacityTween.update();
+            //zoomBlobColorTween.update();
 
             if (zoomShapeAnchor) {
                 zoomShapeAnchor.lookAt(camera.position);
