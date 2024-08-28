@@ -11,8 +11,8 @@ import { animatePage } from './scroll.js';
 document.addEventListener('DOMContentLoaded', async () => initScene());
 
 export let dotTweenGroup = new Group();
-export let zoomBlobColorTween = null; // next
-export let zoomBlobOpacityTween = null;
+export let zoomBlobColorTween; // next
+export let zoomBlobOpacityTween;
 
 export let lastScrollY = 0;
 export function setLastScrollY(value) { lastScrollY = value; }
