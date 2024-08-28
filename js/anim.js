@@ -228,7 +228,6 @@ function initScene() {
 
         zoomShapeAnchor = new THREE.Object3D();
         zoomShapeAnchor.add(zoomShape);
-        console.log(zoomShape)
 
         scene.add(zoomShapeAnchor);
     }
@@ -264,7 +263,10 @@ function initScene() {
             requestAnimationFrame(animate);
 
             dotTweenGroup.update();
-            zoomBlobOpacityTween.update();
+
+            if (zoomBlobOpacityTween) {
+                zoomBlobOpacityTween.update();
+            }
             //zoomBlobColorTween.update();
 
             if (zoomShapeAnchor) {

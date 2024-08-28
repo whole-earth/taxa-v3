@@ -70,7 +70,7 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
 
                     if (comingFrom == 'splash') {
                         dotTweenOpacity(spheres, 0, 1, wavingBlob, true, fadeInDuration);
-                        zoomChildBlob__opacity(zoomShape, 0, 1);
+                        zoomChildBlob__tweenOpacity(zoomShape, 0, 1);
                     } else if (comingFrom == 'zoomAreaSecond') {
                         dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
                         setTimeout(() => {
@@ -116,7 +116,7 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
                             dotTweenOpacity(spheres, 0, 1, wavingBlob, true, fadeInDuration);
                         }, fadeOutDuration);
                     } else if (comingFrom == 'zoomOutArea') {
-                        zoomChildBlob__opacity(zoomShape, 0, 1);
+                        zoomChildBlob__tweenOpacity(zoomShape, 0, 1);
                         dotTweenOpacity(spheres, 0, 1, wavingBlob, true, fadeInDuration);
                     }
 
@@ -136,7 +136,7 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
             activateText(zoomOutArea);
 
             if (comingFrom == 'zoomAreaThird') {
-                zoomChildBlob__opacity(zoomShape, 1, 0);
+                zoomChildBlob__tweenOpacity(zoomShape, 1, 0);
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
             } else if (comingFrom == 'productArea') {
                 controls.autoRotate = true;
@@ -391,7 +391,7 @@ function dotRandomizePositions(spheres, dotBounds) {
 
 //=======================================================================
 
-function zoomChildBlob__opacity(shape, init, target) {
+function zoomChildBlob__tweenOpacity(shape, init, target) {
     zoomBlobOpacityTween = null;
     const currentState = { opacity: init };
     const targetState = { opacity: target };
@@ -405,20 +405,19 @@ function zoomChildBlob__opacity(shape, init, target) {
             console.log(`Current opacity: ${currentState.opacity}`);
         })
         .onComplete(() => {
-            console.log('Tween complete');
             zoomBlobOpacityTween = null;
         });
 
-        zoomBlobOpacityTween.start();
+    zoomBlobOpacityTween.start();
 }
 
-function zoomChildBlob__TweenColor(shape, prev, target, startOpacity = 1, targetOpacity = 1) {
-    zoomBlobColorTween.removeAll();
+function zoomChildBlob__tweenColor(shape, prev, target, startOpacity = 1, targetOpacity = 1) {
+    zoomBlobColorTween.null;
 
     const currentState = { opacity: startOpacity, color: prev.material.color.getHex() };
     const targetState = { opacity: targetOpacity, color: target.material.color.getHex() };
 
-    const colorTween = new Tween(currentState)
+    zoomBlobColorTween = new Tween(currentState)
         .to(targetState, fadeInDuration)
         .easing(Easing.Quadratic.InOut)
         .onUpdate(() => {
@@ -426,12 +425,12 @@ function zoomChildBlob__TweenColor(shape, prev, target, startOpacity = 1, target
             shape.material.needsUpdate = true;
         })
         .onComplete(() => {
-            zoomBlobColorTween.remove(colorTween);
+            zoomBlobColorTween = null;
         });
 
-    zoomBlobColorTween.add(colorTween);
-    colorTween.start();
+    zoomBlobColorTween.start();
 
+    /*
     if (startOpacity !== 1 || targetOpacity !== 1) {
         const opacityTween = new Tween(currentState)
             .to(targetState, fadeOutDuration)
@@ -447,6 +446,7 @@ function zoomChildBlob__TweenColor(shape, prev, target, startOpacity = 1, target
         zoomBlobTween.add(opacityTween);
         opacityTween.start();
     }
+    */
 }
 
 //=======================================================================
