@@ -11,9 +11,9 @@ const zoomOutEndFOV = splashStartFOV;
 const productStartFOV = zoomOutEndFOV;
 const productEndFOV = 80;
 
-const dotsGreen = '#71ff00';
-const dotsOrange = '#ff8e00';
-const dotsYellow = '#f1ff00';
+const dotsGreen = new THREE.Color('#71ff00');
+const dotsOrange = new THREE.Color('#ff8e00');
+const dotsYellow = new THREE.Color('#f1ff00');
 const fadeOutDuration = 60;
 const fadeInDuration = 280;
 
@@ -425,14 +425,14 @@ function zoomChildBlob__tweenOpacity(shape, init, target) {
     opacityTween.start();
 }
 
-function zoomChildBlobTween(shape, initColor, targetColor, initOpacity = 1, targetOpacity = 1) {
+function zoomChildBlobTween(shape, currentColor, targetColor, initOpacity = 1, targetOpacity = 1) {
     zoomBlobTween.removeAll();
 
     const currentState = {
         opacity: initOpacity,
-        r: initColor.r,
-        g: initColor.g,
-        b: initColor.b
+        r: currentColor.r,
+        g: currentColor.g,
+        b: currentColor.b
     };
     const targetState = {
         opacity: targetOpacity,
