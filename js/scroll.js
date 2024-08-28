@@ -402,29 +402,6 @@ function dotRandomizePositions(spheres, dotBounds) {
     }
 }
 
-//=======================================================================
-
-function zoomChildBlob__tweenOpacity(shape, init, target) {
-    zoomBlobOpacityTween.removeAll();
-    const currentState = { opacity: init };
-    const targetState = { opacity: target };
-
-    const opacityTween = new Tween(currentState)
-        .to(targetState, fadeInDuration)
-        .easing(Easing.Quadratic.InOut)
-        .onUpdate(() => {
-            shape.material.opacity = currentState.opacity;
-            shape.material.needsUpdate = true;
-            console.log(`Current opacity: ${currentState.opacity}`);
-        })
-        .onComplete(() => {
-            zoomBlobOpacityTween.remove(opacityTween);
-        });
-
-    zoomBlobOpacityTween.add(opacityTween);
-    opacityTween.start();
-}
-
 function zoomChildBlobTween(shape, currentColor, targetColor, initOpacity = 1, targetOpacity = 1) {
     zoomBlobTween.removeAll();
 
@@ -448,7 +425,6 @@ function zoomChildBlobTween(shape, currentColor, targetColor, initOpacity = 1, t
             shape.material.color.setRGB(currentState.r, currentState.g, currentState.b);
             shape.material.opacity = currentState.opacity;
             shape.material.needsUpdate = true;
-            console.log(shape.material.opacity);
         })
         .onComplete(() => {
             zoomBlobTween.remove(tween);
@@ -457,8 +433,6 @@ function zoomChildBlobTween(shape, currentColor, targetColor, initOpacity = 1, t
     zoomBlobTween.add(tween);
     tween.start();
 }
-
-//=======================================================================
 
 function smoothLerp(start, end, progress) {
     return start + (end - start) * smoothstep(progress);

@@ -220,10 +220,12 @@ function initScene() {
     }
 
     function initZoomShape() {
-        const geometry = new THREE.SphereGeometry(5, 32, 32); // Example geometry, you can change it as needed
-        const material = new THREE.MeshBasicMaterial({ color: 0x71ff00, opacity: 0, transparent: true }); // Set initial opacity to 0 and make it transparent
+        const geometry = new THREE.CapsuleGeometry(1.4, 4, 10, 24); // radius, length, capSegments, radialSegments
+        const material = new THREE.MeshBasicMaterial({ color: 0x71ff00, opacity: 0, transparent: true }); // for prod, set back to 0 opacity
         zoomShape = new THREE.Mesh(geometry, material);
-        zoomShape.position.set(0, 0, 40);
+
+        zoomShape.position.set(3, -2.4, 40);
+        zoomShape.rotation.z = Math.PI / 1.8;
 
         zoomShapeAnchor = new THREE.Object3D();
         zoomShapeAnchor.add(zoomShape);
