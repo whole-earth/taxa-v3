@@ -19,7 +19,7 @@ const fadeInDuration = 280;
 
 // ============================
 
-const productStartScale = 6;
+const productStartScale = 7;
 const productEndScale = 3;
 const cellStartScale = 1;
 const cellEndScale = 0.01;
