@@ -396,7 +396,7 @@ function zoomChildBlob__tweenOpacity(shape, init, target) {
     const currentState = { opacity: init };
     const targetState = { opacity: target };
 
-    opacityTween = new Tween(currentState)
+    const opacityTween = new Tween(currentState)
         .to(targetState, fadeInDuration)
         .easing(Easing.Quadratic.InOut)
         .onUpdate(() => {
