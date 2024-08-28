@@ -86,5 +86,6 @@ export const textBlobMaterial = new THREE.MeshPhysicalMaterial({
     envMapIntensity: 1.5,
     transparent: true,
     opacity: 0.6,
-    side: THREE.DoubleSide
+    side: THREE.DoubleSide,
+    depthWrite: false
 });

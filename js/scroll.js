@@ -5,7 +5,7 @@ import { lastScrollY, setLastScrollY, dotTweenGroup, zoomBlobTween } from './ani
 const splashStartFOV = window.innerWidth < 768 ? 90 : 60;
 const splashEndFOV = splashStartFOV * 0.50;
 const zoomStartFOV = splashEndFOV;
-const zoomEndFOV = splashEndFOV * 1.15;
+const zoomEndFOV = splashEndFOV * 1.1;
 const zoomOutStartFOV = zoomEndFOV;
 const zoomOutEndFOV = splashStartFOV;
 const productStartFOV = zoomOutEndFOV;
