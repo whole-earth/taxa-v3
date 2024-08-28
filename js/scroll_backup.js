@@ -171,18 +171,23 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
             comingFrom = 'productArea';
         }
 
-        productProgress = scrollProgress__Last(productArea);
+        productProgress__100 = scrollProgress__Last(productArea);
+
+        // first 60%
+        productProgress__0_60 = productProgress__100 <= 0.6 ? productProgress__100 / 0.6 : 1;
+
+        // last 60%
+        productProgress__40_100 = productProgress__100 > 0.4 ? (productProgress__100 - 0.4) / 0.6 : 0;
+
+        camera.fov = smoothLerp(productStartFOV, productEndFOV, productProgress__0_60);
 
         if (product && product.children) {
 
             //cell scale : 0-60
-            productProgress__0_60 = productProgress <= 0.6 ? productProgress / 0.6 : 1;
-            
-            camera.fov = smoothLerp(productStartFOV, productEndFOV, productProgress__0_60);
-            
             const cellScale = smoothLerp(cellStartScale, cellEndScale, productProgress__0_60);
             cellObject.scale.set(cellScale, cellScale, cellScale);
-            
+
+            // cell opacity : 0-60
             cellObject.children.forEach(child => {
                 child.traverse(innerChild => {
                     if (innerChild.material) {
@@ -192,30 +197,30 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
                 });
             });
 
+            // product opacity : 40-100
+            product.children.forEach(child => {
+                if (child.material) {
+                    child.material.opacity = productProgress__40_100;
+                    child.material.needsUpdate = true;
+                }
+            });
+
             // product scale
-            const productScale = smoothLerp(productStartScale, productEndScale, productProgress);
+            const productScale = smoothLerp(productStartScale, productEndScale, productProgress__100);
             product.scale.set(productScale, productScale, productScale);
 
             // product transform
-            if (0 < productProgress && productProgress <= 0.4) {
+            if (0 < productProgress__100 && productProgress__100 <= 0.4) {
                 product.rotation.x = Math.PI / 2;
-
-            } else if (0.4 < productProgress && productProgress <= 0.8) {
-                const rotationProgress = (productProgress - 0.4) / 0.4;
+            } else if (0.4 < productProgress__100 && productProgress__100 <= 0.8) {
+                const rotationProgress = (productProgress__100 - 0.4) / 0.4;
                 const startRotation = Math.PI / 2;
                 const endRotation = 0;
                 product.rotation.x = smoothLerp(startRotation, endRotation, rotationProgress);
                 product.rotation.z = 0;
-                product.children.forEach(child => {
-                    if (child.material) {
-                        child.material.opacity = rotationProgress;
-                        child.material.needsUpdate = true;
-                    }
-                });
-                
-            } else if (0.8 < productProgress && productProgress <= 1) {
+            } else if (0.8 < productProgress__100 && productProgress__100 <= 1) {
                 product.rotation.x = 0;
-                const rotationProgress = (productProgress - 0.8) / 0.2;
+                const rotationProgress = (productProgress__100 - 0.8) / 0.2;
                 const startRotation = 0;
                 const endRotation = -Math.PI / 5;
                 product.rotation.z = smoothLerp(startRotation, endRotation, rotationProgress);
@@ -238,7 +243,7 @@ const zoomThird = document.querySelector('#zoomThird');
 const zoomElements = [zoomFirst, zoomSecond, zoomThird];
 
 let splashBool, zoomBool, zoomOutBool, productBool;
-let splashProgress, zoomProgress, zoomOutProgress, productProgress, productProgress__0_60;
+let splashProgress, zoomProgress, zoomOutProgress, productProgress__100, productProgress__0_60, productProgress__40_100;
 
 let comingFrom = "splash";
 
