@@ -392,7 +392,6 @@ function dotRandomizePositions(spheres, dotBounds) {
 //=======================================================================
 
 function zoomChildBlob__tweenOpacity(shape, init, target) {
-    zoomBlobOpacityTween = null;
     const currentState = { opacity: init };
     const targetState = { opacity: target };
 
@@ -405,7 +404,7 @@ function zoomChildBlob__tweenOpacity(shape, init, target) {
             console.log(`Current opacity: ${currentState.opacity}`);
         })
         .onComplete(() => {
-            zoomBlobOpacityTween = null;
+            // console.log()
         });
 
     zoomBlobOpacityTween.start();
