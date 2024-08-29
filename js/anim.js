@@ -232,9 +232,7 @@ function initScene() {
         zoomShape.material.needsUpdate = true;
 
         zoomShapeAnchor = new THREE.Object3D();
-        zoomShape.renderOrder = 9;
         zoomShapeAnchor.add(zoomShape);
-
         scene.add(zoomShapeAnchor);
     }
 
@@ -253,11 +251,11 @@ function initScene() {
         bones.push(rootBone, midBone, endBone);
 
         const geometry = new THREE.CapsuleGeometry(1, 4, 100, 24); // radius, length, capSegments, radialSegments
-        const skinnedMesh = new THREE.SkinnedMesh(geometry, textBlobMaterial);
+        zoomShape = new THREE.SkinnedMesh(geometry, textBlobMaterial);
 
         const skeleton = new THREE.Skeleton(bones);
-        skinnedMesh.add(rootBone);
-        skinnedMesh.bind(skeleton);
+        zoomShape.add(rootBone);
+        zoomShape.bind(skeleton);
 
         // Assign skin indices and weights
         const position = geometry.attributes.position;
@@ -289,17 +287,17 @@ function initScene() {
         geometry.setAttribute('skinIndex', new THREE.Uint16BufferAttribute(skinIndices, 4));
         geometry.setAttribute('skinWeight', new THREE.Float32BufferAttribute(skinWeights, 4));
 
-        skinnedMesh.position.set(4, -3.6, 44);
-        skinnedMesh.rotation.z = Math.PI / 1.8;
+        zoomShape.position.set(4, -3.6, 44);
+        zoomShape.rotation.z = Math.PI / 1.8;
 
 
         zoomShapeAnchor = new THREE.Object3D();
-        zoomShapeAnchor.add(skinnedMesh);
+        zoomShapeAnchor.add(zoomShape);
 
         scene.add(zoomShapeAnchor);
 
         // Ensure the bones are visible for debugging
-        const boneHelper = new THREE.SkeletonHelper(skinnedMesh);
+        const boneHelper = new THREE.SkeletonHelper(zoomShape);
         scene.add(boneHelper);
     }
 
