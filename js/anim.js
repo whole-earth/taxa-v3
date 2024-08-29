@@ -258,7 +258,7 @@ function initScene() {
         endBoneInitialY = endBone.position.y;
         bones.push(rootBone, midBone, endBone);
     
-        const geometry = new THREE.CapsuleGeometry(1, 6, 20, 100); // radius, length, capSegments, radialSegments
+        const geometry = new THREE.CapsuleGeometry(1, 6, 8, 20); // radius, length, capSegments, radialSegments
         zoomShape = new THREE.SkinnedMesh(geometry, textBlobMaterial);
     
         const skeleton = new THREE.Skeleton(bones);

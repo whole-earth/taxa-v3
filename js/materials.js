@@ -74,24 +74,6 @@ export const vialMaterial = new THREE.MeshPhysicalMaterial({
   depthWrite: true
 });
 
-export const textBlobMaterial__PREV = new THREE.MeshPhysicalMaterial({
-  color: new THREE.Color('#71ff00'),
-  roughness: 0.55,
-  metalness: 0.2,
-  iridescence: 0.85,
-  iridescenceIOR: 1.44,
-  transmission: 0.6,
-  ior: 1.4,
-  transparent: true,
-  thickness: 1,
-  envMapIntensity: 1.5,
-  transparent: true,
-  opacity: 0.6,
-  side: THREE.DoubleSide, 
-  depthWrite: false,
-  depthTest: true // cursor said so
-});
-
 export const textBlobMaterial = new THREE.MeshStandardMaterial({
   color: new THREE.Color('#71ff00'),
   // roughness: 0.3,
