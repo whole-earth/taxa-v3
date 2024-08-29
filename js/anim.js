@@ -17,6 +17,11 @@ export let lastScrollY = 0;
 export function setLastScrollY(value) { lastScrollY = value; }
 
 function initScene() {
+
+    let animationProgress = 0;
+    let rootBoneInitialY, midBoneInitialY, endBoneInitialY;
+    let rootBone, midBone, endBone;
+
     let scene, camera, renderer, controls;
     let scrollTimeout;
     let cellObject, blobInner, blobOuter, ribbons;
@@ -227,7 +232,7 @@ function initScene() {
         zoomShape.position.set(4, -3.6, 32);
         zoomShape.rotation.z = Math.PI / 1.8;
         zoomShape.renderOrder = 6;
-        
+
         zoomShape.material.opacity = 0.3;
         zoomShape.material.needsUpdate = true;
 
@@ -237,68 +242,106 @@ function initScene() {
     }
 
     function initZoomShape() {
-
+        // Create bones
         const bones = [];
-        const rootBone = new THREE.Bone();
-        const midBone = new THREE.Bone();
-        const endBone = new THREE.Bone();
+        rootBone = new THREE.Bone();
+        midBone = new THREE.Bone();
+        endBone = new THREE.Bone();
+        
+        // Set up bone hierarchy
         rootBone.add(midBone);
         midBone.add(endBone);
+        
+        // Set initial positions
         rootBone.position.set(0, -2, 0);
         midBone.position.set(0, 2, 0);
         endBone.position.set(0, 2, 0);
-
+    
+        // Store initial positions for animation
+        rootBoneInitialY = rootBone.position.y;
+        midBoneInitialY = midBone.position.y;
+        endBoneInitialY = endBone.position.y;
+    
         bones.push(rootBone, midBone, endBone);
-
-        const geometry = new THREE.CapsuleGeometry(1, 4, 100, 24); // radius, length, capSegments, radialSegments
+    
+        // Create geometry
+        const geometry = new THREE.CapsuleGeometry(1, 4, 100, 24);
+    
+        // Create skinned mesh
         zoomShape = new THREE.SkinnedMesh(geometry, textBlobMaterial);
-
+    
+        // Create and bind skeleton
         const skeleton = new THREE.Skeleton(bones);
         zoomShape.add(rootBone);
         zoomShape.bind(skeleton);
-
+    
         // Assign skin indices and weights
         const position = geometry.attributes.position;
-        const vertex = new THREE.Vector3();
-
         const skinIndices = [];
         const skinWeights = [];
-
+    
+        const segmentHeight = 4; // Total height of the capsule
+        const halfHeight = segmentHeight / 2;
+    
         for (let i = 0; i < position.count; i++) {
-            vertex.fromBufferAttribute(position, i);
-
-            const y = vertex.y;
-
-            if (y < -2) {
-                // Bottom part of the capsule
-                skinIndices.push(0, 0, 0, 0);
-                skinWeights.push(1, 0, 0, 0);
-            } else if (y > 2) {
-                // Top part of the capsule
-                skinIndices.push(2, 2, 2, 2);
-                skinWeights.push(1, 0, 0, 0);
+            const vertex = new THREE.Vector3().fromBufferAttribute(position, i);
+    
+            // Normalize y to range 0-1
+            const y = (vertex.y + halfHeight) / segmentHeight;
+    
+            // Assign indices and weights based on y position
+            if (y <= 0.5) {
+                // Lower half - influenced by root and mid bones
+                const weight = y * 2;
+                skinIndices.push(0, 1, 0, 0);
+                skinWeights.push(1 - weight, weight, 0, 0);
             } else {
-                // Middle part of the capsule
-                skinIndices.push(1, 1, 1, 1);
-                skinWeights.push(1, 0, 0, 0);
+                // Upper half - influenced by mid and end bones
+                const weight = (y - 0.5) * 2;
+                skinIndices.push(1, 2, 0, 0);
+                skinWeights.push(1 - weight, weight, 0, 0);
             }
         }
-
+    
         geometry.setAttribute('skinIndex', new THREE.Uint16BufferAttribute(skinIndices, 4));
         geometry.setAttribute('skinWeight', new THREE.Float32BufferAttribute(skinWeights, 4));
-
-        zoomShape.position.set(4, -3.6, 44);
+    
+        // Position and rotate the mesh
+        zoomShape.position.set(4, -3.6, 42);
         zoomShape.rotation.z = Math.PI / 1.8;
-
-
+    
+        // Create anchor and add to scene
         zoomShapeAnchor = new THREE.Object3D();
         zoomShapeAnchor.add(zoomShape);
-
         scene.add(zoomShapeAnchor);
+    }
 
-        // Ensure the bones are visible for debugging
-        const boneHelper = new THREE.SkeletonHelper(zoomShape);
-        scene.add(boneHelper);
+    function animateBones() {
+        // Increment the animation progress
+        animationProgress += 0.01; // Adjust this value to control animation speed
+        if (animationProgress > 1) animationProgress = 0;
+    
+        // Calculate the deformation factor
+        // This will be 0 at progress 0 and 1, and 1 at progress 0.5
+        const deformationFactor = Math.sin(animationProgress * Math.PI);
+    
+        // Define the maximum deformation
+        const maxDeformation = 1.0; // Adjust this to increase/decrease the S-curve
+    
+        // Animate rootBone
+        rootBone.rotation.x = THREE.MathUtils.lerp(0, 0.5 * maxDeformation, deformationFactor);
+        rootBone.rotation.y = rootBoneInitialY + THREE.MathUtils.lerp(0, 0.5 * maxDeformation, deformationFactor);
+    
+        // Animate midBone
+        midBone.rotation.x = THREE.MathUtils.lerp(0, -1.0 * maxDeformation, deformationFactor);
+        midBone.rotation.y = midBoneInitialY + THREE.MathUtils.lerp(0, 1.0 * maxDeformation, deformationFactor);
+    
+        // Animate endBone
+        endBone.rotation.x = THREE.MathUtils.lerp(0, 0.5 * maxDeformation, deformationFactor);
+        endBone.rotation.y = endBoneInitialY + THREE.MathUtils.lerp(0, -0.5 * maxDeformation, deformationFactor);
+    
+        // Update the skinned mesh
+        zoomShape.skeleton.update();
     }
 
     function initSpeckles(scene, boundingBoxes) {
@@ -335,7 +378,10 @@ function initScene() {
 
             if (zoomBlobTween) { zoomBlobTween.update(); }
 
-            if (zoomShapeAnchor) { zoomShapeAnchor.lookAt(camera.position); }
+            if (zoomShapeAnchor) {
+                zoomShapeAnchor.lookAt(camera.position);
+                animateBones();
+            }
 
             if (productAnchor) { productAnchor.lookAt(camera.position); }
 
