@@ -435,8 +435,15 @@ function zoomChildBlobTween(shape, currentColor, targetColor, initOpacity = 1, t
             zoomBlobTween.remove(tween);
         });
 
-    zoomBlobTween.add(tween);
-    tween.start();
+    if (initOpacity === 0 && targetOpacity === 1) {
+        setTimeout(() => {
+            zoomBlobTween.add(tween);
+            tween.start();
+        }, 400);
+    } else {
+        zoomBlobTween.add(tween);
+        tween.start();
+    }
 
     if (initOpacity === targetOpacity) {
         rotations++;
