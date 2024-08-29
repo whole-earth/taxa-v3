@@ -248,24 +248,17 @@ function initScene() {
         midBone = new THREE.Bone();
         endBone = new THREE.Bone();
         
-        // Set up bone hierarchy
         rootBone.add(midBone);
         midBone.add(endBone);
-        
-        // Set initial positions
         rootBone.position.set(0, -2, 0);
         midBone.position.set(0, 2, 0);
         endBone.position.set(0, 2, 0);
-    
-        // Store initial positions for animation
         rootBoneInitialY = rootBone.position.y;
         midBoneInitialY = midBone.position.y;
         endBoneInitialY = endBone.position.y;
-    
         bones.push(rootBone, midBone, endBone);
     
-        // Create geometry
-        const geometry = new THREE.CapsuleGeometry(1, 4, 100, 24);
+        const geometry = new THREE.CapsuleGeometry(1, 4, 20, 100); // radius, length, capSegments, radialSegments
     
         // Create skinned mesh
         zoomShape = new THREE.SkinnedMesh(geometry, textBlobMaterial);
@@ -317,8 +310,7 @@ function initScene() {
     }
 
     function animateBones() {
-        // Increment the animation progress
-        animationProgress += 0.01; // Adjust this value to control animation speed
+        animationProgress += 0.01;
         if (animationProgress > 1) animationProgress = 0;
     
         // Calculate the deformation factor
@@ -326,7 +318,7 @@ function initScene() {
         const deformationFactor = Math.sin(animationProgress * Math.PI);
     
         // Define the maximum deformation
-        const maxDeformation = 1.0; // Adjust this to increase/decrease the S-curve
+        const maxDeformation = 2.0; // Adjust this to increase/decrease the S-curve
     
         // Animate rootBone
         rootBone.rotation.x = THREE.MathUtils.lerp(0, 0.5 * maxDeformation, deformationFactor);
