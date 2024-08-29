@@ -34,6 +34,7 @@ function initScene() {
         renderer = initRenderer();
         controls = initControls(camera, renderer);
         cellObject = new THREE.Object3D();
+
         initLights(scene, renderer);
         window.addEventListener('scroll', () => animatePage(controls, camera, cellObject, spheres, zoomShape, wavingBlob, dotBounds, product, lastScrollY, scrollTimeout));
         window.addEventListener('resize', () => resizeScene(renderer, camera));
@@ -219,20 +220,87 @@ function initScene() {
         return controls;
     }
 
-    function initZoomShape() {
-        const geometry = new THREE.CapsuleGeometry(1, 4, 10, 24); // radius, length, capSegments, radialSegments
+    function initZoomShapePrev() {
+        const geometry = new THREE.CapsuleGeometry(1, 4, 60, 24); // radius, length, capSegments, radialSegments
         zoomShape = new THREE.Mesh(geometry, textBlobMaterial);
 
-        zoomShape.position.set(4, -3.6, 40);
+        zoomShape.position.set(4, -3.6, 32);
         zoomShape.rotation.z = Math.PI / 1.8;
-
-        zoomShape.material.opacity = 0;
+        zoomShape.renderOrder = 6;
+        
+        zoomShape.material.opacity = 0.3;
         zoomShape.material.needsUpdate = true;
 
         zoomShapeAnchor = new THREE.Object3D();
+        zoomShape.renderOrder = 9;
         zoomShapeAnchor.add(zoomShape);
 
         scene.add(zoomShapeAnchor);
+    }
+
+    function initZoomShape() {
+
+        const bones = [];
+        const rootBone = new THREE.Bone();
+        const midBone = new THREE.Bone();
+        const endBone = new THREE.Bone();
+        rootBone.add(midBone);
+        midBone.add(endBone);
+        rootBone.position.set(0, -2, 0);
+        midBone.position.set(0, 2, 0);
+        endBone.position.set(0, 2, 0);
+
+        bones.push(rootBone, midBone, endBone);
+
+        const geometry = new THREE.CapsuleGeometry(1, 4, 100, 24); // radius, length, capSegments, radialSegments
+        const skinnedMesh = new THREE.SkinnedMesh(geometry, textBlobMaterial);
+
+        const skeleton = new THREE.Skeleton(bones);
+        skinnedMesh.add(rootBone);
+        skinnedMesh.bind(skeleton);
+
+        // Assign skin indices and weights
+        const position = geometry.attributes.position;
+        const vertex = new THREE.Vector3();
+
+        const skinIndices = [];
+        const skinWeights = [];
+
+        for (let i = 0; i < position.count; i++) {
+            vertex.fromBufferAttribute(position, i);
+
+            const y = vertex.y;
+
+            if (y < -2) {
+                // Bottom part of the capsule
+                skinIndices.push(0, 0, 0, 0);
+                skinWeights.push(1, 0, 0, 0);
+            } else if (y > 2) {
+                // Top part of the capsule
+                skinIndices.push(2, 2, 2, 2);
+                skinWeights.push(1, 0, 0, 0);
+            } else {
+                // Middle part of the capsule
+                skinIndices.push(1, 1, 1, 1);
+                skinWeights.push(1, 0, 0, 0);
+            }
+        }
+
+        geometry.setAttribute('skinIndex', new THREE.Uint16BufferAttribute(skinIndices, 4));
+        geometry.setAttribute('skinWeight', new THREE.Float32BufferAttribute(skinWeights, 4));
+
+        skinnedMesh.position.set(4, -3.6, 44);
+        skinnedMesh.rotation.z = Math.PI / 1.8;
+
+
+        zoomShapeAnchor = new THREE.Object3D();
+        zoomShapeAnchor.add(skinnedMesh);
+
+        scene.add(zoomShapeAnchor);
+
+        // Ensure the bones are visible for debugging
+        const boneHelper = new THREE.SkeletonHelper(skinnedMesh);
+        scene.add(boneHelper);
     }
 
     function initSpeckles(scene, boundingBoxes) {
@@ -267,17 +335,11 @@ function initScene() {
 
             dotTweenGroup.update();
 
-            if (zoomBlobTween) {
-                zoomBlobTween.update();
-            }
+            if (zoomBlobTween) { zoomBlobTween.update(); }
 
-            if (zoomShapeAnchor) {
-                zoomShapeAnchor.lookAt(camera.position);
-            }
+            if (zoomShapeAnchor) { zoomShapeAnchor.lookAt(camera.position); }
 
-            if (productAnchor) {
-                productAnchor.lookAt(camera.position);
-            }
+            if (productAnchor) { productAnchor.lookAt(camera.position); }
 
             renderer.render(scene, camera);
             controls.update();
