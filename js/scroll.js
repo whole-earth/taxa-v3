@@ -5,7 +5,7 @@ import { lastScrollY, setLastScrollY, dotTweenGroup, zoomBlobTween } from './ani
 const splashStartFOV = window.innerWidth < 768 ? 90 : 60;
 const splashEndFOV = splashStartFOV * 0.50;
 const zoomStartFOV = splashEndFOV;
-const zoomEndFOV = splashEndFOV * 1.15;
+const zoomEndFOV = splashEndFOV * 1.1;
 const zoomOutStartFOV = zoomEndFOV;
 const zoomOutEndFOV = splashStartFOV;
 const productStartFOV = zoomOutEndFOV;
@@ -33,11 +33,11 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
     productBool = isVisibleBetweenTopAndBottom(productArea);
 
     if (splashBool) {
-        activateText(splashArea);
         splashProgress = scrollProgress(splashArea);
         camera.fov = smoothLerp(splashStartFOV, splashEndFOV, splashProgress);
 
         if (!splashAlready) {
+            activateText(splashArea);
             if (comingFrom == 'zoomAreaFirst') {
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
                 zoomChildBlobTween(zoomShape, dotsGreen, dotsGreen, 1, 0);
@@ -53,11 +53,11 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
         }
     }
     else if (zoomBool) {
-        activateText(zoomArea);
         zoomProgress = scrollProgress(zoomArea);
         camera.fov = smoothLerp(zoomStartFOV, zoomEndFOV, zoomProgress);
 
         if (!zoomAlready) {
+            activateText(zoomArea);
             splashAlready = false;
             zoomAlready = true;
             zoomOutAlready = false;
@@ -138,11 +138,12 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
         }
     }
     else if (zoomOutBool) {
-        activateText(zoomOutArea);
         zoomOutProgress = scrollProgress(zoomOutArea);
         camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress);
 
         if (!zoomOutAlready) {
+            activateText(zoomOutArea);
+
             if (comingFrom == 'zoomAreaThird') {
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
                 zoomChildBlobTween(zoomShape, dotsYellow, dotsYellow, 1, 0);
@@ -171,13 +172,12 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
 
     }
     else if (productBool) {
-        activateText(productArea);
-        productProgress = scrollProgress__Last(productArea);
 
         if (!productAlready) {
             controls.autoRotate = false;
             controls.enableRotate = false;
             controls.autoRotateSpeed = 0;
+            activateText(productArea);
             splashAlready = false;
             zoomAlready = false;
             zoomOutAlready = false;
@@ -185,7 +185,10 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
             comingFrom = 'productArea';
         }
 
+        productProgress = scrollProgress__Last(productArea);
+
         if (product && product.children) {
+
             //cell scale : 0-60
             productProgress__0_60 = productProgress <= 0.6 ? productProgress / 0.6 : 1;
 
@@ -299,7 +302,8 @@ function scrollProgress__Last(element) {
     return parseFloat(progress).toFixed(4);
 }
 
-function activateTextPrev(parentElement) {
+function activateText(parentElement) {
+
     let activeText = parentElement.querySelector('.child');
 
     if (activeText) {
@@ -312,32 +316,6 @@ function activateTextPrev(parentElement) {
 
             if (activeText && !activeText.classList.contains('active')) {
                 activeText.classList.add('active');
-            }
-        }
-    }
-}
-
-function activateText(parentElement) {
-    const activeText = parentElement.querySelector('.child');
-    const viewportHeight = window.innerHeight;
-
-    if (activeText) {
-        const rect = activeText.getBoundingClientRect();
-        const topThreshold = 0.04 * viewportHeight;
-        const bottomThreshold = viewportHeight - 0.04 * viewportHeight;
-
-        if (rect.top <= topThreshold && rect.bottom >= bottomThreshold) {
-            if (!activeText.classList.contains('active')) {
-                textChildren.forEach(child => {
-                    if (child !== activeText && child.classList.contains('active')) {
-                        child.classList.remove('active');
-                    }
-                });
-                activeText.classList.add('active');
-            }
-        } else {
-            if (activeText.classList.contains('active')) {
-                activeText.classList.remove('active');
             }
         }
     }
