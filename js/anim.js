@@ -225,22 +225,6 @@ function initScene() {
         return controls;
     }
 
-    function initZoomShapePrev() {
-        const geometry = new THREE.CapsuleGeometry(1, 4, 60, 24); // radius, length, capSegments, radialSegments
-        zoomShape = new THREE.Mesh(geometry, textBlobMaterial);
-
-        zoomShape.position.set(4, -3.6, 32);
-        zoomShape.rotation.z = Math.PI / 1.8;
-        zoomShape.renderOrder = 6;
-
-        zoomShape.material.opacity = 0.3;
-        zoomShape.material.needsUpdate = true;
-
-        zoomShapeAnchor = new THREE.Object3D();
-        zoomShapeAnchor.add(zoomShape);
-        scene.add(zoomShapeAnchor);
-    }
-
     function initZoomShape() {
         // Create bones
         const bones = [];
