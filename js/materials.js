@@ -81,6 +81,5 @@ export const textBlobMaterial = new THREE.MeshStandardMaterial({
   transparent: true,
   opacity: 1,
   side: THREE.DoubleSide, 
-  depthWrite: false,
-  wireframe: true
+  depthWrite: false
 });

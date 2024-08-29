@@ -256,6 +256,7 @@ let splashProgress, zoomProgress, zoomOutProgress, productProgress, productProgr
 
 let comingFrom = "splash";
 let activeTextTimeout;
+let rotations = 0; // for zoomshape
 
 let splashAlready = false;
 let zoomAlready = false;
@@ -406,28 +407,7 @@ function dotRandomizePositions(spheres, dotBounds) {
 
 //=======================================================================
 
-function zoomChildBlob__tweenOpacity(shape, init, target) {
-    zoomBlobOpacityTween.removeAll();
-    const currentState = { opacity: init };
-    const targetState = { opacity: target };
-
-    const opacityTween = new Tween(currentState)
-        .to(targetState, fadeInDuration)
-        .easing(Easing.Quadratic.InOut)
-        .onUpdate(() => {
-            shape.material.opacity = currentState.opacity;
-            shape.material.needsUpdate = true;
-            console.log(`Current opacity: ${currentState.opacity}`);
-        })
-        .onComplete(() => {
-            zoomBlobOpacityTween.remove(opacityTween);
-        });
-
-    zoomBlobOpacityTween.add(opacityTween);
-    opacityTween.start();
-}
-
-function zoomChildBlobTween(shape, currentColor, targetColor, initOpacity = 1, targetOpacity = 1) {
+function zoomChildBlobTween(shape, currentColor, targetColor, initOpacity = 1, targetOpacity = 1, rotate = true) {
     zoomBlobTween.removeAll();
 
     const currentState = {
@@ -457,6 +437,34 @@ function zoomChildBlobTween(shape, currentColor, targetColor, initOpacity = 1, t
 
     zoomBlobTween.add(tween);
     tween.start();
+
+    if (rotate) {
+        rotations++;
+        const rotationTween = new Tween(shape.rotation)
+            .to(getRotationTarget(rotations), fadeInDuration)
+            .easing(Easing.Quadratic.InOut)
+            .onUpdate(() => {
+                shape.rotation.set(shape.rotation.x, shape.rotation.y, shape.rotation.z);
+            })
+            .onComplete(() => {
+                zoomBlobTween.remove(rotationTween);
+            });
+
+        zoomBlobTween.add(rotationTween);
+        rotationTween.start();
+    }
+}
+
+function getRotationTarget(rotations) {
+    switch (rotations % 3) {
+        case 1:
+            return { x: Math.PI / 2, y: 0, z: 0 };
+        case 2:
+            return { x: 0, y: Math.PI / 2, z: 0 };
+        case 0:
+        default:
+            return { x: 0, y: 0, z: Math.PI / 2 };
+    }
 }
 
 //=======================================================================
