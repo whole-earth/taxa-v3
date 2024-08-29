@@ -31,7 +31,6 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
     zoomBool = isVisibleBetweenTopAndBottom(zoomArea);
     zoomOutBool = isVisibleBetweenTopAndBottom(zoomOutArea);
     productBool = isVisibleBetweenTopAndBottom(productArea);
-    let activeTextTimeout;
 
     if (splashBool) {
         splashProgress = scrollProgress(splashArea);
@@ -256,6 +255,7 @@ let splashBool, zoomBool, zoomOutBool, productBool;
 let splashProgress, zoomProgress, zoomOutProgress, productProgress, productProgress__0_60;
 
 let comingFrom = "splash";
+let activeTextTimeout;
 
 let splashAlready = false;
 let zoomAlready = false;
