@@ -74,7 +74,7 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
                         zoomChildBlobTween(zoomShape, dotsGreen, dotsGreen, 0, 1);
                     } else if (comingFrom == 'zoomAreaSecond') {
                         dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
-                        zoomChildBlobTween(zoomShape, dotsOrange, dotsGreen, true);
+                        zoomChildBlobTween(zoomShape, dotsOrange, dotsGreen);
                         setTimeout(() => {
                             dotUpdateColors(spheres, dotsGreen);
                             dotRandomizePositions(spheres, dotBounds);
@@ -95,9 +95,9 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
                     dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
 
                     if (comingFrom == 'zoomAreaFirst') {
-                        zoomChildBlobTween(zoomShape, dotsGreen, dotsOrange, true);
+                        zoomChildBlobTween(zoomShape, dotsGreen, dotsOrange);
                     } else if (comingFrom == 'zoomAreaThird') {
-                        zoomChildBlobTween(zoomShape, dotsYellow, dotsOrange, true);
+                        zoomChildBlobTween(zoomShape, dotsYellow, dotsOrange);
                     }
 
                     setTimeout(() => {
@@ -118,7 +118,7 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
 
                     if (comingFrom == 'zoomAreaSecond') {
                         dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
-                        zoomChildBlobTween(zoomShape, dotsOrange, dotsYellow, true);
+                        zoomChildBlobTween(zoomShape, dotsOrange, dotsYellow);
                         setTimeout(() => {
                             dotUpdateColors(spheres, dotsYellow);
                             dotRandomizePositions(spheres, dotBounds);
@@ -407,7 +407,7 @@ function dotRandomizePositions(spheres, dotBounds) {
 
 //=======================================================================
 
-function zoomChildBlobTween(shape, currentColor, targetColor, initOpacity = 1, targetOpacity = 1, rotate = false) {
+function zoomChildBlobTween(shape, currentColor, targetColor, initOpacity = 1, targetOpacity = 1) {
     zoomBlobTween.removeAll();
 
     const currentState = {
@@ -438,7 +438,7 @@ function zoomChildBlobTween(shape, currentColor, targetColor, initOpacity = 1, t
     zoomBlobTween.add(tween);
     tween.start();
 
-    if (rotate) {
+    if (initOpacity === targetOpacity) {
         rotations++;
         const rotationTween = new Tween(shape.rotation)
             .to(getRotationTarget(rotations), fadeInDuration)
