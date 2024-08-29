@@ -448,7 +448,7 @@ function zoomChildBlobTween(shape, currentColor, targetColor, initOpacity = 1, t
     if (initOpacity === targetOpacity) {
         rotations++;
         const rotationTween = new Tween(shape.rotation)
-            .to(getRotationTarget(rotations), fadeInDuration)
+            .to(getRotationTarget(rotations), fadeOutDuration)
             .easing(Easing.Quadratic.InOut)
             .onUpdate(() => {
                 shape.rotation.set(shape.rotation.x, shape.rotation.y, shape.rotation.z);
@@ -465,12 +465,15 @@ function zoomChildBlobTween(shape, currentColor, targetColor, initOpacity = 1, t
 function getRotationTarget(rotations) {
     switch (rotations % 3) {
         case 1:
-            return { x: Math.PI / 2, y: 0, z: 0 };
+            console.log('case 1');
+            return { x: 0, y: 0, z: Math.PI / 1.8 };
         case 2:
-            return { x: 0, y: Math.PI / 2, z: 0 };
+            console.log('case 2');
+            return { x: 0, y: Math.PI / 2, z: Math.PI / -1 };
         case 0:
         default:
-            return { x: 0, y: 0, z: Math.PI / 2 };
+            console.log('case 3');
+            return { x: 0, y: 0, z: Math.PI / 1 };
     }
 }
 
