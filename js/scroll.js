@@ -317,7 +317,7 @@ function activateText(parentElement) {
             if (activeText && !activeText.classList.contains('active')) {
                 setTimeout(() => {
                     activeText.classList.add('active');
-                }, 800);
+                }, 500);
             }
         }
     }
