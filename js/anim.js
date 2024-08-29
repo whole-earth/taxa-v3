@@ -258,7 +258,7 @@ function initScene() {
         endBoneInitialY = endBone.position.y;
         bones.push(rootBone, midBone, endBone);
     
-        const geometry = new THREE.CapsuleGeometry(1, 4, 20, 100); // radius, length, capSegments, radialSegments
+        const geometry = new THREE.CapsuleGeometry(1, 6, 20, 100); // radius, length, capSegments, radialSegments
     
         // Create skinned mesh
         zoomShape = new THREE.SkinnedMesh(geometry, textBlobMaterial);
@@ -302,6 +302,9 @@ function initScene() {
         // Position and rotate the mesh
         zoomShape.position.set(4, -3.6, 42);
         zoomShape.rotation.z = Math.PI / 1.8;
+        
+        zoomShape.material.opacity = 0;
+        zoomShape.material.needsUpdate = true;
     
         // Create anchor and add to scene
         zoomShapeAnchor = new THREE.Object3D();
