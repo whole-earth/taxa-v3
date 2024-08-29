@@ -68,7 +68,6 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
             if (zoomProgress >= 0 && zoomProgress < 1 / 3) {
                 if (!zoomFirstAlready) {
                     activateText__ZoomChild(zoomFirst);
-
                     if (comingFrom == 'splash') {
                         dotTweenOpacity(spheres, 0, 1, wavingBlob, true, fadeInDuration);
                         zoomChildBlobTween(zoomShape, dotsGreen, dotsGreen, 0, 1);
@@ -90,7 +89,6 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
             }
             else if (zoomProgress >= 1 / 3 && zoomProgress < 2 / 3) {
                 if (!zoomSecondAlready) {
-
                     activateText__ZoomChild(zoomSecond);
                     dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
 
@@ -307,18 +305,16 @@ function activateText(parentElement) {
     let activeText = parentElement.querySelector('.child');
 
     if (activeText) {
-        if (!activeText.classList.contains('active')) {
-            textChildren.forEach(child => {
-                if (child !== activeText && child.classList.contains('active')) {
-                    child.classList.remove('active');
-                }
-            });
-
-            if (activeText && !activeText.classList.contains('active')) {
-                setTimeout(() => {
-                    activeText.classList.add('active');
-                }, 500);
+        textChildren.forEach(child => {
+            if (child !== activeText && child.classList.contains('active')) {
+                child.classList.remove('active');
             }
+        });
+
+        if (activeText && !activeText.classList.contains('active')) {
+            setTimeout(() => {
+                activeText.classList.add('active');
+            }, 500);
         }
     }
 }
