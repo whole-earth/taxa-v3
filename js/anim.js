@@ -250,20 +250,17 @@ function initScene() {
         
         rootBone.add(midBone);
         midBone.add(endBone);
-        rootBone.position.set(0, -2, 0);
-        midBone.position.set(0, 2, 0);
-        endBone.position.set(0, 2, 0);
+        rootBone.position.set(0, -1, 0);
+        midBone.position.set(0, 0, 0);
+        endBone.position.set(0, 1, 0);
         rootBoneInitialY = rootBone.position.y;
         midBoneInitialY = midBone.position.y;
         endBoneInitialY = endBone.position.y;
         bones.push(rootBone, midBone, endBone);
     
         const geometry = new THREE.CapsuleGeometry(1, 6, 20, 100); // radius, length, capSegments, radialSegments
-    
-        // Create skinned mesh
         zoomShape = new THREE.SkinnedMesh(geometry, textBlobMaterial);
     
-        // Create and bind skeleton
         const skeleton = new THREE.Skeleton(bones);
         zoomShape.add(rootBone);
         zoomShape.bind(skeleton);
@@ -298,15 +295,13 @@ function initScene() {
     
         geometry.setAttribute('skinIndex', new THREE.Uint16BufferAttribute(skinIndices, 4));
         geometry.setAttribute('skinWeight', new THREE.Float32BufferAttribute(skinWeights, 4));
-    
-        // Position and rotate the mesh
+
         zoomShape.position.set(4, -3.6, 42);
         zoomShape.rotation.z = Math.PI / 1.8;
         
-        zoomShape.material.opacity = 0;
+        zoomShape.material.opacity = 1;
         zoomShape.material.needsUpdate = true;
     
-        // Create anchor and add to scene
         zoomShapeAnchor = new THREE.Object3D();
         zoomShapeAnchor.add(zoomShape);
         scene.add(zoomShapeAnchor);
@@ -321,18 +316,18 @@ function initScene() {
         const deformationFactor = Math.sin(animationProgress * Math.PI);
     
         // Define the maximum deformation
-        const maxDeformation = 2.0; // Adjust this to increase/decrease the S-curve
+        const maxDeformation = 1.0; // Adjust this to increase/decrease the S-curve
     
         // Animate rootBone
-        rootBone.rotation.x = THREE.MathUtils.lerp(0, 0.5 * maxDeformation, deformationFactor);
+        //rootBone.rotation.x = THREE.MathUtils.lerp(0, 0.5 * maxDeformation, deformationFactor);
         rootBone.rotation.y = rootBoneInitialY + THREE.MathUtils.lerp(0, 0.5 * maxDeformation, deformationFactor);
     
         // Animate midBone
-        midBone.rotation.x = THREE.MathUtils.lerp(0, -1.0 * maxDeformation, deformationFactor);
+        //midBone.rotation.x = THREE.MathUtils.lerp(0, -1.0 * maxDeformation, deformationFactor);
         midBone.rotation.y = midBoneInitialY + THREE.MathUtils.lerp(0, 1.0 * maxDeformation, deformationFactor);
     
         // Animate endBone
-        endBone.rotation.x = THREE.MathUtils.lerp(0, 0.5 * maxDeformation, deformationFactor);
+        //endBone.rotation.x = THREE.MathUtils.lerp(0, 0.5 * maxDeformation, deformationFactor);
         endBone.rotation.y = endBoneInitialY + THREE.MathUtils.lerp(0, -0.5 * maxDeformation, deformationFactor);
     
         // Update the skinned mesh
