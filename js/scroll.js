@@ -469,7 +469,7 @@ function getRotationTarget(rotations) {
             return { x: 0, y: 0, z: Math.PI / 1.8 };
         case 2:
             console.log('case 2');
-            return { x: 0, y: Math.PI / 2, z: Math.PI / -1 };
+            return { x: 0, y: 0, z: Math.PI / -1 };
         case 0:
         default:
             console.log('case 3');
