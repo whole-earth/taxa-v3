@@ -465,11 +465,14 @@ function zoomChildBlobTween(shape, currentColor, targetColor, initOpacity = 1, t
 function getRotationTarget(rotations) {
     switch (rotations % 3) {
         case 1:
+            console.log('case1')
             return { x: Math.PI / 2, y: 0, z: 0 };
         case 2:
+            console.log('case2')
             return { x: 0, y: Math.PI / 2, z: 0 };
         case 0:
         default:
+            console.log('case3')
             return { x: 0, y: 0, z: Math.PI / 2 };
     }
 }
