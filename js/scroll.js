@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { Tween, Easing } from 'tween';
-import { lastScrollY, setLastScrollY, dotTweenGroup, zoomBlobTween } from './anim.js';
+import { lastScrollY, setLastScrollY, dotTweenGroup } from './anim.js';
 
 const splashStartFOV = window.innerWidth < 768 ? 90 : 60;
 const splashEndFOV = splashStartFOV * 0.55;
@@ -9,14 +9,14 @@ const zoomEndFOV = splashEndFOV * 1.1;
 const zoomOutStartFOV = zoomEndFOV;
 const zoomOutEndFOV = splashStartFOV;
 const transitionStartFOV = zoomOutEndFOV;
-const transitionEndFOV = 80;
+const transitionEndFOV = splashStartFOV * 1.4;
 const productStartFOV = transitionEndFOV;
 const productEndFOV = productStartFOV;
 
 const dotsGreen = new THREE.Color('#71ff00');
 const dotsOrange = new THREE.Color('#ff8e00');
 const dotsYellow = new THREE.Color('#f1ff00');
-const fadeOutDuration = 60;
+const fadeOutDuration = 140;
 const fadeInDuration = 280;
 
 // ============================
@@ -186,10 +186,6 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
             comingFrom = 'transitionArea';
 
         }
-
-        const cellScale = smoothLerp(1, 0.4, transitionProgress);
-        cellObject.scale.set(cellScale, cellScale, cellScale);
-
     }
     else if (productBool) {
 
@@ -214,6 +210,9 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
             productProgress__0_60 = productProgress <= 0.6 ? productProgress / 0.6 : 1;
 
             camera.fov = smoothLerp(productStartFOV, productEndFOV, productProgress__0_60);
+
+            const cellScale = smoothLerp(1, 0.2, productProgress__0_60);
+            cellObject.scale.set(cellScale, cellScale, cellScale);
 
             cellObject.children.forEach(child => {
                 child.traverse(innerChild => {
@@ -275,7 +274,6 @@ let splashProgress, zoomProgress, zoomOutProgress, transitionProgress, productPr
 
 let comingFrom = "splash";
 let activeTextTimeout;
-let rotations = 0; // for zoomshape
 
 let splashAlready = false;
 let zoomAlready = false;

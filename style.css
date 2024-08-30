@@ -72,9 +72,8 @@ main {
 
 .transition {
   position: relative;
-  height: 120vh;
+  height: 50vh;
   width: 100%;
-  background-color: #29ff9454;
 }
 
 .product {

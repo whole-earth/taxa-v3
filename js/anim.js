@@ -11,16 +11,11 @@ import { animatePage } from './scroll.js';
 document.addEventListener('DOMContentLoaded', async () => initScene());
 
 export let dotTweenGroup = new Group();
-export let zoomBlobTween = new Group();
 
 export let lastScrollY = 0;
 export function setLastScrollY(value) { lastScrollY = value; }
 
 function initScene() {
-
-    let animationProgress = 0;
-    let rootBoneInitialY, midBoneInitialY, endBoneInitialY;
-    let rootBone, midBone, endBone;
 
     let scene, camera, renderer, controls;
     let scrollTimeout;
@@ -254,8 +249,6 @@ function initScene() {
             requestAnimationFrame(animate);
 
             dotTweenGroup.update();
-
-            if (zoomBlobTween) { zoomBlobTween.update(); }
 
             if (productAnchor) { productAnchor.lookAt(camera.position); }
 
