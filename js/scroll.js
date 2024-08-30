@@ -40,7 +40,7 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
             activateText(splashArea);
             if (comingFrom == 'zoomAreaFirst') {
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
-                zoomChildBlobTween(zoomShape, dotsGreen, dotsGreen, 1, 0);
+                zoomChildBlobTween(zoomShape, dotsGreen, dotsGreen, 0.5, 0);
             }
             splashAlready = true;
             zoomAlready = false;
@@ -71,7 +71,7 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
 
                     if (comingFrom == 'splash') {
                         dotTweenOpacity(spheres, 0, 1, wavingBlob, true, fadeInDuration);
-                        zoomChildBlobTween(zoomShape, dotsGreen, dotsGreen, 0, 1);
+                        zoomChildBlobTween(zoomShape, dotsGreen, dotsGreen, 0, 0.5);
                     } else if (comingFrom == 'zoomAreaSecond') {
                         dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
                         zoomChildBlobTween(zoomShape, dotsOrange, dotsGreen);
@@ -125,7 +125,7 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
                             dotTweenOpacity(spheres, 0, 1, wavingBlob, true, fadeInDuration);
                         }, fadeOutDuration);
                     } else if (comingFrom == 'zoomOutArea') {
-                        zoomChildBlobTween(zoomShape, dotsYellow, dotsYellow, 0, 1);
+                        zoomChildBlobTween(zoomShape, dotsYellow, dotsYellow, 0, 0.5);
                         dotTweenOpacity(spheres, 0, 1, wavingBlob, true, fadeInDuration);
                     }
 
@@ -146,7 +146,7 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
 
             if (comingFrom == 'zoomAreaThird') {
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
-                zoomChildBlobTween(zoomShape, dotsYellow, dotsYellow, 1, 0);
+                zoomChildBlobTween(zoomShape, dotsYellow, dotsYellow, 0.5, 0);
             } else if (comingFrom == 'productArea') {
                 controls.autoRotate = true;
 
@@ -407,7 +407,7 @@ function dotRandomizePositions(spheres, dotBounds) {
 
 //=======================================================================
 
-function zoomChildBlobTween(shape, currentColor, targetColor, initOpacity = 1, targetOpacity = 1) {
+function zoomChildBlobTween(shape, currentColor, targetColor, initOpacity = 0.5, targetOpacity = 0.5) {
     zoomBlobTween.removeAll();
 
     const currentState = {
@@ -435,7 +435,7 @@ function zoomChildBlobTween(shape, currentColor, targetColor, initOpacity = 1, t
             zoomBlobTween.remove(tween);
         });
 
-    if (initOpacity === 0 && targetOpacity === 1) {
+    if (initOpacity === 0 && targetOpacity === 0.5) {
         setTimeout(() => {
             zoomBlobTween.add(tween);
             tween.start();
