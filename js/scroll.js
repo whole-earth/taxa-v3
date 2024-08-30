@@ -17,7 +17,7 @@ const dotsGreen = new THREE.Color('#71ff00');
 const dotsOrange = new THREE.Color('#ff8e00');
 const dotsYellow = new THREE.Color('#f1ff00');
 const fadeInDuration = 500;
-const fadeOutDuration = 240;
+const fadeOutDuration = 180;
 
 // ============================
 
@@ -60,7 +60,7 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
 
         if (!zoomAlready) {
             activateText(zoomArea);
-            // tween opacity of ribbons here ribbonTween(init, target, duration)
+            tweenRibbons(cellObject, 1, 0.25, fadeInDuration)
             splashAlready = false;
             zoomAlready = true;
             zoomOutAlready = false;
@@ -141,7 +141,8 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
 
         if (!zoomOutAlready) {
             activateText(zoomOutArea);
-            // tween opacity of ribbons here ribbonTween(init, target, duration)
+            tweenRibbons(cellObject, 0.25, 1, fadeInDuration)
+
 
             if (comingFrom == 'zoomAreaThird') {
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
@@ -343,6 +344,39 @@ function activateText(parentElement) {
                     activeText.classList.add('active');
                 }, 400);
             }
+        }
+    }
+}
+
+function tweenRibbons(object, initOpacity, targetOpacity, duration) {
+    const ribbons = object.getObjectByName('ribbons.glb');
+    if (ribbons) {
+        const materials = [];
+        ribbons.traverse(child => {
+            if (child.material) {
+                materials.push(child.material);
+            }
+        });
+
+        if (materials.length > 0) {
+            const currentState = { opacity: initOpacity };
+            const targetState = { opacity: targetOpacity };
+
+            const ribbonTween = new Tween(currentState)
+                .to(targetState, duration)
+                .easing(Easing.Quadratic.InOut)
+                .onUpdate(() => {
+                    materials.forEach(material => {
+                        material.opacity = currentState.opacity;
+                        material.needsUpdate = true;
+                    });
+                })
+                .onComplete(() => {
+                    dotTweenGroup.remove(ribbonTween);
+                });
+
+            dotTweenGroup.add(ribbonTween);
+            ribbonTween.start();
         }
     }
 }

@@ -45,6 +45,7 @@ function initScene() {
                     this.position = new THREE.Vector3(0, 0, 0);
                     this.basePath = 'https://cdn.jsdelivr.net/gh/whole-earth/taxa@main/assets/cell/';
                     this.loader = new GLTFLoader();
+                    this.gltfFileName = gltf;
                     const dracoLoader = new DRACOLoader();
                     dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.3/');
                     this.loader.setDRACOLoader(dracoLoader);
@@ -60,6 +61,7 @@ function initScene() {
                 this.loader.load(fullPath, (gltf) => {
                     this.object = gltf.scene;
                     this.object.position.copy(this.position);
+                    this.object.name = this.gltfFileName.split('/').pop();
                     cellObject.add(this.object);
                     this.centerObject(this.object);
                     if (shader) this.applyCustomShader(shader);
