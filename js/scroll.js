@@ -278,14 +278,7 @@ export function animatePage(controls, camera, cellObject, spheres, zoomShape, wa
         controls.autoRotateSpeed = 0.2;
     }, 100);
 
-    //throttle(() => scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlob, dotBounds, product), 60)();
-    
-    if (window.innerWidth < 900) {
-        scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlob, dotBounds, product);
-    } else {
-        throttle(() => scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlob, dotBounds, product), 40)();
-    }
-
+    throttle(() => scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlob, dotBounds, product), 60)();
     camera.updateProjectionMatrix();
     setLastScrollY(scrollY);
 };
@@ -483,9 +476,12 @@ function getRotationTarget(rotations) {
 
 //=======================================================================
 
-function smoothLerp(start, end, progress) {
-    return start + (end - start) * smoothstep(progress);
-}
+const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+console.log('isMobile:', isMobile);
+
+const smoothLerp = isMobile
+    ? (start, end, progress) => start + (end - start) * progress
+    : (start, end, progress) => start + (end - start) * smoothstep(progress);
 
 function smoothstep(x) {
     return x * x * (3 - 2 * x);
