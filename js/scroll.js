@@ -408,6 +408,7 @@ function dotRandomizePositions(spheres, dotBounds) {
 //=======================================================================
 
 function zoomChildBlobTween(shape, currentColor, targetColor, initOpacity = 0.5, targetOpacity = 0.5) {
+    /*
     zoomBlobTween.removeAll();
 
     const currentState = {
@@ -460,6 +461,7 @@ function zoomChildBlobTween(shape, currentColor, targetColor, initOpacity = 0.5,
         zoomBlobTween.add(rotationTween);
         rotationTween.start();
     }
+        */
 }
 
 function getRotationTarget(rotations) {
