@@ -8,8 +8,10 @@ const zoomStartFOV = splashEndFOV;
 const zoomEndFOV = splashEndFOV * 1.1;
 const zoomOutStartFOV = zoomEndFOV;
 const zoomOutEndFOV = splashStartFOV;
-const productStartFOV = zoomOutEndFOV;
-const productEndFOV = 80;
+const transitionStartFOV = zoomOutEndFOV;
+const transitionEndFOV = 80;
+const productStartFOV = transitionEndFOV;
+const productEndFOV = productStartFOV;
 
 const dotsGreen = new THREE.Color('#71ff00');
 const dotsOrange = new THREE.Color('#ff8e00');
@@ -30,6 +32,7 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
     splashBool = isVisibleBetweenTopAndBottom(splashArea);
     zoomBool = isVisibleBetweenTopAndBottom(zoomArea);
     zoomOutBool = isVisibleBetweenTopAndBottom(zoomOutArea);
+    transitionBool = isVisibleBetweenTopAndBottom(transitionArea);
     productBool = isVisibleBetweenTopAndBottom(productArea);
 
     if (splashBool) {
@@ -45,6 +48,7 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
             splashAlready = true;
             zoomAlready = false;
             zoomOutAlready = false;
+            transitionAlready = false;
             productAlready = false;
             zoomFirstAlready = false;
             zoomSecondAlready = false;
@@ -61,6 +65,7 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
             splashAlready = false;
             zoomAlready = true;
             zoomOutAlready = false;
+            transitionAlready = false;
             productAlready = false;
         }
 
@@ -147,9 +152,37 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
             if (comingFrom == 'zoomAreaThird') {
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
                 zoomChildBlobTween(zoomShape, dotsYellow, dotsYellow, 0.5, 0);
-            } else if (comingFrom == 'productArea') {
-                controls.autoRotate = true;
+            }
 
+            splashAlready = false;
+            zoomAlready = false;
+            zoomOutAlready = true;
+            transitionAlready = false;
+            productAlready = false;
+            zoomFirstAlready = false;
+            zoomSecondAlready = false;
+            zoomThirdAlready = false;
+            comingFrom = 'zoomOutArea';
+        }
+
+    }
+    else if (transitionBool) {
+        transitionProgress = scrollProgress(transitionArea);
+        camera.fov = smoothLerp(transitionStartFOV, transitionEndFOV, transitionProgress);
+
+        console.log(transitionProgress)
+
+        if (!transitionAlready) {
+            splashAlready = false;
+            zoomAlready = false;
+            zoomOutAlready = false;
+            transitionAlready = true;
+            productAlready = false;
+            comingFrom = 'transitionArea';
+
+            if (comingFrom == 'productArea') {
+                controls.autoRotate = true;
+    
                 if (product) {
                     product.children.forEach(child => {
                         if (child.material) {
@@ -159,15 +192,6 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
                     });
                 }
             }
-
-            splashAlready = false;
-            zoomAlready = false;
-            zoomOutAlready = true;
-            productAlready = false;
-            zoomFirstAlready = false;
-            zoomSecondAlready = false;
-            zoomThirdAlready = false;
-            comingFrom = 'zoomOutArea';
         }
 
     }
@@ -181,6 +205,7 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
             splashAlready = false;
             zoomAlready = false;
             zoomOutAlready = false;
+            transitionAlready = false;
             productAlready = true;
             comingFrom = 'productArea';
         }
@@ -243,6 +268,7 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
 const splashArea = document.querySelector('.splash');
 const zoomArea = document.querySelector('.zoom');
 const zoomOutArea = document.querySelector('.zoom-out');
+const transitionArea = document.querySelector('.transition');
 const productArea = document.querySelector('.product');
 
 const textChildren = document.querySelectorAll('.child');
@@ -251,8 +277,8 @@ const zoomSecond = document.querySelector('#zoomSecond');
 const zoomThird = document.querySelector('#zoomThird');
 const zoomElements = [zoomFirst, zoomSecond, zoomThird];
 
-let splashBool, zoomBool, zoomOutBool, productBool;
-let splashProgress, zoomProgress, zoomOutProgress, productProgress, productProgress__0_60;
+let splashBool, zoomBool, zoomOutBool, transitionBool, productBool;
+let splashProgress, zoomProgress, zoomOutProgress, transitionProgress, productProgress, productProgress__0_60;
 
 let comingFrom = "splash";
 let activeTextTimeout;
@@ -261,6 +287,7 @@ let rotations = 0; // for zoomshape
 let splashAlready = false;
 let zoomAlready = false;
 let zoomOutAlready = false;
+let transitionAlready = false;
 let productAlready = false;
 
 let zoomFirstAlready = false;
