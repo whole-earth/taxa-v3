@@ -6,7 +6,8 @@ export const pearlBlue = new THREE.MeshStandardMaterial({
   metalness: 0.2,
   opacity: 1,
   transparent: true,
-  side: THREE.DoubleSide
+  side: THREE.DoubleSide,
+  depthWrite: true
 });
 
 export const mauve = new THREE.MeshBasicMaterial({

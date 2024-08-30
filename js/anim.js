@@ -229,7 +229,7 @@ function initScene() {
         for (let i = 0; i < 180; i++) {
             const randomPosition = getRandomPositionWithinBounds(dotBounds);
             const sphereGeometry = new THREE.SphereGeometry(0.15, 6, 6);
-            const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x92cb86, opacity: 1, transparent: true, depthWrite: true });
+            const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x92cb86, opacity: 0, transparent: true, depthWrite: true });
             const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
             sphereMesh.position.copy(randomPosition);
             const randomDirection = new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize();

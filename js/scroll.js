@@ -366,7 +366,7 @@ function dotTweenOpacity(spheres, initialOpacity, targetOpacity, wavingBlob, dur
         const targetState = { opacity: targetOpacity };
 
         const sphereTween = new Tween(currentState)
-            .to(targetState, duration * 2.4 ) // temp prolonged duration
+            .to(targetState, duration * 2.4 ) // prolonged duration
             .easing(Easing.Quadratic.InOut)
             .onUpdate(() => {
                 sphere.material.opacity = currentState.opacity;

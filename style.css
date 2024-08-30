@@ -58,7 +58,7 @@ main {
 
 .zoom {
   position: relative;
-  height: 200vh;
+  height: 200vh; /* 400 in webflow */
   width: 100%;
   border: 2px solid #d1d1d1;
 }
@@ -72,7 +72,7 @@ main {
 
 .transition {
   position: relative;
-  height: 50vh;
+  height: 100vh;
   width: 100%;
 }
 
