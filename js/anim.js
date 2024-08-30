@@ -5,7 +5,7 @@ import { DRACOLoader } from 'three/DracoLoader';
 import { OrbitControls } from 'three/OrbitControls';
 import { RGBELoader } from 'three/RGBELoader';
 import { PMREMGenerator } from 'three';
-import { dispersion, grayPurple, iridescent, vialMaterial, textBlobMaterial } from './materials.js';
+import { dispersion, mauve, pearlBlue, vialMaterial } from './materials.js';
 import { animatePage } from './scroll.js';
 
 document.addEventListener('DOMContentLoaded', async () => initScene());
@@ -26,7 +26,6 @@ function initScene() {
     let scrollTimeout;
     let cellObject, blobInner, blobOuter, ribbons;
     let dotBounds, wavingBlob;
-    let zoomShapeAnchor, zoomShape;
     let productAnchor, product;
     const spheres = [];
 
@@ -41,7 +40,7 @@ function initScene() {
         cellObject = new THREE.Object3D();
 
         initLights(scene, renderer);
-        window.addEventListener('scroll', () => animatePage(controls, camera, cellObject, spheres, zoomShape, wavingBlob, dotBounds, product, lastScrollY, scrollTimeout));
+        window.addEventListener('scroll', () => animatePage(controls, camera, cellObject, spheres, wavingBlob, dotBounds, product, lastScrollY, scrollTimeout));
         window.addEventListener('resize', () => resizeScene(renderer, camera));
 
         class CellComponent {
@@ -143,7 +142,7 @@ function initScene() {
 
         const loadCellObjects = [
 
-            new CellComponent("blob-inner.glb", iridescent, 1).then((object) => {
+            new CellComponent("blob-inner.glb", pearlBlue, 1).then((object) => {
                 blobInner = object;
                 resolve();
             }),
@@ -153,7 +152,7 @@ function initScene() {
                 resolve();
             }),
 
-            new CellComponent("ribbons.glb", grayPurple, 3).then((object) => {
+            new CellComponent("ribbons.glb", mauve, 3).then((object) => {
                 ribbons = object;
                 resolve();
             })
@@ -173,7 +172,6 @@ function initScene() {
         Promise.all(loadCellObjects).then(() => {
             scene.add(cellObject);
             initSpeckles(scene, boundingBoxes);
-            initZoomShape();
             loadProductObject;
             resolve();
         });
@@ -225,99 +223,6 @@ function initScene() {
         return controls;
     }
 
-    function initZoomShape() {
-        // Create bones
-        const bones = [];
-        rootBone = new THREE.Bone();
-        midBone = new THREE.Bone();
-        endBone = new THREE.Bone();
-        
-        rootBone.add(midBone);
-        midBone.add(endBone);
-        rootBone.position.set(0, -1, 0);
-        midBone.position.set(0, 0, 0);
-        endBone.position.set(0, 1, 0);
-        rootBoneInitialY = rootBone.position.y;
-        midBoneInitialY = midBone.position.y;
-        endBoneInitialY = endBone.position.y;
-        bones.push(rootBone, midBone, endBone);
-    
-        const geometry = new THREE.CapsuleGeometry(1, 6, 6, 100); // radius, length, capSegments, radialSegments
-        zoomShape = new THREE.SkinnedMesh(geometry, textBlobMaterial);
-    
-        const skeleton = new THREE.Skeleton(bones);
-        zoomShape.add(rootBone);
-        zoomShape.bind(skeleton);
-    
-        // Assign skin indices and weights
-        const position = geometry.attributes.position;
-        const skinIndices = [];
-        const skinWeights = [];
-    
-        const segmentHeight = 4; // Total height of the capsule
-        const halfHeight = segmentHeight / 2;
-    
-        for (let i = 0; i < position.count; i++) {
-            const vertex = new THREE.Vector3().fromBufferAttribute(position, i);
-    
-            // Normalize y to range 0-1
-            const y = (vertex.y + halfHeight) / segmentHeight;
-    
-            // Assign indices and weights based on y position
-            if (y <= 0.5) {
-                // Lower half - influenced by root and mid bones
-                const weight = y * 2;
-                skinIndices.push(0, 1, 0, 0);
-                skinWeights.push(1 - weight, weight, 0, 0);
-            } else {
-                // Upper half - influenced by mid and end bones
-                const weight = (y - 0.5) * 2;
-                skinIndices.push(1, 2, 0, 0);
-                skinWeights.push(1 - weight, weight, 0, 0);
-            }
-        }
-    
-        geometry.setAttribute('skinIndex', new THREE.Uint16BufferAttribute(skinIndices, 4));
-        geometry.setAttribute('skinWeight', new THREE.Float32BufferAttribute(skinWeights, 4));
-
-        zoomShape.position.set(4, -3.3, 42);
-        zoomShape.rotation.z = Math.PI / 1.8;
-        
-        zoomShape.material.opacity = 0;
-        zoomShape.material.needsUpdate = true;
-    
-        zoomShapeAnchor = new THREE.Object3D();
-        zoomShapeAnchor.add(zoomShape);
-        scene.add(zoomShapeAnchor);
-    }
-
-    function animateBones() {
-        animationProgress += 0.01;
-        if (animationProgress > 1) animationProgress = 0;
-    
-        // Calculate the deformation factor
-        // This will be 0 at progress 0 and 1, and 1 at progress 0.5
-        const deformationFactor = Math.sin(animationProgress * Math.PI);
-    
-        // Define the maximum deformation
-        const maxDeformation = 1.0; // Adjust this to increase/decrease the S-curve
-    
-        // Animate rootBone
-        //rootBone.rotation.x = THREE.MathUtils.lerp(0, 0.5 * maxDeformation, deformationFactor);
-        rootBone.rotation.y = rootBoneInitialY + THREE.MathUtils.lerp(0, 0.5 * maxDeformation, deformationFactor);
-    
-        // Animate midBone
-        //midBone.rotation.x = THREE.MathUtils.lerp(0, -1.0 * maxDeformation, deformationFactor);
-        midBone.rotation.y = midBoneInitialY + THREE.MathUtils.lerp(0, 1.0 * maxDeformation, deformationFactor);
-    
-        // Animate endBone
-        //endBone.rotation.x = THREE.MathUtils.lerp(0, 0.5 * maxDeformation, deformationFactor);
-        endBone.rotation.y = endBoneInitialY + THREE.MathUtils.lerp(0, -0.5 * maxDeformation, deformationFactor);
-    
-        // Update the skinned mesh
-        zoomShape.skeleton.update();
-    }
-
     function initSpeckles(scene, boundingBoxes) {
         dotBounds = boundingBoxes[1].max.z * 0.85;
         const waveGeom = new THREE.SphereGeometry(dotBounds, 32, 32);
@@ -351,11 +256,6 @@ function initScene() {
             dotTweenGroup.update();
 
             if (zoomBlobTween) { zoomBlobTween.update(); }
-
-            if (zoomShapeAnchor) {
-                zoomShapeAnchor.lookAt(camera.position);
-                animateBones();
-            }
 
             if (productAnchor) { productAnchor.lookAt(camera.position); }
 

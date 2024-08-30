@@ -26,7 +26,7 @@ const productEndScale = 3;
 
 // ============================
 
-function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlob, dotBounds, product) {
+function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBounds, product) {
     splashBool = isVisibleBetweenTopAndBottom(splashArea);
     zoomBool = isVisibleBetweenTopAndBottom(zoomArea);
     zoomOutBool = isVisibleBetweenTopAndBottom(zoomOutArea);
@@ -41,7 +41,6 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
             activateText(splashArea);
             if (comingFrom == 'zoomAreaFirst') {
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
-                zoomChildBlobTween(zoomShape, dotsGreen, dotsGreen, 0.5, 0);
             }
             splashAlready = true;
             zoomAlready = false;
@@ -75,10 +74,8 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
 
                     if (comingFrom == 'splash') {
                         dotTweenOpacity(spheres, 0, 1, wavingBlob, true, fadeInDuration);
-                        zoomChildBlobTween(zoomShape, dotsGreen, dotsGreen, 0, 0.5);
                     } else if (comingFrom == 'zoomAreaSecond') {
                         dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
-                        zoomChildBlobTween(zoomShape, dotsOrange, dotsGreen);
                         setTimeout(() => {
                             dotUpdateColors(spheres, dotsGreen);
                             dotRandomizePositions(spheres, dotBounds);
@@ -99,9 +96,7 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
                     dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
 
                     if (comingFrom == 'zoomAreaFirst') {
-                        zoomChildBlobTween(zoomShape, dotsGreen, dotsOrange);
                     } else if (comingFrom == 'zoomAreaThird') {
-                        zoomChildBlobTween(zoomShape, dotsYellow, dotsOrange);
                     }
 
                     setTimeout(() => {
@@ -122,14 +117,12 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
 
                     if (comingFrom == 'zoomAreaSecond') {
                         dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
-                        zoomChildBlobTween(zoomShape, dotsOrange, dotsYellow);
                         setTimeout(() => {
                             dotUpdateColors(spheres, dotsYellow);
                             dotRandomizePositions(spheres, dotBounds);
                             dotTweenOpacity(spheres, 0, 1, wavingBlob, true, fadeInDuration);
                         }, fadeOutDuration);
                     } else if (comingFrom == 'zoomOutArea') {
-                        zoomChildBlobTween(zoomShape, dotsYellow, dotsYellow, 0, 0.5);
                         dotTweenOpacity(spheres, 0, 1, wavingBlob, true, fadeInDuration);
                     }
 
@@ -150,7 +143,6 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
 
             if (comingFrom == 'zoomAreaThird') {
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
-                zoomChildBlobTween(zoomShape, dotsYellow, dotsYellow, 0.5, 0);
             }
 
             splashAlready = false;
@@ -295,7 +287,7 @@ let zoomFirstAlready = false;
 let zoomSecondAlready = false;
 let zoomThirdAlready = false;
 
-export function animatePage(controls, camera, cellObject, spheres, zoomShape, wavingBlob, dotBounds, product, scrollTimeout) {
+export function animatePage(controls, camera, cellObject, spheres, wavingBlob, dotBounds, product, scrollTimeout) {
     let scrollY = window.scrollY;
     let scrollDiff = scrollY - lastScrollY;
     const multiplier = Math.floor(scrollDiff / 20);
@@ -306,7 +298,7 @@ export function animatePage(controls, camera, cellObject, spheres, zoomShape, wa
         controls.autoRotateSpeed = 0.2;
     }, 100);
 
-    throttle(() => scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlob, dotBounds, product), 60)();
+    throttle(() => scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBounds, product), 60)();
     camera.updateProjectionMatrix();
     setLastScrollY(scrollY);
 };
@@ -432,79 +424,6 @@ function dotRandomizePositions(spheres, dotBounds) {
         return new THREE.Vector3(x, y, z);
     }
 }
-
-//=======================================================================
-
-function zoomChildBlobTween(shape, currentColor, targetColor, initOpacity = 0.5, targetOpacity = 0.5) {
-    /*
-    zoomBlobTween.removeAll();
-
-    const currentState = {
-        opacity: initOpacity,
-        r: currentColor.r,
-        g: currentColor.g,
-        b: currentColor.b
-    };
-    const targetState = {
-        opacity: targetOpacity,
-        r: targetColor.r,
-        g: targetColor.g,
-        b: targetColor.b
-    };
-
-    const tween = new Tween(currentState)
-        .to(targetState, fadeInDuration)
-        .easing(Easing.Quadratic.InOut)
-        .onUpdate(() => {
-            shape.material.color.setRGB(currentState.r, currentState.g, currentState.b);
-            shape.material.opacity = currentState.opacity;
-            shape.material.needsUpdate = true;
-        })
-        .onComplete(() => {
-            zoomBlobTween.remove(tween);
-        });
-
-    if (initOpacity === 0 && targetOpacity === 0.5) {
-        setTimeout(() => {
-            zoomBlobTween.add(tween);
-            tween.start();
-        }, 400);
-    } else {
-        zoomBlobTween.add(tween);
-        tween.start();
-    }
-
-    if (initOpacity === targetOpacity) {
-        rotations++;
-        const rotationTween = new Tween(shape.rotation)
-            .to(getRotationTarget(rotations), fadeInDuration * 1.4)
-            .easing(Easing.Quadratic.InOut)
-            .onUpdate(() => {
-                shape.rotation.set(shape.rotation.x, shape.rotation.y, shape.rotation.z);
-            })
-            .onComplete(() => {
-                zoomBlobTween.remove(rotationTween);
-            });
-
-        zoomBlobTween.add(rotationTween);
-        rotationTween.start();
-    }
-        */
-}
-
-function getRotationTarget(rotations) {
-    switch (rotations % 2) {
-        case 1:
-            console.log('case1');
-            return { x: 0, y: 0, z: Math.PI / 2.2 };
-        case 0:
-        default:
-            console.log('case2');
-            return { x: 0, y: 0, z: Math.PI / 1.8 };
-    }
-}
-
-//=======================================================================
 
 const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
 console.log('isMobile:', isMobile);

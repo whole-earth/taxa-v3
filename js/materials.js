@@ -1,22 +1,6 @@
 import * as THREE from 'three';
 
-export const iridescentPrev = new THREE.MeshPhysicalMaterial({
-  color: new THREE.Color('#849ed0'),
-  roughness: 0.55,
-  metalness: 0.2,
-  iridescence: 0.85,
-  iridescenceIOR: 1.44,
-  transmission: 0.6,
-  ior: 1.4,
-  thickness: 1,
-  envMapIntensity: 1.5,
-  transparent: true,
-  opacity: 1,
-  side: THREE.DoubleSide,
-  depthWrite: true
-});
-
-export const iridescent = new THREE.MeshStandardMaterial({
+export const pearlBlue = new THREE.MeshStandardMaterial({
   color: new THREE.Color('#849ed0'),
   roughness: 0.9,
   metalness: 0.5,
@@ -26,7 +10,7 @@ export const iridescent = new THREE.MeshStandardMaterial({
   depthWrite: true
 });
 
-export const grayPurple = new THREE.MeshBasicMaterial({
+export const mauve = new THREE.MeshBasicMaterial({
   color: new THREE.Color('#e7cbef'),
   opacity: 1,
   transparent: true,
@@ -74,16 +58,4 @@ export const vialMaterial = new THREE.MeshPhysicalMaterial({
   opacity: 1,
   side: THREE.DoubleSide,
   depthWrite: true
-});
-
-export const textBlobMaterial = new THREE.MeshStandardMaterial({
-  color: new THREE.Color('#71ff00'),
-  roughness: 0.4,
-  opacity: 0.3,
-  metalness: 0.2,
-  transparent: true,
-  opacity: 0.5,
-  side: THREE.FrontSide, 
-  depthWrite: false,
-  //wireframe: true
 });
