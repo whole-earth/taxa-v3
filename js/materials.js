@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 
 export const pearlBlue = new THREE.MeshStandardMaterial({
-  color: new THREE.Color('#849ed0'),
-  roughness: 0.9,
-  metalness: 0.5,
+  color: new THREE.Color('#6a81ad'),
+  roughness: 0.4,
+  metalness: 0.2,
   opacity: 1,
   transparent: true,
   side: THREE.DoubleSide,

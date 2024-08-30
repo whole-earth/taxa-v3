@@ -206,18 +206,17 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
 
         if (product && product.children) {
 
-            //cell scale : 0-60
-            productProgress__0_60 = productProgress <= 0.6 ? productProgress / 0.6 : 1;
+            productProgress__0_40 = productProgress <= 0.4 ? productProgress / 0.4 : 1;
 
-            camera.fov = smoothLerp(productStartFOV, productEndFOV, productProgress__0_60);
+            camera.fov = smoothLerp(productStartFOV, productEndFOV, productProgress__0_40);
 
-            const cellScale = smoothLerp(1, 0.2, productProgress__0_60);
+            const cellScale = smoothLerp(1, 0.1, productProgress__0_40);
             cellObject.scale.set(cellScale, cellScale, cellScale);
 
             cellObject.children.forEach(child => {
                 child.traverse(innerChild => {
                     if (innerChild.material) {
-                        innerChild.material.opacity = 1 - productProgress__0_60;
+                        innerChild.material.opacity = 1 - productProgress__0_40;
                         innerChild.material.needsUpdate = true;
                     }
                 });
@@ -228,11 +227,11 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
             product.scale.set(productScale, productScale, productScale);
 
             // product transform
-            if (0 < productProgress && productProgress <= 0.4) {
+            if (0 < productProgress && productProgress <= 0.25) {
                 product.rotation.x = Math.PI / 2;
 
-            } else if (0.4 < productProgress && productProgress <= 0.8) {
-                const rotationProgress = (productProgress - 0.4) / 0.4;
+            } else if (0.25 < productProgress && productProgress <= 0.8) {
+                const rotationProgress = (productProgress - 0.25) / 0.55;
                 const startRotation = Math.PI / 2;
                 const endRotation = 0;
                 product.rotation.x = smoothLerp(startRotation, endRotation, rotationProgress);
@@ -251,7 +250,7 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
                 const endRotation = -Math.PI / 5;
                 product.rotation.z = smoothLerp(startRotation, endRotation, rotationProgress);
             }
-        }
+        } else (console.log('product loading'))
     }
 }
 
@@ -270,7 +269,7 @@ const zoomThird = document.querySelector('#zoomThird');
 const zoomElements = [zoomFirst, zoomSecond, zoomThird];
 
 let splashBool, zoomBool, zoomOutBool, transitionBool, productBool;
-let splashProgress, zoomProgress, zoomOutProgress, transitionProgress, productProgress, productProgress__0_60;
+let splashProgress, zoomProgress, zoomOutProgress, transitionProgress, productProgress, productProgress__0_40;
 
 let comingFrom = "splash";
 let activeTextTimeout;

@@ -144,6 +144,7 @@ function initScene() {
 
             new CellComponent("blob-outer.glb", dispersion, 2).then((object) => {
                 blobOuter = object;
+                blobOuter.renderOrder = 200;
                 resolve();
             }),
 
