@@ -278,7 +278,7 @@ export function animatePage(controls, camera, cellObject, spheres, zoomShape, wa
         controls.autoRotateSpeed = 0.2;
     }, 100);
 
-    throttle(() => scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlob, dotBounds, product), 100)();
+    throttle(() => scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlob, dotBounds, product), 10)();
     camera.updateProjectionMatrix();
     setLastScrollY(scrollY);
 };

@@ -19,7 +19,7 @@ export const iridescentPrev = new THREE.MeshPhysicalMaterial({
 export const iridescent = new THREE.MeshStandardMaterial({
   color: new THREE.Color('#849ed0'),
   roughness: 0.9,
-  metalness: 0.6,
+  metalness: 0.5,
   opacity: 1,
   side: THREE.DoubleSide,
   depthWrite: true
