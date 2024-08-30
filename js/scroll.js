@@ -40,7 +40,7 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
         if (!splashAlready) {
             activateText(splashArea);
             if (comingFrom == 'zoomAreaFirst') {
-                dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
+                dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
             }
             splashAlready = true;
             zoomAlready = false;
@@ -60,6 +60,7 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
 
         if (!zoomAlready) {
             activateText(zoomArea);
+            // tween opacity of ribbons here ribbonTween(init, target, duration)
             splashAlready = false;
             zoomAlready = true;
             zoomOutAlready = false;
@@ -73,13 +74,13 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
                     activateText__ZoomChild(zoomFirst);
 
                     if (comingFrom == 'splash') {
-                        dotTweenOpacity(spheres, 0, 1, wavingBlob, true, fadeInDuration);
+                        dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
                     } else if (comingFrom == 'zoomAreaSecond') {
-                        dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
+                        dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
                         setTimeout(() => {
                             dotUpdateColors(spheres, dotsGreen);
                             dotRandomizePositions(spheres, dotBounds);
-                            dotTweenOpacity(spheres, 0, 1, wavingBlob, true, fadeInDuration);
+                            dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
                         }, fadeOutDuration);
                     }
 
@@ -93,7 +94,7 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
                 if (!zoomSecondAlready) {
 
                     activateText__ZoomChild(zoomSecond);
-                    dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
+                    dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
 
                     if (comingFrom == 'zoomAreaFirst') {
                     } else if (comingFrom == 'zoomAreaThird') {
@@ -102,7 +103,7 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
                     setTimeout(() => {
                         dotUpdateColors(spheres, dotsOrange);
                         dotRandomizePositions(spheres, dotBounds);
-                        dotTweenOpacity(spheres, 0, 1, wavingBlob, true, fadeInDuration);
+                        dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
                     }, fadeOutDuration);
 
                     zoomFirstAlready = false;
@@ -116,14 +117,14 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
                     activateText__ZoomChild(zoomThird);
 
                     if (comingFrom == 'zoomAreaSecond') {
-                        dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
+                        dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
                         setTimeout(() => {
                             dotUpdateColors(spheres, dotsYellow);
                             dotRandomizePositions(spheres, dotBounds);
-                            dotTweenOpacity(spheres, 0, 1, wavingBlob, true, fadeInDuration);
+                            dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
                         }, fadeOutDuration);
                     } else if (comingFrom == 'zoomOutArea') {
-                        dotTweenOpacity(spheres, 0, 1, wavingBlob, true, fadeInDuration);
+                        dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
                     }
 
                     zoomFirstAlready = false;
@@ -140,9 +141,10 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
 
         if (!zoomOutAlready) {
             activateText(zoomOutArea);
+            // tween opacity of ribbons here ribbonTween(init, target, duration)
 
             if (comingFrom == 'zoomAreaThird') {
-                dotTweenOpacity(spheres, 1, 0, wavingBlob, false, fadeOutDuration);
+                dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
             }
 
             splashAlready = false;
@@ -357,14 +359,14 @@ function activateText__ZoomChild(activeElement) {
     }
 }
 
-function dotTweenOpacity(spheres, initialOpacity, targetOpacity, wavingBlob, scale = false, duration = 300) {
+function dotTweenOpacity(spheres, initialOpacity, targetOpacity, wavingBlob, duration = 300) {
     dotTweenGroup.removeAll();
     spheres.forEach(sphere => {
         const currentState = { opacity: initialOpacity };
         const targetState = { opacity: targetOpacity };
 
         const sphereTween = new Tween(currentState)
-            .to(targetState, duration)
+            .to(targetState, duration * 2.4 ) // temp prolonged duration
             .easing(Easing.Quadratic.InOut)
             .onUpdate(() => {
                 sphere.material.opacity = currentState.opacity;
@@ -378,12 +380,12 @@ function dotTweenOpacity(spheres, initialOpacity, targetOpacity, wavingBlob, sca
         sphereTween.start();
     });
 
-    if (scale) {
-        const initialScale = { scale: 0.85 };
+    if (initialOpacity === 0 && targetOpacity === 1) {
+        const initialScale = { scale: 0.95 };
         const targetScale = { scale: 1.0 };
 
         const scaleTween = new Tween(initialScale)
-            .to(targetScale, (duration * 1.4))
+            .to(targetScale, (duration * 1.2))
             .easing(Easing.Quadratic.InOut)
             .onUpdate(() => {
                 wavingBlob.scale.set(initialScale.scale, initialScale.scale, initialScale.scale);
