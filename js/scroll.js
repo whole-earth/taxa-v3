@@ -479,7 +479,9 @@ function getRotationTarget(rotations) {
 const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
 console.log('isMobile:', isMobile);
 
-const smoothLerp = (start, end, progress) => start + (end - start) * progress;
+function smoothLerp(start, end, progress){
+    return start + (end - start) * progress;
+}
 
 /*
 
