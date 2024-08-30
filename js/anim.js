@@ -114,7 +114,7 @@ function initScene() {
                     this.object = gltf.scene;
                     this.object.position.copy(this.position);
                     this.centerObject(this.object);
-                    this.object.rotation.x = Math.PI / 2;
+                    this.object.rotation.x = Math.PI / 2.2;
                     if (shader) this.applyCustomShader(shader);
                     this.object.renderOrder = renderOrder;
                     resolve(this.object);
@@ -321,7 +321,7 @@ function initScene() {
     function initSpeckles(scene, boundingBoxes) {
         dotBounds = boundingBoxes[1].max.z * 0.85;
         const waveGeom = new THREE.SphereGeometry(dotBounds, 32, 32);
-        const waveMaterial = new THREE.MeshBasicMaterial({ color: 0x92cb86, opacity: 0, transparent: true });
+        const waveMaterial = new THREE.MeshBasicMaterial({ color: 0x92cb86, opacity: 0, transparent: true, depthWrite: false, depthTest: false });
         wavingBlob = new THREE.Mesh(waveGeom, waveMaterial);
         wavingBlob.renderOrder = 1;
         scene.add(wavingBlob);

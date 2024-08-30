@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export const iridescent = new THREE.MeshPhysicalMaterial({
+export const iridescentPrev = new THREE.MeshPhysicalMaterial({
   color: new THREE.Color('#849ed0'),
   roughness: 0.55,
   metalness: 0.2,
@@ -16,17 +16,18 @@ export const iridescent = new THREE.MeshPhysicalMaterial({
   depthWrite: true
 });
 
-export const grayPurple = new THREE.MeshPhysicalMaterial({
+export const iridescent = new THREE.MeshStandardMaterial({
+  color: new THREE.Color('#849ed0'),
+  roughness: 0.9,
+  metalness: 0.6,
+  opacity: 1,
+  side: THREE.DoubleSide,
+  depthWrite: true
+});
+
+export const grayPurple = new THREE.MeshBasicMaterial({
   color: new THREE.Color('#e7cbef'),
-  roughness: 0.55,
-  metalness: 0.2,
-  iridescence: 0.85,
-  iridescenceIOR: 1.44,
-  transmission: 0.6,
-  ior: 1.4,
-  thickness: 1,
-  envMapIntensity: 1.5,
-  transparent: true,
+  roughness: 0.05,
   opacity: 1,
   side: THREE.DoubleSide,
   depthWrite: true
@@ -82,5 +83,5 @@ export const textBlobMaterial = new THREE.MeshStandardMaterial({
   opacity: 1,
   side: THREE.DoubleSide, 
   depthWrite: false,
-  wireframe: true
+  //wireframe: true
 });
