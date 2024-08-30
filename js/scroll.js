@@ -466,14 +466,14 @@ function getRotationTarget(rotations) {
     switch (rotations % 3) {
         case 1:
             console.log('case1')
-            return { x: 0, y: 0, z: Math.PI / 1.8 };
+            return { x: 0, y: 0, z: Math.PI / 2 };
         case 2:
             console.log('case2')
-            return { x: 0, y: 0, z: 2.8 * Math.PI / 1.8 };
+            return { x: 0, y: 0, z: -Math.PI / 1.8 };
         case 0:
         default:
             console.log('case3')
-            return { x: 0, y: 0, z: Math.PI };
+            return { x: 0, y: 0, z: Math.PI / 1.2 };
     }
 }
 
