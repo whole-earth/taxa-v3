@@ -16,8 +16,8 @@ const productEndFOV = productStartFOV;
 const dotsGreen = new THREE.Color('#71ff00');
 const dotsOrange = new THREE.Color('#ff8e00');
 const dotsYellow = new THREE.Color('#f1ff00');
-const fadeOutDuration = 140;
-const fadeInDuration = 280;
+const fadeInDuration = 500;
+const fadeOutDuration = 240;
 
 // ============================
 
@@ -366,7 +366,7 @@ function dotTweenOpacity(spheres, initialOpacity, targetOpacity, wavingBlob, dur
         const targetState = { opacity: targetOpacity };
 
         const sphereTween = new Tween(currentState)
-            .to(targetState, duration * 2.4 ) // prolonged duration
+            .to(targetState, duration ) // prolonged duration
             .easing(Easing.Quadratic.InOut)
             .onUpdate(() => {
                 sphere.material.opacity = currentState.opacity;
@@ -385,7 +385,7 @@ function dotTweenOpacity(spheres, initialOpacity, targetOpacity, wavingBlob, dur
         const targetScale = { scale: 1.0 };
 
         const scaleTween = new Tween(initialScale)
-            .to(targetScale, (duration * 1.2))
+            .to(targetScale, (duration))
             .easing(Easing.Quadratic.InOut)
             .onUpdate(() => {
                 wavingBlob.scale.set(initialScale.scale, initialScale.scale, initialScale.scale);
