@@ -173,15 +173,11 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
         console.log(transitionProgress)
 
         if (!transitionAlready) {
-            splashAlready = false;
-            zoomAlready = false;
-            zoomOutAlready = false;
-            transitionAlready = true;
-            productAlready = false;
-            comingFrom = 'transitionArea';
 
             if (comingFrom == 'productArea') {
                 controls.autoRotate = true;
+                controls.enableRotate = true;
+                controls.autoRotateSpeed = 0.2;
     
                 if (product) {
                     product.children.forEach(child => {
@@ -192,6 +188,14 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
                     });
                 }
             }
+
+            splashAlready = false;
+            zoomAlready = false;
+            zoomOutAlready = false;
+            transitionAlready = true;
+            productAlready = false;
+            comingFrom = 'transitionArea';
+
         }
 
     }
