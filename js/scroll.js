@@ -23,8 +23,6 @@ const fadeInDuration = 280;
 
 const productStartScale = 7;
 const productEndScale = 3;
-const cellStartScale = 1;
-const cellEndScale = 0.01;
 
 // ============================
 
@@ -56,6 +54,7 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
             comingFrom = 'splash';
         }
     }
+
     else if (zoomBool) {
         zoomProgress = scrollProgress(zoomArea);
         camera.fov = smoothLerp(zoomStartFOV, zoomEndFOV, zoomProgress);
@@ -170,15 +169,13 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
         transitionProgress = scrollProgress(transitionArea);
         camera.fov = smoothLerp(transitionStartFOV, transitionEndFOV, transitionProgress);
 
-        console.log(transitionProgress)
-
         if (!transitionAlready) {
 
             if (comingFrom == 'productArea') {
                 controls.autoRotate = true;
                 controls.enableRotate = true;
                 controls.autoRotateSpeed = 0.2;
-    
+
                 if (product) {
                     product.children.forEach(child => {
                         if (child.material) {
@@ -197,6 +194,9 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
             comingFrom = 'transitionArea';
 
         }
+
+        const cellScale = smoothLerp(1, 0.4, transitionProgress);
+        cellObject.scale.set(cellScale, cellScale, cellScale);
 
     }
     else if (productBool) {
@@ -222,9 +222,6 @@ function scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlo
             productProgress__0_60 = productProgress <= 0.6 ? productProgress / 0.6 : 1;
 
             camera.fov = smoothLerp(productStartFOV, productEndFOV, productProgress__0_60);
-
-            const cellScale = smoothLerp(cellStartScale, cellEndScale, productProgress__0_60);
-            cellObject.scale.set(cellScale, cellScale, cellScale);
 
             cellObject.children.forEach(child => {
                 child.traverse(innerChild => {

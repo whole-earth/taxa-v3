@@ -21,6 +21,7 @@ export const iridescent = new THREE.MeshStandardMaterial({
   roughness: 0.9,
   metalness: 0.5,
   opacity: 1,
+  transparent: true,
   side: THREE.DoubleSide,
   depthWrite: true
 });
@@ -28,6 +29,7 @@ export const iridescent = new THREE.MeshStandardMaterial({
 export const grayPurple = new THREE.MeshBasicMaterial({
   color: new THREE.Color('#e7cbef'),
   opacity: 1,
+  transparent: true,
   side: THREE.DoubleSide,
   depthWrite: true
 });
