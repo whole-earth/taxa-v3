@@ -6,8 +6,7 @@ export const pearlBlue = new THREE.MeshStandardMaterial({
   metalness: 0.2,
   opacity: 1,
   transparent: true,
-  side: THREE.DoubleSide,
-  depthWrite: true
+  side: THREE.DoubleSide
 });
 
 export const mauve = new THREE.MeshBasicMaterial({
@@ -41,7 +40,9 @@ export const dispersion = new THREE.MeshPhysicalMaterial({
   attenuationColor: 0xffffff,
   side: THREE.DoubleSide,
   transparent: true,
-  dispersion: 5
+  dispersion: 5,
+  transparent: true,
+  depthWrite: true
 });
 
 export const vialMaterial = new THREE.MeshPhysicalMaterial({

@@ -381,7 +381,7 @@ function dotTweenOpacity(spheres, initialOpacity, targetOpacity, wavingBlob, dur
     });
 
     if (initialOpacity === 0 && targetOpacity === 1) {
-        const initialScale = { scale: 0.95 };
+        const initialScale = { scale: 0.96 };
         const targetScale = { scale: 1.0 };
 
         const scaleTween = new Tween(initialScale)

@@ -137,7 +137,7 @@ function initScene() {
 
         const loadCellObjects = [
 
-            new CellComponent("blob-inner.glb", pearlBlue, 1).then((object) => {
+            new CellComponent("blob-inner.glb", pearlBlue, 0).then((object) => {
                 blobInner = object;
                 resolve();
             }),
@@ -223,13 +223,13 @@ function initScene() {
         const waveGeom = new THREE.SphereGeometry(dotBounds, 32, 32);
         const waveMaterial = new THREE.MeshBasicMaterial({ color: 0x92cb86, opacity: 0, transparent: true, depthWrite: false, depthTest: false });
         wavingBlob = new THREE.Mesh(waveGeom, waveMaterial);
-        wavingBlob.renderOrder = 1;
+        wavingBlob.renderOrder = 5;
         scene.add(wavingBlob);
 
         for (let i = 0; i < 180; i++) {
             const randomPosition = getRandomPositionWithinBounds(dotBounds);
             const sphereGeometry = new THREE.SphereGeometry(0.15, 6, 6);
-            const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x92cb86, opacity: 0, transparent: true, depthWrite: true });
+            const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x92cb86, opacity: 0, transparent: true });
             const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
             sphereMesh.position.copy(randomPosition);
             const randomDirection = new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize();
