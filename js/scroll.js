@@ -7,9 +7,9 @@ const splashEndFOV = splashStartFOV * 0.55;
 const zoomStartFOV = splashEndFOV;
 const zoomEndFOV = splashEndFOV * 1.1;
 const zoomOutStartFOV = zoomEndFOV;
-const zoomOutEndFOV = splashStartFOV;
-const transitionStartFOV = zoomOutEndFOV;
-const transitionEndFOV = splashStartFOV * 1.4;
+const zoomOutEndFOV = splashStartFOV * 1.1;
+const transitionStartFOV = zoomOutEndFOV * 1.1;
+const transitionEndFOV = splashStartFOV * 1.1;
 const productStartFOV = transitionEndFOV;
 const productEndFOV = productStartFOV;
 
