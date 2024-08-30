@@ -3,7 +3,7 @@ import { Tween, Easing } from 'tween';
 import { lastScrollY, setLastScrollY, dotTweenGroup, zoomBlobTween } from './anim.js';
 
 const splashStartFOV = window.innerWidth < 768 ? 90 : 60;
-const splashEndFOV = splashStartFOV * 0.50;
+const splashEndFOV = splashStartFOV * 0.65;
 const zoomStartFOV = splashEndFOV;
 const zoomEndFOV = splashEndFOV * 1.1;
 const zoomOutStartFOV = zoomEndFOV;
@@ -479,12 +479,6 @@ function getRotationTarget(rotations) {
 const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
 console.log('isMobile:', isMobile);
 
-function smoothLerp(start, end, progress){
-    return start + (end - start) * progress;
-}
-
-/*
-
 const smoothLerp = isMobile
     ? (start, end, progress) => start + (end - start) * progress
     : (start, end, progress) => start + (end - start) * smoothstep(progress);
@@ -492,7 +486,6 @@ const smoothLerp = isMobile
 function smoothstep(x) {
     return x * x * (3 - 2 * x);
 }
-    */
 
 function throttle(func, limit) {
     let inThrottle;
