@@ -3,7 +3,7 @@ import { Tween, Easing } from 'tween';
 import { lastScrollY, setLastScrollY, dotTweenGroup, zoomBlobTween } from './anim.js';
 
 const splashStartFOV = window.innerWidth < 768 ? 90 : 60;
-const splashEndFOV = splashStartFOV * 0.65;
+const splashEndFOV = splashStartFOV * 0.55;
 const zoomStartFOV = splashEndFOV;
 const zoomEndFOV = splashEndFOV * 1.1;
 const zoomOutStartFOV = zoomEndFOV;

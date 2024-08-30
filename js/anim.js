@@ -242,7 +242,7 @@ function initScene() {
         endBoneInitialY = endBone.position.y;
         bones.push(rootBone, midBone, endBone);
     
-        const geometry = new THREE.CapsuleGeometry(1, 6, 8, 20); // radius, length, capSegments, radialSegments
+        const geometry = new THREE.CapsuleGeometry(1, 6, 6, 60); // radius, length, capSegments, radialSegments
         zoomShape = new THREE.SkinnedMesh(geometry, textBlobMaterial);
     
         const skeleton = new THREE.Skeleton(bones);
@@ -280,10 +280,10 @@ function initScene() {
         geometry.setAttribute('skinIndex', new THREE.Uint16BufferAttribute(skinIndices, 4));
         geometry.setAttribute('skinWeight', new THREE.Float32BufferAttribute(skinWeights, 4));
 
-        zoomShape.position.set(4, -3.6, 42);
+        zoomShape.position.set(4, -3.3, 42);
         zoomShape.rotation.z = Math.PI / 1.8;
         
-        zoomShape.material.opacity = 0;
+        zoomShape.material.opacity = 1;
         zoomShape.material.needsUpdate = true;
     
         zoomShapeAnchor = new THREE.Object3D();

@@ -77,11 +77,11 @@ export const vialMaterial = new THREE.MeshPhysicalMaterial({
 
 export const textBlobMaterial = new THREE.MeshStandardMaterial({
   color: new THREE.Color('#71ff00'),
-  // roughness: 0.3,
-  // metalness: 0.5,
+  roughness: 0.3,
+  metalness: 0.5,
   transparent: true,
   opacity: 1,
-  side: THREE.DoubleSide, 
-  depthWrite: false
+  //side: THREE.DoubleSide, 
+  depthWrite: true,
   //wireframe: true
 });
