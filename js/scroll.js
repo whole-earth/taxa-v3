@@ -278,7 +278,14 @@ export function animatePage(controls, camera, cellObject, spheres, zoomShape, wa
         controls.autoRotateSpeed = 0.2;
     }, 100);
 
-    throttle(() => scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlob, dotBounds, product), 10)();
+    //throttle(() => scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlob, dotBounds, product), 60)();
+    
+    if (window.innerWidth < 900) {
+        scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlob, dotBounds, product);
+    } else {
+        throttle(() => scrollLogic(controls, camera, cellObject, spheres, zoomShape, wavingBlob, dotBounds, product), 40)();
+    }
+
     camera.updateProjectionMatrix();
     setLastScrollY(scrollY);
 };
