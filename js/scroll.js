@@ -141,7 +141,7 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
 
         if (!zoomOutAlready) {
             activateText(zoomOutArea);
-            tweenRibbons(cellObject, 0.25, 1, fadeInDuration)
+            tweenRibbons(cellObject, 0.4, 1, fadeInDuration)
 
 
             if (comingFrom == 'zoomAreaThird') {
