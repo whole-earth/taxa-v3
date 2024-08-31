@@ -139,7 +139,7 @@ function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob,
     }
     else if (zoomOutBool) {
         zoomOutProgress = scrollProgress(zoomOutArea);
-        zoomOutProgress__0_40 = zoomOutProgress <= 0.6 ? zoomOutProgress / 0.6 : 1;
+        zoomOutProgress__0_40 = zoomOutProgress <= 0.3 ? zoomOutProgress / 0.3 : 1;
         camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress__0_40);
 
         if (!zoomOutAlready) {
@@ -170,12 +170,6 @@ function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob,
         if (zoomOutProgress__0_40 >= 0.95 && !zoomOutTextActivated) {
             activateText(zoomOutArea);
             zoomOutTextActivated = true;
-        } else {
-            textChildren.forEach(child => {
-                if (child.classList.contains('active')) {
-                    child.classList.remove('active');
-                }
-            });
         }
 
     }
