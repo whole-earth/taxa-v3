@@ -7,9 +7,9 @@ const splashEndFOV = splashStartFOV * 0.55;
 const zoomStartFOV = splashEndFOV;
 const zoomEndFOV = splashEndFOV * 1.1;
 const zoomOutStartFOV = zoomEndFOV;
-const zoomOutEndFOV = splashStartFOV * 1.1;
+const zoomOutEndFOV = splashStartFOV * 1.2;
 const transitionStartFOV = zoomOutEndFOV;
-const transitionEndFOV = transitionStartFOV * 1.4;
+const transitionEndFOV = transitionStartFOV * 1.6;
 const productStartFOV = transitionEndFOV;
 const productEndFOV = productStartFOV;
 
@@ -60,7 +60,7 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
 
         if (!zoomAlready) {
             activateText(zoomArea);
-            tweenRibbons(cellObject, 1, 0.25, fadeInDuration)
+            tweenRibbons(cellObject, 1, 0.2, fadeInDuration)
             splashAlready = false;
             zoomAlready = true;
             zoomOutAlready = false;
@@ -137,12 +137,20 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
     }
     else if (zoomOutBool) {
         zoomOutProgress = scrollProgress(zoomOutArea);
-        camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress);
+
+        zoomOutProgress__0_60 = zoomOutProgress <= 0.6 ? zoomOutProgress / 0.6 : 1;
+        camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress__0_60);
+
+        // then when zoomOutProgress__0_60 breaks 96%, call activateText once
+        if (zoomOutProgress__0_60 >= 0.95 && !zoomOutTextActivated) {
+            console.log('here');
+            activateText(zoomOutArea);
+            zoomOutTextActivated = true;
+        }
 
         if (!zoomOutAlready) {
-            activateText(zoomOutArea);
-            tweenRibbons(cellObject, 0.4, 1, fadeInDuration)
-
+            zoomOutTextActivated = false;
+            tweenRibbons(cellObject, 0.2, 1, fadeInDuration);
 
             if (comingFrom == 'zoomAreaThird') {
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
@@ -272,7 +280,7 @@ const zoomThird = document.querySelector('#zoomThird');
 const zoomElements = [zoomFirst, zoomSecond, zoomThird];
 
 let splashBool, zoomBool, zoomOutBool, transitionBool, productBool;
-let splashProgress, zoomProgress, zoomOutProgress, transitionProgress, productProgress, productProgress__0_40;
+let splashProgress, zoomProgress, zoomOutProgress, zoomOutProgress__0_60, transitionProgress, productProgress, productProgress__0_40;
 
 let comingFrom = "splash";
 let activeTextTimeout;
@@ -280,6 +288,7 @@ let activeTextTimeout;
 let splashAlready = false;
 let zoomAlready = false;
 let zoomOutAlready = false;
+let zoomOutTextActivated = false;
 let transitionAlready = false;
 let productAlready = false;
 
@@ -459,7 +468,6 @@ function dotRandomizePositions(spheres, dotBounds) {
 }
 
 const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
-console.log('isMobile:', isMobile);
 
 const smoothLerp = isMobile
     ? (start, end, progress) => start + (end - start) * progress
