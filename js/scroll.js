@@ -21,9 +21,6 @@ const fadeOutDuration = 180;
 
 // ============================
 
-const productStartScale = 7;
-const productEndScale = 5;
-
 // ============================
 
 function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob, dotBounds, product) {
@@ -203,12 +200,12 @@ function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob,
             controls.autoRotate = false;
             controls.enableRotate = false;
             controls.autoRotateSpeed = 0;
-            activateText(productArea);
             splashAlready = false;
             zoomAlready = false;
             zoomOutAlready = false;
             pitchAlready = false;
             productAlready = true;
+            productTextActivated = true;
             comingFrom = 'productArea';
         }
 
@@ -233,7 +230,7 @@ function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob,
             });
 
             // product scale
-            const productScale = smoothLerp(productStartScale, productEndScale, productProgress);
+            const productScale = smoothLerp(7, 3, productProgress);
             product.scale.set(productScale, productScale, productScale);
 
             // product transform
@@ -241,6 +238,12 @@ function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob,
                 product.rotation.x = Math.PI / 2;
 
             } else if (0.25 < productProgress && productProgress <= 0.8) {
+
+                if (!productTextActivated) {
+                    activateText(productArea); // Activate text once when productProgress reaches 0.25
+                    productTextActivated = true;
+                }
+
                 const rotationProgress = (productProgress - 0.25) / 0.55;
                 const startRotation = Math.PI / 2;
                 const endRotation = 0;
@@ -289,6 +292,7 @@ let zoomAlready = false;
 let zoomOutAlready = false;
 let pitchAlready = false;
 let productAlready = false;
+let productTextActivated = false;
 
 let zoomFirstAlready = false;
 let zoomSecondAlready = false;
