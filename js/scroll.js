@@ -168,7 +168,7 @@ function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob,
         camera.fov = smoothLerp(pitchStartFOV, pitchEndFOV, pitchProgress);
 
         if (!pitchAlready) {
-            activateText(pitchArea, false);
+            activateText(pitchArea); // preserved timeout... usability?
 
             if (comingFrom == 'productArea') {
                 controls.autoRotate = true;
