@@ -41,6 +41,7 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
             activateText(splashArea);
             if (comingFrom == 'zoomAreaFirst') {
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
+                tweenRibbons(cellObject, 0.2, 1, fadeInDuration);
             }
             splashAlready = true;
             zoomAlready = false;
@@ -60,7 +61,6 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
 
         if (!zoomAlready) {
             activateText(zoomArea);
-            tweenRibbons(cellObject, 1, 0.2, fadeInDuration)
             splashAlready = false;
             zoomAlready = true;
             zoomOutAlready = false;
@@ -72,6 +72,7 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
             if (zoomProgress >= 0 && zoomProgress < 1 / 3) {
                 if (!zoomFirstAlready) {
                     activateText__ZoomChild(zoomFirst);
+                    tweenRibbons(cellObject, 1, 0.2, fadeInDuration);
 
                     if (comingFrom == 'splash') {
                         dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
@@ -364,6 +365,7 @@ function activateText(parentElement) {
 }
 
 function tweenRibbons(object, initOpacity, targetOpacity, duration) {
+    console.log("FIRED")
     const ribbons = object.getObjectByName('ribbons.glb');
     if (ribbons && ribbons.children.length > 0) {
         const mesh = ribbons.children[0];
