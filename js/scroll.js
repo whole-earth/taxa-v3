@@ -9,7 +9,7 @@ const zoomEndFOV = splashEndFOV * 1.1;
 const zoomOutStartFOV = zoomEndFOV;
 const zoomOutEndFOV = splashStartFOV;
 const pitchStartFOV = zoomOutEndFOV;
-const pitchEndFOV = pitchStartFOV * 1.2;
+const pitchEndFOV = pitchStartFOV * 1.05;
 const productStartFOV = pitchEndFOV;
 const productEndFOV = productStartFOV;
 
@@ -168,7 +168,7 @@ function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob,
         camera.fov = smoothLerp(pitchStartFOV, pitchEndFOV, pitchProgress);
 
         if (!pitchAlready) {
-            activateText(pitchArea); // preserved timeout... usability?
+            activateText(pitchArea);
 
             if (comingFrom == 'productArea') {
                 controls.autoRotate = true;
@@ -236,6 +236,15 @@ function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob,
             // product transform
             if (0 < productProgress && productProgress <= 0.25) {
                 product.rotation.x = Math.PI / 2;
+
+                if (productTextActivated) {
+                    productArea.querySelectorAll('.child').forEach(child => {
+                        if (child.classList.contains('active')) {
+                            child.classList.remove('active');
+                        }
+                    });
+                    productTextActivated = false;
+                }
 
             } else if (0.25 < productProgress && productProgress <= 0.8) {
 
