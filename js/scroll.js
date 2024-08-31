@@ -137,8 +137,8 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
     }
     else if (zoomOutBool) {
         zoomOutProgress = scrollProgress(zoomOutArea);
-        zoomOutProgress__0_60 = zoomOutProgress <= 0.6 ? zoomOutProgress / 0.6 : 1;
-        camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress__0_60);
+        zoomOutProgress__0_40 = zoomOutProgress <= 0.6 ? zoomOutProgress / 0.6 : 1;
+        camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress__0_40);
 
         if (!zoomOutAlready) {
             zoomOutTextActivated = false;
@@ -166,8 +166,8 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
             comingFrom = 'zoomOutArea';
         }
 
-        // then when zoomOutProgress__0_60 breaks 96%, call activateText once
-        if (zoomOutProgress__0_60 >= 0.95 && !zoomOutTextActivated) {
+        // then when zoomOutProgress__0_40 breaks 96%, call activateText once
+        if (zoomOutProgress__0_40 >= 0.95 && !zoomOutTextActivated) {
             console.log('here');
             activateText(zoomOutArea);
             zoomOutTextActivated = true;
@@ -286,7 +286,7 @@ const zoomThird = document.querySelector('#zoomThird');
 const zoomElements = [zoomFirst, zoomSecond, zoomThird];
 
 let splashBool, zoomBool, zoomOutBool, transitionBool, productBool;
-let splashProgress, zoomProgress, zoomOutProgress, zoomOutProgress__0_60, transitionProgress, productProgress, productProgress__0_40;
+let splashProgress, zoomProgress, zoomOutProgress, zoomOutProgress__0_40, transitionProgress, productProgress, productProgress__0_40;
 
 let comingFrom = "splash";
 let activeTextTimeout;
@@ -365,17 +365,9 @@ function activateText(parentElement) {
 
 function tweenRibbons(object, initOpacity, targetOpacity, duration) {
     const ribbons = object.getObjectByName('ribbons.glb');
-    console.log(ribbons)
-    if (ribbons) {
-        console.log("ribbons entereed")
-        const materials = [];
-        ribbons.traverse(child => {
-            if (child.material) {
-                materials.push(child.material);
-            }
-        });
-
-        if (materials.length > 0) {
+    if (ribbons && ribbons.children.length > 0) {
+        const mesh = ribbons.children[0];
+        if (mesh.material) {
             const currentState = { opacity: initOpacity };
             const targetState = { opacity: targetOpacity };
 
@@ -383,10 +375,8 @@ function tweenRibbons(object, initOpacity, targetOpacity, duration) {
                 .to(targetState, duration)
                 .easing(Easing.Quadratic.InOut)
                 .onUpdate(() => {
-                    materials.forEach(material => {
-                        material.opacity = currentState.opacity;
-                        material.needsUpdate = true;
-                    });
+                    mesh.material.opacity = currentState.opacity;
+                    mesh.material.needsUpdate = true;
                 })
                 .onComplete(() => {
                     dotTweenGroup.remove(ribbonTween);
