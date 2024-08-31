@@ -171,7 +171,7 @@ function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob,
         camera.fov = smoothLerp(pitchStartFOV, pitchEndFOV, pitchProgress);
 
         if (!pitchAlready) {
-            activateText(pitchArea);
+            activateText(pitchArea, false);
 
             if (comingFrom == 'productArea') {
                 controls.autoRotate = true;
@@ -331,7 +331,7 @@ function scrollProgress__Last(element) {
     return parseFloat(progress).toFixed(4);
 }
 
-function activateText(parentElement) {
+function activateText(parentElement, timeout = true) {
     let activeText = parentElement.querySelector('.child');
 
     if (activeText) {
@@ -347,9 +347,13 @@ function activateText(parentElement) {
                     clearTimeout(activeTextTimeout);
                 }
 
-                activeTextTimeout = setTimeout(() => {
+                if (timeout) {
+                    activeTextTimeout = setTimeout(() => {
+                        activeText.classList.add('active');
+                    }, 400);
+                } else {
                     activeText.classList.add('active');
-                }, 400);
+                }
             }
         }
     }

@@ -10,14 +10,12 @@ import { animatePage } from './scroll.js';
 
 document.addEventListener('DOMContentLoaded', async () => initScene());
 
+export function setLastScrollY(value) { lastScrollY = value; }
+export let lastScrollY = 0;
 export let dotTweenGroup = new Group();
 export let ribbonTweenGroup = new Group();
 
-export let lastScrollY = 0;
-export function setLastScrollY(value) { lastScrollY = value; }
-
 function initScene() {
-
     let scene, camera, renderer, controls;
     let scrollTimeout;
     let cellObject, blobInner, blobOuter, ribbons;
