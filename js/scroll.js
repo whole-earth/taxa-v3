@@ -9,7 +9,7 @@ const zoomEndFOV = splashEndFOV * 1.1;
 const zoomOutStartFOV = zoomEndFOV;
 const zoomOutEndFOV = splashStartFOV * 1.2;
 const pitchStartFOV = zoomOutEndFOV;
-const pitchEndFOV = pitchStartFOV * 1.6;
+const pitchEndFOV = pitchStartFOV * 1.1;
 const productStartFOV = pitchEndFOV;
 const productEndFOV = productStartFOV;
 
@@ -216,17 +216,17 @@ function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob,
 
         if (product && product.children) {
 
-            productProgress__0_65 = productProgress <= 0.65 ? productProgress / 0.65 : 1;
+            productProgress__0_40 = productProgress <= 0.4 ? productProgress / 0.4 : 1;
 
-            camera.fov = smoothLerp(productStartFOV, productEndFOV, productProgress__0_65);
+            camera.fov = smoothLerp(productStartFOV, productEndFOV, productProgress__0_40);
 
-            const cellScale = smoothLerp(1, 0.1, productProgress__0_65);
+            const cellScale = smoothLerp(1, 0.1, productProgress__0_40);
             cellObject.scale.set(cellScale, cellScale, cellScale);
 
             cellObject.children.forEach(child => {
                 child.traverse(innerChild => {
                     if (innerChild.material) {
-                        innerChild.material.opacity = 1 - productProgress__0_65;
+                        innerChild.material.opacity = 1 - productProgress__0_40;
                         innerChild.material.needsUpdate = true;
                     }
                 });
@@ -279,7 +279,7 @@ const zoomThird = document.querySelector('#zoomThird');
 const zoomElements = [zoomFirst, zoomSecond, zoomThird];
 
 let splashBool, zoomBool, zoomOutBool, pitchBool, productBool;
-let splashProgress, zoomProgress, zoomOutProgress, pitchProgress, productProgress, productProgress__0_65;
+let splashProgress, zoomProgress, zoomOutProgress, pitchProgress, productProgress, productProgress__0_40;
 
 let comingFrom = "splash";
 let activeTextTimeout;
