@@ -227,9 +227,13 @@ function initScene() {
         wavingBlob.renderOrder = 5;
         scene.add(wavingBlob);
 
-        for (let i = 0; i < 180; i++) {
+        //const sizes = [0.12, 0.16, 0.2, 0.25];
+        const sizes = [0.15];
+
+        for (let i = 0; i < 222; i++) {
             const randomPosition = getRandomPositionWithinBounds(dotBounds);
-            const sphereGeometry = new THREE.SphereGeometry(0.15, 6, 6);
+            const sizeIndex = i % sizes.length;
+            const sphereGeometry = new THREE.SphereGeometry(sizes[sizeIndex], 6, 6);
             const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x92cb86, opacity: 0, transparent: true, depthWrite: false });
             const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
             sphereMesh.position.copy(randomPosition);
