@@ -8,9 +8,9 @@ const zoomStartFOV = splashEndFOV;
 const zoomEndFOV = splashEndFOV * 1.1;
 const zoomOutStartFOV = zoomEndFOV;
 const zoomOutEndFOV = splashStartFOV * 1.2;
-const transitionStartFOV = zoomOutEndFOV;
-const transitionEndFOV = transitionStartFOV * 1.6;
-const productStartFOV = transitionEndFOV;
+const pitchStartFOV = zoomOutEndFOV;
+const pitchEndFOV = pitchStartFOV * 1.6;
+const productStartFOV = pitchEndFOV;
 const productEndFOV = productStartFOV;
 
 const dotsGreen = new THREE.Color('#71ff00');
@@ -22,7 +22,7 @@ const fadeOutDuration = 180;
 // ============================
 
 const productStartScale = 7;
-const productEndScale = 3;
+const productEndScale = 5;
 
 // ============================
 
@@ -30,7 +30,7 @@ function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob,
     splashBool = isVisibleBetweenTopAndBottom(splashArea);
     zoomBool = isVisibleBetweenTopAndBottom(zoomArea);
     zoomOutBool = isVisibleBetweenTopAndBottom(zoomOutArea);
-    transitionBool = isVisibleBetweenTopAndBottom(transitionArea);
+    pitchBool = isVisibleBetweenTopAndBottom(pitchArea);
     productBool = isVisibleBetweenTopAndBottom(productArea);
 
     if (splashBool) {
@@ -46,7 +46,7 @@ function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob,
             splashAlready = true;
             zoomAlready = false;
             zoomOutAlready = false;
-            transitionAlready = false;
+            pitchAlready = false;
             productAlready = false;
             zoomFirstAlready = false;
             zoomSecondAlready = false;
@@ -65,7 +65,7 @@ function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob,
             splashAlready = false;
             zoomAlready = true;
             zoomOutAlready = false;
-            transitionAlready = false;
+            pitchAlready = false;
             productAlready = false;
         }
 
@@ -139,27 +139,25 @@ function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob,
     }
     else if (zoomOutBool) {
         zoomOutProgress = scrollProgress(zoomOutArea);
-        zoomOutProgress__0_40 = zoomOutProgress <= 0.3 ? zoomOutProgress / 0.3 : 1;
-        camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress__0_40);
+        camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress);
 
         if (!zoomOutAlready) {
-            zoomOutTextActivated = false;
+
+            textChildren.forEach(child => {
+                if (child.classList.contains('active')) {
+                    child.classList.remove('active');
+                }
+            });
 
             if (comingFrom == 'zoomAreaThird') {
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
                 ribbonTweenOpacity(ribbons, 0, 1);
-
-                textChildren.forEach(child => {
-                    if (child.classList.contains('active')) {
-                        child.classList.remove('active');
-                    }
-                });
             }
 
             splashAlready = false;
             zoomAlready = false;
             zoomOutAlready = true;
-            transitionAlready = false;
+            pitchAlready = false;
             productAlready = false;
             zoomFirstAlready = false;
             zoomSecondAlready = false;
@@ -167,17 +165,13 @@ function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob,
             comingFrom = 'zoomOutArea';
         }
 
-        if (zoomOutProgress__0_40 >= 0.95 && !zoomOutTextActivated) {
-            activateText(zoomOutArea);
-            zoomOutTextActivated = true;
-        }
-
     }
-    else if (transitionBool) {
-        transitionProgress = scrollProgress(transitionArea);
-        camera.fov = smoothLerp(transitionStartFOV, transitionEndFOV, transitionProgress);
+    else if (pitchBool) {
+        pitchProgress = scrollProgress(pitchArea);
+        camera.fov = smoothLerp(pitchStartFOV, pitchEndFOV, pitchProgress);
 
-        if (!transitionAlready) {
+        if (!pitchAlready) {
+            activateText(pitchArea);
 
             if (comingFrom == 'productArea') {
                 controls.autoRotate = true;
@@ -197,9 +191,9 @@ function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob,
             splashAlready = false;
             zoomAlready = false;
             zoomOutAlready = false;
-            transitionAlready = true;
+            pitchAlready = true;
             productAlready = false;
-            comingFrom = 'transitionArea';
+            comingFrom = 'pitchArea';
 
         }
     }
@@ -213,7 +207,7 @@ function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob,
             splashAlready = false;
             zoomAlready = false;
             zoomOutAlready = false;
-            transitionAlready = false;
+            pitchAlready = false;
             productAlready = true;
             comingFrom = 'productArea';
         }
@@ -222,17 +216,17 @@ function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob,
 
         if (product && product.children) {
 
-            productProgress__0_40 = productProgress <= 0.4 ? productProgress / 0.4 : 1;
+            productProgress__0_65 = productProgress <= 0.65 ? productProgress / 0.65 : 1;
 
-            camera.fov = smoothLerp(productStartFOV, productEndFOV, productProgress__0_40);
+            camera.fov = smoothLerp(productStartFOV, productEndFOV, productProgress__0_65);
 
-            const cellScale = smoothLerp(1, 0.1, productProgress__0_40);
+            const cellScale = smoothLerp(1, 0.1, productProgress__0_65);
             cellObject.scale.set(cellScale, cellScale, cellScale);
 
             cellObject.children.forEach(child => {
                 child.traverse(innerChild => {
                     if (innerChild.material) {
-                        innerChild.material.opacity = 1 - productProgress__0_40;
+                        innerChild.material.opacity = 1 - productProgress__0_65;
                         innerChild.material.needsUpdate = true;
                     }
                 });
@@ -275,7 +269,7 @@ function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob,
 const splashArea = document.querySelector('.splash');
 const zoomArea = document.querySelector('.zoom');
 const zoomOutArea = document.querySelector('.zoom-out');
-const transitionArea = document.querySelector('.transition');
+const pitchArea = document.querySelector('.pitch');
 const productArea = document.querySelector('.product');
 
 const textChildren = document.querySelectorAll('.child');
@@ -284,8 +278,8 @@ const zoomSecond = document.querySelector('#zoomSecond');
 const zoomThird = document.querySelector('#zoomThird');
 const zoomElements = [zoomFirst, zoomSecond, zoomThird];
 
-let splashBool, zoomBool, zoomOutBool, transitionBool, productBool;
-let splashProgress, zoomProgress, zoomOutProgress, zoomOutProgress__0_40, transitionProgress, productProgress, productProgress__0_40;
+let splashBool, zoomBool, zoomOutBool, pitchBool, productBool;
+let splashProgress, zoomProgress, zoomOutProgress, pitchProgress, productProgress, productProgress__0_65;
 
 let comingFrom = "splash";
 let activeTextTimeout;
@@ -293,8 +287,7 @@ let activeTextTimeout;
 let splashAlready = false;
 let zoomAlready = false;
 let zoomOutAlready = false;
-let zoomOutTextActivated = false;
-let transitionAlready = false;
+let pitchAlready = false;
 let productAlready = false;
 
 let zoomFirstAlready = false;
