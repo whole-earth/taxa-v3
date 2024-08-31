@@ -137,16 +137,8 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
     }
     else if (zoomOutBool) {
         zoomOutProgress = scrollProgress(zoomOutArea);
-
         zoomOutProgress__0_60 = zoomOutProgress <= 0.6 ? zoomOutProgress / 0.6 : 1;
         camera.fov = smoothLerp(zoomOutStartFOV, zoomOutEndFOV, zoomOutProgress__0_60);
-
-        // then when zoomOutProgress__0_60 breaks 96%, call activateText once
-        if (zoomOutProgress__0_60 >= 0.95 && !zoomOutTextActivated) {
-            console.log('here');
-            activateText(zoomOutArea);
-            zoomOutTextActivated = true;
-        }
 
         if (!zoomOutAlready) {
             zoomOutTextActivated = false;
@@ -154,6 +146,13 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
 
             if (comingFrom == 'zoomAreaThird') {
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
+
+                // CLEAR
+                textChildren.forEach(child => {
+                    if (child !== activeText && child.classList.contains('active')) {
+                        child.classList.remove('active');
+                    }
+                });
             }
 
             splashAlready = false;
@@ -166,6 +165,13 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
             zoomThirdAlready = false;
             comingFrom = 'zoomOutArea';
         }
+
+        // then when zoomOutProgress__0_60 breaks 96%, call activateText once
+        if (zoomOutProgress__0_60 >= 0.95 && !zoomOutTextActivated) {
+            console.log('here');
+            activateText(zoomOutArea);
+            zoomOutTextActivated = true;
+        } // what about case of scrolling up?
 
     }
     else if (transitionBool) {
@@ -409,7 +415,7 @@ function dotTweenOpacity(spheres, initialOpacity, targetOpacity, wavingBlob, dur
         const targetState = { opacity: targetOpacity };
 
         const sphereTween = new Tween(currentState)
-            .to(targetState, duration ) // prolonged duration
+            .to(targetState, duration) // prolonged duration
             .easing(Easing.Quadratic.InOut)
             .onUpdate(() => {
                 sphere.material.opacity = currentState.opacity;
