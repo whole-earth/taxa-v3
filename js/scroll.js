@@ -170,8 +170,7 @@ function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob,
         if (zoomOutProgress__0_40 >= 0.95 && !zoomOutTextActivated) {
             activateText(zoomOutArea);
             zoomOutTextActivated = true;
-        } else if (zoomOutTextActivated){
-            zoomOutTextActivated = false;
+        } else {
             textChildren.forEach(child => {
                 if (child.classList.contains('active')) {
                     child.classList.remove('active');
