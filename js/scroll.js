@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { Tween, Easing } from 'tween';
-import { lastScrollY, setLastScrollY, dotTweenGroup } from './anim.js';
+import { lastScrollY, setLastScrollY, ribbonTweenGroup, dotTweenGroup } from './anim.js';
 
 const splashStartFOV = window.innerWidth < 768 ? 90 : 60;
 const splashEndFOV = splashStartFOV * 0.55;
@@ -26,7 +26,7 @@ const productEndScale = 3;
 
 // ============================
 
-function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBounds, product) {
+function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob, dotBounds, product) {
     splashBool = isVisibleBetweenTopAndBottom(splashArea);
     zoomBool = isVisibleBetweenTopAndBottom(zoomArea);
     zoomOutBool = isVisibleBetweenTopAndBottom(zoomOutArea);
@@ -39,9 +39,10 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
 
         if (!splashAlready) {
             activateText(splashArea);
+            console.log(ribbons)
             if (comingFrom == 'zoomAreaFirst') {
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
-                tweenRibbons(cellObject, 0.2, 1, fadeInDuration);
+                ribbonTweenOpacity(ribbons, 0.2, 1);
             }
             splashAlready = true;
             zoomAlready = false;
@@ -61,6 +62,7 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
 
         if (!zoomAlready) {
             activateText(zoomArea);
+            ribbonTweenOpacity(ribbons, 1, 0.2);
             splashAlready = false;
             zoomAlready = true;
             zoomOutAlready = false;
@@ -72,7 +74,6 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
             if (zoomProgress >= 0 && zoomProgress < 1 / 3) {
                 if (!zoomFirstAlready) {
                     activateText__ZoomChild(zoomFirst);
-                    tweenRibbons(cellObject, 1, 0.2, fadeInDuration);
 
                     if (comingFrom == 'splash') {
                         dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
@@ -126,6 +127,7 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
                         }, fadeOutDuration);
                     } else if (comingFrom == 'zoomOutArea') {
                         dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
+                        ribbonTweenOpacity(ribbons, 1, 0.2);
                     }
 
                     zoomFirstAlready = false;
@@ -143,12 +145,11 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
 
         if (!zoomOutAlready) {
             zoomOutTextActivated = false;
-            tweenRibbons(cellObject, 0.2, 1, fadeInDuration);
 
             if (comingFrom == 'zoomAreaThird') {
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
+                ribbonTweenOpacity(ribbons, 0.2, 1);
 
-                // CLEAR
                 textChildren.forEach(child => {
                     if (child.classList.contains('active')) {
                         child.classList.remove('active');
@@ -169,7 +170,6 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
 
         // then when zoomOutProgress__0_40 breaks 96%, call activateText once
         if (zoomOutProgress__0_40 >= 0.95 && !zoomOutTextActivated) {
-            console.log('here');
             activateText(zoomOutArea);
             zoomOutTextActivated = true;
         } // what about case of scrolling up?
@@ -303,7 +303,7 @@ let zoomFirstAlready = false;
 let zoomSecondAlready = false;
 let zoomThirdAlready = false;
 
-export function animatePage(controls, camera, cellObject, spheres, wavingBlob, dotBounds, product, scrollTimeout) {
+export function animatePage(controls, camera, cellObject, ribbons, spheres, wavingBlob, dotBounds, product, scrollTimeout) {
     let scrollY = window.scrollY;
     let scrollDiff = scrollY - lastScrollY;
     const multiplier = Math.floor(scrollDiff / 20);
@@ -314,7 +314,7 @@ export function animatePage(controls, camera, cellObject, spheres, wavingBlob, d
         controls.autoRotateSpeed = 0.2;
     }, 100);
 
-    throttle(() => scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBounds, product), 60)();
+    throttle(() => scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob, dotBounds, product), 60)();
     camera.updateProjectionMatrix();
     setLastScrollY(scrollY);
 };
@@ -364,29 +364,29 @@ function activateText(parentElement) {
     }
 }
 
-function tweenRibbons(object, initOpacity, targetOpacity, duration) {
-    console.log("FIRED")
-    const ribbons = object.getObjectByName('ribbons.glb');
-    if (ribbons && ribbons.children.length > 0) {
-        const mesh = ribbons.children[0];
-        if (mesh.material) {
-            const currentState = { opacity: initOpacity };
-            const targetState = { opacity: targetOpacity };
+function ribbonTweenOpacity(ribbons, initOpacity, targetOpacity, duration = fadeInDuration) {
+    dotTweenGroup.removeAll();
+    if (ribbons && ribbons.children) {
+        ribbons.children.forEach(mesh => {
+            if (mesh.material) {
+                const currentState = { opacity: initOpacity };
+                const targetState = { opacity: targetOpacity };
 
-            const ribbonTween = new Tween(currentState)
-                .to(targetState, duration)
-                .easing(Easing.Quadratic.InOut)
-                .onUpdate(() => {
-                    mesh.material.opacity = currentState.opacity;
-                    mesh.material.needsUpdate = true;
-                })
-                .onComplete(() => {
-                    dotTweenGroup.remove(ribbonTween);
-                });
+                const ribbonTween = new Tween(currentState)
+                    .to(targetState, duration)
+                    .easing(Easing.Quadratic.InOut)
+                    .onUpdate(() => {
+                        mesh.material.opacity = currentState.opacity;
+                        mesh.material.needsUpdate = true;
+                    })
+                    .onComplete(() => {
+                        ribbonTweenGroup.remove(ribbonTween);
+                    });
 
-            dotTweenGroup.add(ribbonTween);
-            ribbonTween.start();
-        }
+                ribbonTweenGroup.add(ribbonTween);
+                ribbonTween.start();
+            }
+        });
     }
 }
 

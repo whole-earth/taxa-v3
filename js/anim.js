@@ -11,6 +11,7 @@ import { animatePage } from './scroll.js';
 document.addEventListener('DOMContentLoaded', async () => initScene());
 
 export let dotTweenGroup = new Group();
+export let ribbonTweenGroup = new Group();
 
 export let lastScrollY = 0;
 export function setLastScrollY(value) { lastScrollY = value; }
@@ -35,7 +36,7 @@ function initScene() {
         cellObject = new THREE.Object3D();
 
         initLights(scene, renderer);
-        window.addEventListener('scroll', () => animatePage(controls, camera, cellObject, spheres, wavingBlob, dotBounds, product, lastScrollY, scrollTimeout));
+        window.addEventListener('scroll', () => animatePage(controls, camera, cellObject, ribbons, spheres, wavingBlob, dotBounds, product, lastScrollY, scrollTimeout));
         window.addEventListener('resize', () => resizeScene(renderer, camera));
 
         class CellComponent {
@@ -251,6 +252,7 @@ function initScene() {
             requestAnimationFrame(animate);
 
             dotTweenGroup.update();
+            ribbonTweenGroup.update();
 
             if (productAnchor) { productAnchor.lookAt(camera.position); }
 
