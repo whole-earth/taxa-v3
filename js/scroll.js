@@ -41,7 +41,7 @@ function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob,
             activateText(splashArea);
             if (comingFrom == 'zoomAreaFirst') {
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
-                ribbonTweenOpacity(ribbons, 0.2, 1);
+                ribbonTweenOpacity(ribbons, 0.1, 1);
             }
             splashAlready = true;
             zoomAlready = false;
@@ -61,7 +61,7 @@ function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob,
 
         if (!zoomAlready) {
             activateText(zoomArea);
-            ribbonTweenOpacity(ribbons, 1, 0.2);
+            ribbonTweenOpacity(ribbons, 1, 0.1);
             splashAlready = false;
             zoomAlready = true;
             zoomOutAlready = false;
@@ -126,7 +126,7 @@ function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob,
                         }, fadeOutDuration);
                     } else if (comingFrom == 'zoomOutArea') {
                         dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
-                        ribbonTweenOpacity(ribbons, 1, 0.2);
+                        ribbonTweenOpacity(ribbons, 1, 0.1);
                     }
 
                     zoomFirstAlready = false;
@@ -147,7 +147,7 @@ function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob,
 
             if (comingFrom == 'zoomAreaThird') {
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
-                ribbonTweenOpacity(ribbons, 0.2, 1);
+                ribbonTweenOpacity(ribbons, 0.1, 1);
 
                 textChildren.forEach(child => {
                     if (child.classList.contains('active')) {
@@ -363,7 +363,7 @@ function activateText(parentElement) {
     }
 }
 
-function ribbonTweenOpacity(ribbons, initOpacity, targetOpacity, duration = (fadeInDuration * 1.6)) {
+function ribbonTweenOpacity(ribbons, initOpacity, targetOpacity, duration = (fadeInDuration * 2)) {
     ribbonTweenGroup.removeAll();
     if (ribbons && ribbons.children) {
         ribbons.children.forEach(mesh => {
