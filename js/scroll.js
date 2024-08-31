@@ -39,7 +39,6 @@ function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob,
 
         if (!splashAlready) {
             activateText(splashArea);
-            console.log(ribbons)
             if (comingFrom == 'zoomAreaFirst') {
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
                 ribbonTweenOpacity(ribbons, 0.2, 1);
@@ -364,8 +363,8 @@ function activateText(parentElement) {
     }
 }
 
-function ribbonTweenOpacity(ribbons, initOpacity, targetOpacity, duration = fadeInDuration) {
-    dotTweenGroup.removeAll();
+function ribbonTweenOpacity(ribbons, initOpacity, targetOpacity, duration = (fadeInDuration * 1.6)) {
+    ribbonTweenGroup.removeAll();
     if (ribbons && ribbons.children) {
         ribbons.children.forEach(mesh => {
             if (mesh.material) {
