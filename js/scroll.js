@@ -205,7 +205,7 @@ function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob,
             zoomOutAlready = false;
             pitchAlready = false;
             productAlready = true;
-            productTextActivated = true;
+            productTextActivated = false;
             comingFrom = 'productArea';
         }
 
@@ -240,7 +240,7 @@ function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob,
             } else if (0.25 < productProgress && productProgress <= 0.8) {
 
                 if (!productTextActivated) {
-                    activateText(productArea); // Activate text once when productProgress reaches 0.25
+                    activateText(productArea);
                     productTextActivated = true;
                 }
 
