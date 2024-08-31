@@ -149,7 +149,7 @@ function scrollLogic(controls, camera, cellObject, spheres, wavingBlob, dotBound
 
                 // CLEAR
                 textChildren.forEach(child => {
-                    if (child !== activeText && child.classList.contains('active')) {
+                    if (child.classList.contains('active')) {
                         child.classList.remove('active');
                     }
                 });
@@ -365,7 +365,9 @@ function activateText(parentElement) {
 
 function tweenRibbons(object, initOpacity, targetOpacity, duration) {
     const ribbons = object.getObjectByName('ribbons.glb');
+    console.log(ribbons)
     if (ribbons) {
+        console.log("ribbons entereed")
         const materials = [];
         ribbons.traverse(child => {
             if (child.material) {
