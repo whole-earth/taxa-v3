@@ -286,18 +286,37 @@ function initScene() {
         const gui = new dat.GUI();
         const blobFolder = gui.addFolder('Blob Inner');
     
-        // Assuming blobInner is a mesh or has a material property
-        blobFolder.addColor({ color: blobInner.material.color.getStyle() }, 'color').onChange((value) => {
-            blobInner.material.color.setStyle(value);
-            blobInner.material.needsUpdate = true;
+        blobInner.traverse(child => {
+            if (child.isMesh && child.material) {
+                const material = child.material;
+    
+                blobFolder.addColor({ color: material.color.getStyle() }, 'color').onChange((value) => {
+                    material.color.setStyle(value);
+                    material.needsUpdate = true;
+                });
+    
+                blobFolder.add(material, 'opacity', 0, 1).onChange((value) => {
+                    material.opacity = value;
+                    material.needsUpdate = true;
+                });
+    
+                blobFolder.add(material, 'roughness', 0, 1).onChange((value) => {
+                    material.roughness = value;
+                    material.needsUpdate = true;
+                });
+    
+                blobFolder.add(material, 'metalness', 0, 1).onChange((value) => {
+                    material.metalness = value;
+                    material.needsUpdate = true;
+                });
+    
+                blobFolder.open();
+            }
         });
     
-        blobFolder.add(blobInner.material, 'opacity', 0, 1).onChange((value) => {
-            blobInner.material.opacity = value;
-            blobInner.material.needsUpdate = true;
-        });
-    
-        blobFolder.open();
+        if (blobFolder.__controllers.length === 0) {
+            console.error('No mesh with material found in blobInner');
+        }
     }
 
 }

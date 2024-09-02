@@ -82,3 +82,12 @@ main {
   width: 100%;
   border: 2px solid black;
 }
+
+.dg.ac {
+  z-index: 1;
+}
+
+.dg.a {
+  z-index: 10000000;
+  pointer-events: auto;
+}
