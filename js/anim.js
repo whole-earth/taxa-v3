@@ -7,6 +7,7 @@ import { RGBELoader } from 'three/RGBELoader';
 import { PMREMGenerator } from 'three';
 import { dispersion, mauve, pearlBlue, vialMaterial } from './materials.js';
 import { animatePage } from './scroll.js';
+import * as dat from 'dat.gui';
 
 document.addEventListener('DOMContentLoaded', async () => initScene());
 
@@ -14,6 +15,7 @@ export function setLastScrollY(value) { lastScrollY = value; }
 export let lastScrollY = 0;
 export let dotTweenGroup = new Group();
 export let ribbonTweenGroup = new Group();
+export let blobTweenGroup = new Group();
 
 function initScene() {
     let scene, camera, renderer, controls;
@@ -34,7 +36,7 @@ function initScene() {
         cellObject = new THREE.Object3D();
 
         initLights(scene, renderer);
-        window.addEventListener('scroll', () => animatePage(controls, camera, cellObject, ribbons, spheres, wavingBlob, dotBounds, product, lastScrollY, scrollTimeout));
+        window.addEventListener('scroll', () => animatePage(controls, camera, cellObject, blobInner, ribbons, spheres, wavingBlob, dotBounds, product, lastScrollY, scrollTimeout));
         window.addEventListener('resize', () => resizeScene(renderer, camera));
 
         class CellComponent {
@@ -140,6 +142,7 @@ function initScene() {
 
             new CellComponent("blob-inner.glb", pearlBlue, 0).then((object) => {
                 blobInner = object;
+                setupGUI(blobInner); // DAT.GUI
                 resolve();
             }),
 
@@ -255,6 +258,7 @@ function initScene() {
 
             dotTweenGroup.update();
             ribbonTweenGroup.update();
+            blobTweenGroup.update();
 
             if (productAnchor) { productAnchor.lookAt(camera.position); }
 
@@ -276,6 +280,24 @@ function initScene() {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         render.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function setupGUI(blobInner) {
+        const gui = new dat.GUI();
+        const blobFolder = gui.addFolder('Blob Inner');
+    
+        // Assuming blobInner is a mesh or has a material property
+        blobFolder.addColor({ color: blobInner.material.color.getStyle() }, 'color').onChange((value) => {
+            blobInner.material.color.setStyle(value);
+            blobInner.material.needsUpdate = true;
+        });
+    
+        blobFolder.add(blobInner.material, 'opacity', 0, 1).onChange((value) => {
+            blobInner.material.opacity = value;
+            blobInner.material.needsUpdate = true;
+        });
+    
+        blobFolder.open();
     }
 
 }

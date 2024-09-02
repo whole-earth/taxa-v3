@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { Tween, Easing } from 'tween';
-import { lastScrollY, setLastScrollY, ribbonTweenGroup, dotTweenGroup } from './anim.js';
+import { lastScrollY, setLastScrollY, ribbonTweenGroup, dotTweenGroup, blobTweenGroup } from './anim.js';
 
 const splashStartFOV = window.innerWidth < 768 ? 90 : 60;
 const splashEndFOV = splashStartFOV * 0.55;
@@ -16,6 +16,11 @@ const productEndFOV = productStartFOV;
 const dotsGreen = new THREE.Color('#71ff00');
 const dotsOrange = new THREE.Color('#ff8e00');
 const dotsYellow = new THREE.Color('#f1ff00');
+
+const blobGreenSheen = new THREE.Color('#6aada7');
+const blobOrangeSheen = new THREE.Color('#71ff00');
+const blobYellowSheen = new THREE.Color('#71ff00');
+
 const fadeInDuration = 500;
 const fadeOutDuration = 180;
 
@@ -23,7 +28,7 @@ const fadeOutDuration = 180;
 
 // ============================
 
-function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob, dotBounds, product) {
+function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, wavingBlob, dotBounds, product) {
     splashBool = isVisibleBetweenTopAndBottom(splashArea);
     zoomBool = isVisibleBetweenTopAndBottom(zoomArea);
     zoomOutBool = isVisibleBetweenTopAndBottom(zoomOutArea);
@@ -64,6 +69,11 @@ function scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob,
             zoomOutAlready = false;
             pitchAlready = false;
             productAlready = false;
+
+            // TEMP TEST
+            cellSheenTween(blobInner, dotsGreen, 0)
+
+
         }
 
         if (zoomFirst && zoomSecond && zoomThird) {
@@ -307,7 +317,7 @@ let zoomFirstAlready = false;
 let zoomSecondAlready = false;
 let zoomThirdAlready = false;
 
-export function animatePage(controls, camera, cellObject, ribbons, spheres, wavingBlob, dotBounds, product, scrollTimeout) {
+export function animatePage(controls, camera, cellObject, blobInner, ribbons, spheres, wavingBlob, dotBounds, product, scrollTimeout) {
     let scrollY = window.scrollY;
     let scrollDiff = scrollY - lastScrollY;
     const multiplier = Math.floor(scrollDiff / 20);
@@ -318,7 +328,7 @@ export function animatePage(controls, camera, cellObject, ribbons, spheres, wavi
         controls.autoRotateSpeed = 0.2;
     }, 100);
 
-    throttle(() => scrollLogic(controls, camera, cellObject, ribbons, spheres, wavingBlob, dotBounds, product), 60)();
+    throttle(() => scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, wavingBlob, dotBounds, product), 60)();
     camera.updateProjectionMatrix();
     setLastScrollY(scrollY);
 };
@@ -396,6 +406,33 @@ function ribbonTweenOpacity(ribbons, initOpacity, targetOpacity, duration = (fad
             }
         });
     }
+}
+
+function cellSheenTween(group, color, timeout = fadeInDuration) {
+    blobTweenGroup.removeAll();
+    group.traverse(child => {
+        if (child.isMesh && child.material) {
+            const initialColor = new THREE.Color(child.material.color);
+            const targetColor = new THREE.Color(color);
+
+            const blobTween = new Tween({ r: initialColor.r, g: initialColor.g, b: initialColor.b })
+                .to({ r: targetColor.r, g: targetColor.g, b: targetColor.b }, 400)
+                .easing(Easing.Quadratic.InOut)
+                .onUpdate(({ r, g, b }) => {
+                    child.material.color.setRGB(r, g, b);
+                    child.material.needsUpdate = true;
+                })
+                .onComplete(() => {
+                    blobTweenGroup.remove(blobTween);
+                });
+
+            blobTweenGroup.add(blobTween);
+
+            setTimeout(() => {
+                blobTween.start();
+            }, timeout);
+        }
+    });
 }
 
 function activateText__ZoomChild(activeElement) {
