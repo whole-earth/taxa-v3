@@ -1,19 +1,31 @@
 import * as THREE from 'three';
 
-export const pearlBlue = new THREE.MeshStandardMaterial({
+export const pearlBluePrev = new THREE.MeshStandardMaterial({
   color: new THREE.Color('#6a81ad'),
   roughness: 0.4,
   metalness: 0.2,
   opacity: 1,
   transparent: true,
-  side: THREE.DoubleSide
+  side: THREE.FrontSide
+});
+
+export const pearlBlue = new THREE.MeshPhysicalMaterial({
+  color: new THREE.Color('#6a81ad'),
+  roughness: 0.4,
+  metalness: 0.2,
+  opacity: 1,
+  transparent: true,
+  side: THREE.FrontSide,
+  sheen: 1,
+  sheenRoughness: 1,
+  sheenColor: new THREE.Color('#6a81ad')
 });
 
 export const mauve = new THREE.MeshBasicMaterial({
   color: new THREE.Color('#e7cbef'),
   opacity: 1,
   transparent: true,
-  side: THREE.DoubleSide,
+  side: THREE.FrontSide,
   depthWrite: true
 });
 
@@ -57,6 +69,6 @@ export const vialMaterial = new THREE.MeshPhysicalMaterial({
   envMapIntensity: 1.5,
   transparent: true,
   opacity: 1,
-  side: THREE.DoubleSide,
+  side: THREE.FrontSide,
   depthWrite: true
 });

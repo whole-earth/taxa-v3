@@ -309,6 +309,21 @@ function initScene() {
                     material.metalness = value;
                     material.needsUpdate = true;
                 });
+
+                blobFolder.addColor({ sheenColor: material.sheenColor.getStyle() }, 'sheenColor').onChange((value) => {
+                    material.sheenColor.setStyle(value);
+                    material.needsUpdate = true;
+                });
+    
+                blobFolder.add(material, 'sheen', 0, 1).onChange((value) => {
+                    material.sheen = value;
+                    material.needsUpdate = true;
+                });
+    
+                blobFolder.add(material, 'sheenRoughness', 0, 1).onChange((value) => {
+                    material.sheenRoughness = value;
+                    material.needsUpdate = true;
+                });
     
                 blobFolder.open();
             }
