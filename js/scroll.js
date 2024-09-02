@@ -17,9 +17,9 @@ const dotsGreen = new THREE.Color('#71ff00');
 const dotsOrange = new THREE.Color('#ff8e00');
 const dotsYellow = new THREE.Color('#f1ff00');
 
-const blobGreenSheen = new THREE.Color('#6aada7');
-const blobOrangeSheen = new THREE.Color('#71ff00');
-const blobYellowSheen = new THREE.Color('#71ff00');
+const blobGreenSheen = new THREE.Color('#71ff00');
+const blobOrangeSheen = new THREE.Color('#ff8e00');
+const blobYellowSheen = new THREE.Color('#f1ff00');
 
 const fadeInDuration = 500;
 const fadeOutDuration = 180;
@@ -44,6 +44,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
             if (comingFrom == 'zoomAreaFirst') {
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
                 ribbonTweenOpacity(ribbons, 0, 1);
+                cellSheenTween(blobInner, 0);
             }
             splashAlready = true;
             zoomAlready = false;
@@ -69,11 +70,6 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
             zoomOutAlready = false;
             pitchAlready = false;
             productAlready = false;
-
-            // TEMP TEST
-            cellSheenTween(blobInner, dotsGreen, 0)
-
-
         }
 
         if (zoomFirst && zoomSecond && zoomThird) {
@@ -83,8 +79,10 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
 
                     if (comingFrom == 'splash') {
                         dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
+                        cellSheenTween(blobInner, blobGreenSheen);
                     } else if (comingFrom == 'zoomAreaSecond') {
                         dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
+                        cellSheenTween(blobInner, blobGreenSheen);
                         setTimeout(() => {
                             dotUpdateColors(spheres, dotsGreen);
                             dotRandomizePositions(spheres, dotBounds);
@@ -103,6 +101,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
 
                     activateText__ZoomChild(zoomSecond);
                     dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
+                    cellSheenTween(blobInner, blobOrangeSheen);
 
                     if (comingFrom == 'zoomAreaFirst') {
                     } else if (comingFrom == 'zoomAreaThird') {
@@ -123,6 +122,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
             else if (zoomProgress >= 2 / 3 && zoomProgress <= 1) {
                 if (!zoomThirdAlready) {
                     activateText__ZoomChild(zoomThird);
+                    cellSheenTween(blobInner, blobOrangeSheen, );
 
                     if (comingFrom == 'zoomAreaSecond') {
                         dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
@@ -159,6 +159,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
             if (comingFrom == 'zoomAreaThird') {
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
                 ribbonTweenOpacity(ribbons, 0, 1);
+                cellSheenTween(blobInner, 0);
             }
 
             splashAlready = false;
@@ -408,18 +409,18 @@ function ribbonTweenOpacity(ribbons, initOpacity, targetOpacity, duration = (fad
     }
 }
 
-function cellSheenTween(group, color, timeout = fadeInDuration) {
+function cellSheenTween(group, color = null, timeout = fadeInDuration) {
     blobTweenGroup.removeAll();
     group.traverse(child => {
         if (child.isMesh && child.material) {
-            const initialColor = new THREE.Color(child.material.color);
-            const targetColor = new THREE.Color(color);
+            const initialColor = new THREE.Color(child.material.sheenColor || child.material.color);
+            const targetColor = color ? new THREE.Color(color) : initialColor;
 
             const blobTween = new Tween({ r: initialColor.r, g: initialColor.g, b: initialColor.b })
                 .to({ r: targetColor.r, g: targetColor.g, b: targetColor.b }, 400)
                 .easing(Easing.Quadratic.InOut)
                 .onUpdate(({ r, g, b }) => {
-                    child.material.color.setRGB(r, g, b);
+                    child.material.sheenColor.setRGB(r, g, b);
                     child.material.needsUpdate = true;
                 })
                 .onComplete(() => {
