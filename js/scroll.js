@@ -122,7 +122,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
             else if (zoomProgress >= 2 / 3 && zoomProgress <= 1) {
                 if (!zoomThirdAlready) {
                     activateText__ZoomChild(zoomThird);
-                    cellSheenTween(blobInner, blobOrangeSheen, );
+                    cellSheenTween(blobInner, blobYellowSheen, );
 
                     if (comingFrom == 'zoomAreaSecond') {
                         dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
@@ -410,6 +410,7 @@ function ribbonTweenOpacity(ribbons, initOpacity, targetOpacity, duration = (fad
 }
 
 function cellSheenTween(group, color = null, timeout = fadeInDuration) {
+    console.log('blob sheen called')
     blobTweenGroup.removeAll();
     group.traverse(child => {
         if (child.isMesh && child.material) {
