@@ -230,7 +230,7 @@ function initScene() {
         wavingBlob.renderOrder = 5;
         scene.add(wavingBlob);
 
-        const sizes = [0.14, 0.18, 0.2, 0.24];
+        const sizes = [0.12, 0.14, 0.16, 0.18, 0.22];
         // const sizes = [0.15];
 
         for (let i = 0; i < 180; i++) {
