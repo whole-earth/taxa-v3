@@ -82,7 +82,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
                         dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
 
                         setTimeout(() => {
-                            if (zoomProgress >= 0 && zoomProgress < 1 / 3) {
+                            if (!splashCurrent && !zoomSecondCurrent) {
                                 dotUpdateColors(spheres, dotsGreen);
                                 dotRandomizePositions(spheres, dotBounds);
                                 dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
@@ -103,7 +103,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
                     dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
 
                     setTimeout(() => {
-                        if (zoomProgress >= 1 / 3 && zoomProgress < 2 / 3) {
+                        if (!zoomFirstCurrent && !zoomThirdCurrent) {
                             dotUpdateColors(spheres, dotsOrange);
                             dotRandomizePositions(spheres, dotBounds);
                             dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
@@ -124,7 +124,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
                     if (comingFrom == 'zoomAreaSecond') {
                         dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
                         setTimeout(() => {
-                            if (zoomProgress >= 2 / 3 && zoomProgress <= 1) {
+                            if (!zoomSecondCurrent && !!zoomOutCurrent) {
                                 console.log((zoomProgress >= 2 / 3 && zoomProgress <= 1))
                                 dotUpdateColors(spheres, dotsYellow);
                                 dotRandomizePositions(spheres, dotBounds);
