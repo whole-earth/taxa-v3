@@ -157,6 +157,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
             });
 
             if (comingFrom == 'zoomAreaThird') {
+                dotTweenGroup.removeAll(); // hack
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
                 ribbonTweenOpacity(ribbons, 0, 1);
                 cellSheenTween(blobInner);
@@ -438,7 +439,6 @@ function activateText__ZoomChild(activeElement) {
 
 function dotTweenOpacity(spheres, initialOpacity, targetOpacity, wavingBlob, duration = 300) {
     dotTweenGroup.removeAll();
-    console.log(`dotTweenOpacity fired: ${message}, opacity ${initialOpacity} to ${targetOpacity}`);
 
     spheres.forEach(sphere => {
         const currentState = { opacity: initialOpacity };
