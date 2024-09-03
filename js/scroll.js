@@ -157,7 +157,6 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
             });
 
             if (comingFrom == 'zoomAreaThird') {
-                console.log("YES")
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
                 ribbonTweenOpacity(ribbons, 0, 1);
                 cellSheenTween(blobInner);
@@ -458,6 +457,7 @@ function dotTweenOpacity(spheres, initialOpacity, targetOpacity, wavingBlob, dur
         sphereTween.start();
     });
 
+    /*
     if (initialOpacity === 0 && targetOpacity === 1) {
         const initialScale = { scale: 0.96 };
         const targetScale = { scale: 1.0 };
@@ -475,6 +475,7 @@ function dotTweenOpacity(spheres, initialOpacity, targetOpacity, wavingBlob, dur
         dotTweenGroup.add(scaleTween);
         scaleTween.start();
     }
+    /*
 }
 
 function dotUpdateColors(spheres, color) {
