@@ -233,7 +233,7 @@ function initScene() {
         const sizes = [0.14, 0.18, 0.2, 0.24];
         // const sizes = [0.15];
 
-        for (let i = 0; i < 222; i++) {
+        for (let i = 0; i < 180; i++) {
             const randomPosition = getRandomPositionWithinBounds(dotBounds);
             const sizeIndex = i % sizes.length;
             const sphereGeometry = new THREE.SphereGeometry(sizes[sizeIndex], 6, 6);
