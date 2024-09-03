@@ -124,8 +124,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
                     if (comingFrom == 'zoomAreaSecond') {
                         dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
                         setTimeout(() => {
-                            if (!zoomSecondCurrent && !!zoomOutCurrent) {
-                                console.log((zoomProgress >= 2 / 3 && zoomProgress <= 1))
+                            if (!zoomSecondCurrent && !zoomOutCurrent) {
                                 dotUpdateColors(spheres, dotsYellow);
                                 dotRandomizePositions(spheres, dotBounds);
                                 dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
