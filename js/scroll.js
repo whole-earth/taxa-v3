@@ -475,7 +475,7 @@ function dotTweenOpacity(spheres, initialOpacity, targetOpacity, wavingBlob, dur
         dotTweenGroup.add(scaleTween);
         scaleTween.start();
     }
-    /*
+    */
 }
 
 function dotUpdateColors(spheres, color) {
