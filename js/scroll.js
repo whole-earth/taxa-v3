@@ -82,7 +82,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
                         dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
 
                         setTimeout(() => {
-                            if (!splashCurrent && !zoomSecondCurrent) {
+                            if (zoomFirstCurrent) {
                                 dotUpdateColors(spheres, dotsGreen);
                                 dotRandomizePositions(spheres, dotBounds);
                                 dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
@@ -103,7 +103,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
                     dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
 
                     setTimeout(() => {
-                        if (!zoomFirstCurrent && !zoomThirdCurrent) {
+                        if (zoomSecondCurrent) {
                             dotUpdateColors(spheres, dotsOrange);
                             dotRandomizePositions(spheres, dotBounds);
                             dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
@@ -124,7 +124,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
                     if (comingFrom == 'zoomAreaSecond') {
                         dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
                         setTimeout(() => {
-                            if (!zoomSecondCurrent && !zoomOutCurrent) {
+                            if (zoomThirdCurrent) {
                                 dotUpdateColors(spheres, dotsYellow);
                                 dotRandomizePositions(spheres, dotBounds);
                                 dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
@@ -274,7 +274,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
                 const endRotation = -Math.PI / 5;
                 product.rotation.z = smoothLerp(startRotation, endRotation, rotationProgress);
             }
-        } else (console.log('Product render loading: deferring to -else'))
+        } else (console.log('Render Incomplete: Still awaiting product render!'))
     }
 }
 
