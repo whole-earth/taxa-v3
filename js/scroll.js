@@ -44,7 +44,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
             if (comingFrom == 'zoomAreaFirst') {
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
                 ribbonTweenOpacity(ribbons, 0, 1);
-                cellSheenTween(blobInner, undefined, 0);
+                cellSheenTween(blobInner);
             }
             splashAlready = true;
             zoomAlready = false;
@@ -109,7 +109,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
                         dotUpdateColors(spheres, dotsOrange);
                         dotRandomizePositions(spheres, dotBounds);
                         dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
-                        cellSheenTween(blobInner, blobOrangeSheen, 0);
+                        cellSheenTween(blobInner, blobOrangeSheen);
                     }, fadeOutDuration);
 
                     zoomFirstAlready = false;
@@ -128,12 +128,12 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
                             dotUpdateColors(spheres, dotsYellow);
                             dotRandomizePositions(spheres, dotBounds);
                             dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
-                            cellSheenTween(blobInner, blobYellowSheen, 0);
+                            cellSheenTween(blobInner, blobYellowSheen);
                         }, fadeOutDuration);
                     } else if (comingFrom == 'zoomOutArea') {
                         dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
                         ribbonTweenOpacity(ribbons, 1, 0);
-                        cellSheenTween(blobInner, blobYellowSheen, 0);
+                        cellSheenTween(blobInner, blobYellowSheen);
                     }
 
                     zoomFirstAlready = false;
@@ -159,7 +159,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
             if (comingFrom == 'zoomAreaThird') {
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
                 ribbonTweenOpacity(ribbons, 0, 1);
-                cellSheenTween(blobInner, undefined, 0);
+                cellSheenTween(blobInner);
             }
 
             splashAlready = false;
@@ -409,13 +409,13 @@ function ribbonTweenOpacity(ribbons, initOpacity, targetOpacity, duration = (fad
     }
 }
 
-function cellSheenTween(group, color = null, timeout = fadeInDuration) {
+function cellSheenTween(group, color = null) {
     console.log('blob sheen called');
     blobTweenGroup.removeAll();
     group.traverse(child => {
         if (child.isMesh && child.material) {
-            const initialColor = new THREE.Color(child.material.sheenColor || child.material.color);
-            const targetColor = color ? new THREE.Color(color) : initialColor;
+            const initialColor = new THREE.Color(child.material.sheenColor);
+            const targetColor = color ? new THREE.Color(color) : new THREE.Color(child.material.color); // if no color param, set sheenColor = color
 
             const blobTween = new Tween({ r: initialColor.r, g: initialColor.g, b: initialColor.b })
                 .to({ r: targetColor.r, g: targetColor.g, b: targetColor.b }, 400)
@@ -429,10 +429,7 @@ function cellSheenTween(group, color = null, timeout = fadeInDuration) {
                 });
 
             blobTweenGroup.add(blobTween);
-
-            setTimeout(() => {
-                blobTween.start();
-            }, timeout);
+            blobTween.start();
         }
     });
 }
