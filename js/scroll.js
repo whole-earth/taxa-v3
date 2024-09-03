@@ -125,6 +125,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
                         dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
                         setTimeout(() => {
                             if (zoomProgress >= 2 / 3 && zoomProgress <= 1) {
+                                console.log((zoomProgress >= 2 / 3 && zoomProgress <= 1))
                                 dotUpdateColors(spheres, dotsYellow);
                                 dotRandomizePositions(spheres, dotBounds);
                                 dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
@@ -321,7 +322,7 @@ export function animatePage(controls, camera, cellObject, blobInner, ribbons, sp
         controls.autoRotateSpeed = 0.2;
     }, 100);
 
-    throttle(() => scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, wavingBlob, dotBounds, product), 20)();
+    throttle(() => scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, wavingBlob, dotBounds, product), 40)();
     camera.updateProjectionMatrix();
     setLastScrollY(scrollY);
 };
@@ -476,16 +477,6 @@ function dotTweenOpacity(spheres, initialOpacity, targetOpacity, wavingBlob, dur
         scaleTween.start();
     }
 
-}
-
-function dotsZeroOpacity__Edgecase(spheres) {
-    console.log("This fool scrolled too fast and we had to fire the edge-case function!")
-    spheres.forEach(sphere => {
-        if (sphere.material) {
-            sphere.material.opacity = 0;
-            sphere.material.needsUpdate = true;
-        }
-    });
 }
 
 function dotUpdateColors(spheres, color) {
