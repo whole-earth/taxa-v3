@@ -1,14 +1,5 @@
 import * as THREE from 'three';
 
-export const pearlBluePrev = new THREE.MeshStandardMaterial({
-  color: new THREE.Color('#6a81ad'),
-  roughness: 0.4,
-  metalness: 0.2,
-  opacity: 1,
-  transparent: true,
-  side: THREE.FrontSide
-});
-
 export const pearlBlue = new THREE.MeshPhysicalMaterial({
   color: new THREE.Color('#6a81ad'),
   roughness: 0.4,

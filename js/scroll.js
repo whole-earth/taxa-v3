@@ -177,7 +177,6 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
 
         if (!pitchCurrent) {
             activateText(pitchArea);
-            dotsZeroOpacity__Edgecase(spheres);
 
             if (comingFrom == 'productArea') {
                 controls.autoRotate = true;

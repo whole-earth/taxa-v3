@@ -142,7 +142,7 @@ function initScene() {
 
             new CellComponent("blob-inner.glb", pearlBlue, 0).then((object) => {
                 blobInner = object;
-                setupGUI(blobInner); // DAT.GUI
+                //setupGUI(blobInner);
                 resolve();
             }),
 
