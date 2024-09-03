@@ -274,7 +274,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
                 const endRotation = -Math.PI / 5;
                 product.rotation.z = smoothLerp(startRotation, endRotation, rotationProgress);
             }
-        } else (console.log('product loading'))
+        } else (console.log('Product render loading: deferring to -else'))
     }
 }
 
@@ -320,7 +320,7 @@ export function animatePage(controls, camera, cellObject, blobInner, ribbons, sp
         controls.autoRotateSpeed = 0.2;
     }, 100);
 
-    throttle(() => scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, wavingBlob, dotBounds, product), 60)();
+    throttle(() => scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, wavingBlob, dotBounds, product), 20)();
     camera.updateProjectionMatrix();
     setLastScrollY(scrollY);
 };
@@ -401,7 +401,6 @@ function ribbonTweenOpacity(ribbons, initOpacity, targetOpacity, duration = (fad
 }
 
 function cellSheenTween(group, color = null) {
-    console.log('blob sheen called');
     blobTweenGroup.removeAll();
     group.traverse(child => {
         if (child.isMesh && child.material) {
