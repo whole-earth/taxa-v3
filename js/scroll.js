@@ -44,7 +44,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
             if (comingFrom == 'zoomAreaFirst') {
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
                 ribbonTweenOpacity(ribbons, 0, 1);
-                cellSheenTween(blobInner, 0);
+                cellSheenTween(blobInner, undefined, 0);
             }
             splashAlready = true;
             zoomAlready = false;
@@ -76,13 +76,12 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
             if (zoomProgress >= 0 && zoomProgress < 1 / 3) {
                 if (!zoomFirstAlready) {
                     activateText__ZoomChild(zoomFirst);
+                    cellSheenTween(blobInner, blobGreenSheen);
 
                     if (comingFrom == 'splash') {
                         dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
-                        cellSheenTween(blobInner, blobGreenSheen);
                     } else if (comingFrom == 'zoomAreaSecond') {
                         dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
-                        cellSheenTween(blobInner, blobGreenSheen);
                         setTimeout(() => {
                             dotUpdateColors(spheres, dotsGreen);
                             dotRandomizePositions(spheres, dotBounds);
@@ -101,7 +100,6 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
 
                     activateText__ZoomChild(zoomSecond);
                     dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
-                    cellSheenTween(blobInner, blobOrangeSheen);
 
                     if (comingFrom == 'zoomAreaFirst') {
                     } else if (comingFrom == 'zoomAreaThird') {
@@ -111,6 +109,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
                         dotUpdateColors(spheres, dotsOrange);
                         dotRandomizePositions(spheres, dotBounds);
                         dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
+                        cellSheenTween(blobInner, blobOrangeSheen, 0);
                     }, fadeOutDuration);
 
                     zoomFirstAlready = false;
@@ -122,7 +121,6 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
             else if (zoomProgress >= 2 / 3 && zoomProgress <= 1) {
                 if (!zoomThirdAlready) {
                     activateText__ZoomChild(zoomThird);
-                    cellSheenTween(blobInner, blobYellowSheen, );
 
                     if (comingFrom == 'zoomAreaSecond') {
                         dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
@@ -130,10 +128,12 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
                             dotUpdateColors(spheres, dotsYellow);
                             dotRandomizePositions(spheres, dotBounds);
                             dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
+                            cellSheenTween(blobInner, blobYellowSheen, 0);
                         }, fadeOutDuration);
                     } else if (comingFrom == 'zoomOutArea') {
                         dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
                         ribbonTweenOpacity(ribbons, 1, 0);
+                        cellSheenTween(blobInner, blobYellowSheen, 0);
                     }
 
                     zoomFirstAlready = false;
@@ -159,7 +159,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
             if (comingFrom == 'zoomAreaThird') {
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
                 ribbonTweenOpacity(ribbons, 0, 1);
-                cellSheenTween(blobInner, 0);
+                cellSheenTween(blobInner, undefined, 0);
             }
 
             splashAlready = false;
@@ -410,7 +410,7 @@ function ribbonTweenOpacity(ribbons, initOpacity, targetOpacity, duration = (fad
 }
 
 function cellSheenTween(group, color = null, timeout = fadeInDuration) {
-    console.log('blob sheen called')
+    console.log('blob sheen called');
     blobTweenGroup.removeAll();
     group.traverse(child => {
         if (child.isMesh && child.material) {
