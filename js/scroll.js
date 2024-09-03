@@ -157,7 +157,6 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
             });
 
             if (comingFrom == 'zoomAreaThird') {
-                dotTweenGroup.removeAll(); // hack
                 dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
                 ribbonTweenOpacity(ribbons, 0, 1);
                 cellSheenTween(blobInner);
@@ -177,6 +176,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
 
         if (!pitchCurrent) {
             activateText(pitchArea);
+            dotsZeroOpacity__Edgecase(spheres);
 
             if (comingFrom == 'productArea') {
                 controls.autoRotate = true;
@@ -439,7 +439,6 @@ function activateText__ZoomChild(activeElement) {
 
 function dotTweenOpacity(spheres, initialOpacity, targetOpacity, wavingBlob, duration = 300) {
     dotTweenGroup.removeAll();
-
     spheres.forEach(sphere => {
         const currentState = { opacity: initialOpacity };
         const targetState = { opacity: targetOpacity };
@@ -477,6 +476,16 @@ function dotTweenOpacity(spheres, initialOpacity, targetOpacity, wavingBlob, dur
         scaleTween.start();
     }
 
+}
+
+function dotsZeroOpacity__Edgecase(spheres) {
+    console.log("This fool scrolled too fast and we had to fire the edge-case function!")
+    spheres.forEach(sphere => {
+        if (sphere.material) {
+            sphere.material.opacity = 0;
+            sphere.material.needsUpdate = true;
+        }
+    });
 }
 
 function dotUpdateColors(spheres, color) {
