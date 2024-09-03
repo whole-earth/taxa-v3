@@ -438,12 +438,14 @@ function activateText__ZoomChild(activeElement) {
 
 function dotTweenOpacity(spheres, initialOpacity, targetOpacity, wavingBlob, duration = 300) {
     dotTweenGroup.removeAll();
+    console.log(`dotTweenOpacity fired: ${message}, opacity ${initialOpacity} to ${targetOpacity}`);
+
     spheres.forEach(sphere => {
         const currentState = { opacity: initialOpacity };
         const targetState = { opacity: targetOpacity };
 
         const sphereTween = new Tween(currentState)
-            .to(targetState, duration) // prolonged duration
+            .to(targetState, duration)
             .easing(Easing.Quadratic.InOut)
             .onUpdate(() => {
                 sphere.material.opacity = currentState.opacity;
@@ -457,7 +459,6 @@ function dotTweenOpacity(spheres, initialOpacity, targetOpacity, wavingBlob, dur
         sphereTween.start();
     });
 
-    /*
     if (initialOpacity === 0 && targetOpacity === 1) {
         const initialScale = { scale: 0.96 };
         const targetScale = { scale: 1.0 };
@@ -475,7 +476,7 @@ function dotTweenOpacity(spheres, initialOpacity, targetOpacity, wavingBlob, dur
         dotTweenGroup.add(scaleTween);
         scaleTween.start();
     }
-    */
+
 }
 
 function dotUpdateColors(spheres, color) {
