@@ -44,7 +44,8 @@ function initScene() {
                 return new Promise((resolve) => {
                     this.scene = scene;
                     this.position = new THREE.Vector3(0, 0, 0);
-                    this.basePath = 'https://cdn.jsdelivr.net/gh/whole-earth/taxa@main/assets/cell/';
+                    // this.basePath = 'https://cdn.jsdelivr.net/gh/whole-earth/taxa@main/assets/cell/';
+                    this.basePath = './assets/cell/';
                     this.loader = new GLTFLoader();
                     this.gltfFileName = gltf;
                     const dracoLoader = new DRACOLoader();
@@ -95,7 +96,8 @@ function initScene() {
                 return new Promise((resolve) => {
                     this.scene = scene;
                     this.position = new THREE.Vector3(0, 0, 0);
-                    this.basePath = 'https://cdn.jsdelivr.net/gh/whole-earth/taxa@main/assets/product/';
+                    // this.basePath = 'https://cdn.jsdelivr.net/gh/whole-earth/taxa@main/assets/product/';
+                    this.basePath = './assets/product/';
                     this.loader = new GLTFLoader();
                     const dracoLoader = new DRACOLoader();
                     dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.3/');

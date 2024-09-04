@@ -2,6 +2,6 @@
   "dependencies": {
     "dat.gui": "^0.7.9",
     "three": "^0.168.0",
-    "tween": "^0.9.0"
+    "tween.js": "^16.6.0"
   }
 }
