@@ -44,8 +44,8 @@ function initScene() {
                 return new Promise((resolve) => {
                     this.scene = scene;
                     this.position = new THREE.Vector3(0, 0, 0);
-                    // this.basePath = 'https://cdn.jsdelivr.net/gh/whole-earth/taxa@main/assets/cell/';
-                    this.basePath = './assets/cell/';
+                    this.basePath = 'https://cdn.jsdelivr.net/gh/whole-earth/taxa@main/assets/cell/';
+                    // this.basePath = './assets/cell/';
                     this.loader = new GLTFLoader();
                     this.gltfFileName = gltf;
                     const dracoLoader = new DRACOLoader();
@@ -96,8 +96,8 @@ function initScene() {
                 return new Promise((resolve) => {
                     this.scene = scene;
                     this.position = new THREE.Vector3(0, 0, 0);
-                    // this.basePath = 'https://cdn.jsdelivr.net/gh/whole-earth/taxa@main/assets/product/';
-                    this.basePath = './assets/product/';
+                    this.basePath = 'https://cdn.jsdelivr.net/gh/whole-earth/taxa@main/assets/product/';
+                    // this.basePath = './assets/product/';
                     this.loader = new GLTFLoader();
                     const dracoLoader = new DRACOLoader();
                     dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.3/');
@@ -199,7 +199,9 @@ function initScene() {
         const ambientLight = new THREE.AmbientLight(0xffffff, 4);
         scene.add(ambientLight);
         const rgbeLoader = new RGBELoader();
-        rgbeLoader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa-v3@main/assets/cell/aloe.hdr", function (texture) {
+        rgbeLoader.load("./assets/cell/aloe.hdr", function (texture) {
+
+        // rgbeLoader.load("https://cdn.jsdelivr.net/gh/whole-earth/taxa-v3@main/assets/cell/aloe.hdr", function (texture) {
             const pmremGenerator = new PMREMGenerator(renderer);
             pmremGenerator.compileEquirectangularShader();
             const envMap = pmremGenerator.fromEquirectangular(texture).texture;
