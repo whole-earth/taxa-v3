@@ -191,8 +191,9 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
                         }
                     });
                 }
-            } else if (comingFrom == 'zoomOutArea'){
-                dotsTweenExplosion(wavingBlob);
+            } else if (comingFrom == 'zoomOutArea') {
+                dotsTweenExplosion(spheres, wavingBlob, fadeOutDuration);
+                // what duration do i really want?
             }
 
             zoomOutCurrent = false;
@@ -551,8 +552,8 @@ function dotsTweenExplosion(spheres, wavingBlob, duration) {
     }, duration * 0.6);
 }
 
-function restoreDotScale(wavingBlob){
-    wavingBlob.scale.set(1,1,1);
+function restoreDotScale(wavingBlob) {
+    wavingBlob.scale.set(1, 1, 1);
     console.log("reset the wavingBlob scale to (1,1,1)")
 }
 
