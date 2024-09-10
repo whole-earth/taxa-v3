@@ -505,38 +505,34 @@ function dotRandomizePositions(spheres, dotBounds) {
     }
 }
 
-function dotsTweenExplosion(spheres, wavingBlob, duration){
+function dotsTweenExplosion(spheres, wavingBlob, duration) {
+    blobTweenGroup.removeAll();
+    const initial = { scale: 1, opacity: 1 };
+    const target = { scale: 1.3, opacity: 0 };
 
-    // first scale the opacity over time course
-    blobTweenGroup.removeAll(); // this is the smae array as the innerBlob sheen... confirm this is aight
-    const initialScale = { scale: 1 };
-    const targetScale = { scale: 1.3 };
-
-    const scaleTween = new Tween(initialScale)
-        .to(targetScale, (duration))
+    const scaleTween = new Tween(initial)
+        .to({ scale: target.scale }, duration)
         .easing(Easing.Quadratic.InOut)
         .onUpdate(() => {
-            wavingBlob.scale.set(initialScale.scale, initialScale.scale, initialScale.scale);
+            wavingBlob.scale.set(initial.scale, initial.scale, initial.scale);
         })
         .onComplete(() => {
             blobTweenGroup.remove(scaleTween);
         });
 
-    blobTweenGroup.add(scaleTween); // this will need to be a different group, 
+    blobTweenGroup.add(scaleTween);
     scaleTween.start();
 
     // after certain time, start the opacity fade-out of the dots
     setTimeout(() => {
         dotTweenGroup.removeAll();
-        const initialOpacity = 1;
-        const targetOpacity = 0;
 
         spheres.forEach(sphere => {
-            const currentState = { opacity: initialOpacity }; // need to define these variables somewhere, can I just do it within here?
-            const targetState = { opacity: targetOpacity };
-    
+            const currentState = { opacity: initial.opacity };
+            const targetState = { opacity: target.opacity };
+
             const sphereTween = new Tween(currentState)
-                .to(targetState, (duration - (duration*0.6))) // adjust as needed, but such that OPACITY and SCALE concurrently
+                .to(targetState, duration * 0.4) // adjust as needed, but such that OPACITY and SCALE concurrently
                 .easing(Easing.Quadratic.InOut)
                 .onUpdate(() => {
                     sphere.material.opacity = currentState.opacity;
@@ -545,7 +541,7 @@ function dotsTweenExplosion(spheres, wavingBlob, duration){
                 .onComplete(() => {
                     dotTweenGroup.remove(sphereTween);
                 });
-    
+
             dotTweenGroup.add(sphereTween);
             sphereTween.start();
         });
