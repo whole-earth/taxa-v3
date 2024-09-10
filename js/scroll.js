@@ -505,6 +505,8 @@ function dotRandomizePositions(spheres, dotBounds) {
     }
 }
 
+//================================================================
+
 function dotsTweenExplosion(spheres, wavingBlob, duration) {
     blobTweenGroup.removeAll();
     const initial = { scale: 1, opacity: 1 };
@@ -553,6 +555,9 @@ function restoreDotScale(wavingBlob){
     wavingBlob.scale.set(1,1,1);
     console.log("reset the wavingBlob scale to (1,1,1)")
 }
+
+//================================================================
+
 
 const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
 
