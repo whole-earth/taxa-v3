@@ -133,7 +133,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
                         }, fadeOutDuration);
                     } else if (comingFrom == 'zoomOutArea') {
                         dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
-                        ribbonTweenOpacity(ribbons, 1, 0);
+                        //ribbonTweenOpacity(ribbons, 1, 0);
                         cellSheenTween(blobInner, blobYellowSheen);
                     }
 
@@ -158,7 +158,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
 
             if (comingFrom == 'zoomAreaThird') {
                 //dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
-                ribbonTweenOpacity(ribbons, 0, 1);
+                //ribbonTweenOpacity(ribbons, 0, 1);
                 cellSheenTween(blobInner);
             }
 
@@ -193,7 +193,6 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
                 }
             } else if (comingFrom == 'zoomOutArea') {
                 dotsTweenExplosion(spheres, wavingBlob, fadeOutDuration);
-                // what duration do i really want?
             }
 
             zoomOutCurrent = false;
@@ -511,7 +510,7 @@ function dotRandomizePositions(spheres, dotBounds) {
 function dotsTweenExplosion(spheres, wavingBlob, duration) {
     blobTweenGroup.removeAll();
     const initial = { scale: 1, opacity: 1 };
-    const target = { scale: 1.3, opacity: 0 };
+    const target = { scale: 1.2, opacity: 0 };
 
     const scaleTween = new Tween(initial)
         .to({ scale: target.scale }, duration)
