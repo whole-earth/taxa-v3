@@ -157,7 +157,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
             });
 
             if (comingFrom == 'zoomAreaThird') {
-                dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
+                //dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
                 ribbonTweenOpacity(ribbons, 0, 1);
                 cellSheenTween(blobInner);
             }
