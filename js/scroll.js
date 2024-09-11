@@ -13,15 +13,9 @@ const pitchEndFOV = pitchStartFOV * 1.05;
 const productStartFOV = pitchEndFOV;
 const productEndFOV = productStartFOV;
 
-const dotsGreen = new THREE.Color('#71ff00');
-const dotsOrange = new THREE.Color('#ff8e00');
-const dotsYellow = new THREE.Color('#f1ff00');
-
-const blobOrangeSheen = new THREE.Color('#ff8e00');
-const blobYellowSheen = new THREE.Color('#f1ff00');
-const blobGreenSheen = new THREE.Color('#71ff00');
-
-let productFadeoutElems = [];
+const green = new THREE.Color('#92cb86');
+const orange = new THREE.Color('#ff8e00');
+const yellow = new THREE.Color('#f1ff00');
 
 const fadeInDuration = 500;
 const fadeOutDuration = 180;
@@ -60,7 +54,6 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
 
         if (!zoomCurrent) {
             activateText(zoomArea);
-            ribbonTweenOpacity(ribbons, 1, 0);
             splashCurrent = false;
             zoomCurrent = true;
             zoomOutCurrent = false;
@@ -73,9 +66,10 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
             if (zoomProgress >= 0 && zoomProgress < 1 / 3) {
                 if (!zoomFirstCurrent) {
                     activateText__ZoomChild(zoomFirst);
-                    cellSheenTween(blobInner, blobOrangeSheen);
+                    cellSheenTween(blobInner, orange);
 
                     if (comingFrom == 'splash') {
+                        ribbonTweenOpacity(ribbons, 1, 0);
                         dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
                     } else if (comingFrom == 'zoomAreaSecond') {
 
@@ -83,7 +77,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
 
                         setTimeout(() => {
                             if (zoomFirstCurrent) {
-                                dotUpdateColors(spheres, dotsOrange);
+                                dotUpdateColors(spheres, orange);
                                 dotRandomizePositions(spheres, dotBounds);
                                 dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
                             }
@@ -104,10 +98,10 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
 
                     setTimeout(() => {
                         if (zoomSecondCurrent) {
-                            dotUpdateColors(spheres, dotsYellow);
+                            dotUpdateColors(spheres, yellow);
                             dotRandomizePositions(spheres, dotBounds);
                             dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
-                            cellSheenTween(blobInner, blobYellowSheen);
+                            cellSheenTween(blobInner, yellow);
                         }
                     }, fadeOutDuration);
                 }
@@ -125,16 +119,15 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
                         dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
                         setTimeout(() => {
                             if (zoomThirdCurrent) {
-                                dotUpdateColors(spheres, dotsGreen);
+                                dotUpdateColors(spheres, green);
                                 dotRandomizePositions(spheres, dotBounds);
                                 dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
-                                cellSheenTween(blobInner, blobGreenSheen);
+                                cellSheenTween(blobInner, green);
                             }
                         }, fadeOutDuration);
                     } else if (comingFrom == 'zoomOutArea') {
                         dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
-                        //ribbonTweenOpacity(ribbons, 1, 0);
-                        cellSheenTween(blobInner, blobGreenSheen);
+                        cellSheenTween(blobInner, green);
                     }
 
                     zoomSecondCurrent = false;
@@ -155,12 +148,6 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
                     child.classList.remove('active');
                 }
             });
-
-            if (comingFrom == 'zoomAreaThird') {
-                //dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
-                //ribbonTweenOpacity(ribbons, 0, 1);
-                //cellSheenTween(blobInner);
-            }
 
             zoomCurrent = false;
             zoomThirdCurrent = false;
@@ -212,10 +199,6 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
             productCurrent = true;
             productTextActivated = false;
             comingFrom = 'productArea';
-
-            productFadeoutElems = cellObject.children.filter(child => child.name !== 'ribbons.glb');
-            console.log(cellObject);
-
         }
 
         productProgress = scrollProgress__Last(productArea);

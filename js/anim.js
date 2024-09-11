@@ -239,7 +239,7 @@ function initScene() {
             const randomPosition = getRandomPositionWithinBounds(dotBounds);
             const sizeIndex = i % sizes.length;
             const sphereGeometry = new THREE.SphereGeometry(sizes[sizeIndex], 6, 6);
-            const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x92cb86, opacity: 0, transparent: true, depthWrite: false });
+            const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xff8e00, opacity: 0, transparent: true, depthWrite: false });
             const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
             sphereMesh.position.copy(randomPosition);
             const randomDirection = new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize();
