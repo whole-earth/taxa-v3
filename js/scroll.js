@@ -17,14 +17,14 @@ const dotsGreen = new THREE.Color('#71ff00');
 const dotsOrange = new THREE.Color('#ff8e00');
 const dotsYellow = new THREE.Color('#f1ff00');
 
-const blobGreenSheen = new THREE.Color('#71ff00');
 const blobOrangeSheen = new THREE.Color('#ff8e00');
 const blobYellowSheen = new THREE.Color('#f1ff00');
+const blobGreenSheen = new THREE.Color('#71ff00');
+
+let productFadeoutElems = [];
 
 const fadeInDuration = 500;
 const fadeOutDuration = 180;
-
-// ============================
 
 // ============================
 
@@ -73,7 +73,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
             if (zoomProgress >= 0 && zoomProgress < 1 / 3) {
                 if (!zoomFirstCurrent) {
                     activateText__ZoomChild(zoomFirst);
-                    cellSheenTween(blobInner, blobGreenSheen);
+                    cellSheenTween(blobInner, blobOrangeSheen);
 
                     if (comingFrom == 'splash') {
                         dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
@@ -83,7 +83,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
 
                         setTimeout(() => {
                             if (zoomFirstCurrent) {
-                                dotUpdateColors(spheres, dotsGreen);
+                                dotUpdateColors(spheres, dotsOrange);
                                 dotRandomizePositions(spheres, dotBounds);
                                 dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
                             }
@@ -104,10 +104,10 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
 
                     setTimeout(() => {
                         if (zoomSecondCurrent) {
-                            dotUpdateColors(spheres, dotsOrange);
+                            dotUpdateColors(spheres, dotsYellow);
                             dotRandomizePositions(spheres, dotBounds);
                             dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
-                            cellSheenTween(blobInner, blobOrangeSheen);
+                            cellSheenTween(blobInner, blobYellowSheen);
                         }
                     }, fadeOutDuration);
                 }
@@ -125,16 +125,16 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
                         dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
                         setTimeout(() => {
                             if (zoomThirdCurrent) {
-                                dotUpdateColors(spheres, dotsYellow);
+                                dotUpdateColors(spheres, dotsGreen);
                                 dotRandomizePositions(spheres, dotBounds);
                                 dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
-                                cellSheenTween(blobInner, blobYellowSheen);
+                                cellSheenTween(blobInner, blobGreenSheen);
                             }
                         }, fadeOutDuration);
                     } else if (comingFrom == 'zoomOutArea') {
                         dotTweenOpacity(spheres, 0, 1, wavingBlob, fadeInDuration);
                         //ribbonTweenOpacity(ribbons, 1, 0);
-                        cellSheenTween(blobInner, blobYellowSheen);
+                        cellSheenTween(blobInner, blobGreenSheen);
                     }
 
                     zoomSecondCurrent = false;
@@ -159,7 +159,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
             if (comingFrom == 'zoomAreaThird') {
                 //dotTweenOpacity(spheres, 1, 0, wavingBlob, fadeOutDuration);
                 //ribbonTweenOpacity(ribbons, 0, 1);
-                cellSheenTween(blobInner);
+                //cellSheenTween(blobInner);
             }
 
             zoomCurrent = false;
@@ -212,6 +212,10 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
             productCurrent = true;
             productTextActivated = false;
             comingFrom = 'productArea';
+
+            productFadeoutElems = cellObject.children.filter(child => child.name !== 'ribbons.glb');
+            console.log(cellObject);
+
         }
 
         productProgress = scrollProgress__Last(productArea);
@@ -226,12 +230,22 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
             cellObject.scale.set(cellScale, cellScale, cellScale);
 
             cellObject.children.forEach(child => {
-                child.traverse(innerChild => {
-                    if (innerChild.material) {
-                        innerChild.material.opacity = 1 - productProgress__0_40;
-                        innerChild.material.needsUpdate = true;
-                    }
-                });
+                if (child.name == 'ribbons.glb'){
+                    child.traverse(innerChild => {
+                        if (innerChild.material) {
+                            innerChild.material.opacity = 0;
+                            innerChild.material.needsUpdate = true;
+                        }
+                    });
+                    
+                } else {
+                    child.traverse(innerChild => {
+                        if (innerChild.material) {
+                            innerChild.material.opacity = 1 - productProgress__0_40;
+                            innerChild.material.needsUpdate = true;
+                        }
+                    });
+                }
             });
 
             // product scale
