@@ -550,7 +550,7 @@ function dotsTweenExplosion(spheres, wavingBlob, duration) {
 
 function restoreDotScale(wavingBlob) {
     wavingBlob.scale.set(1, 1, 1);
-    console.log("reset the wavingBlob scale to (1,1,1)")
+    console.log("FIX THIS reset the wavingBlob scale to (1,1,1)")
 }
 
 //================================================================
