@@ -161,7 +161,7 @@ function initScene() {
         ];
 
         const loadProductObject = [
-            new productComponent("vial_placeholder.glb", vialMaterial, 200).then((createdProduct) => {
+            new productComponent("compressed.glb", vialMaterial, 200).then((createdProduct) => {
                 product = createdProduct;
                 productAnchor = new THREE.Object3D();
                 productAnchor.add(product);
