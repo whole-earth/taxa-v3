@@ -288,7 +288,6 @@ function initScene() {
         const dotsGroup3 = new THREE.Group();
         wavingBlob.add(dotsGroup1, dotsGroup2, dotsGroup3);
         scene.add(wavingBlob);
-        spheres.push(sphereMesh);
     
         const sizes = [0.12, 0.14, 0.16, 0.18, 0.22];
         
@@ -299,6 +298,7 @@ function initScene() {
             const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xff8e00, opacity: 0, transparent: true, depthWrite: false });
             const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
             sphereMesh.position.copy(randomPosition);
+            spheres.push(sphereMesh);
             const randomDirection = new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize();
             sphereMesh.velocity = randomDirection.multiplyScalar(0.014);
             
