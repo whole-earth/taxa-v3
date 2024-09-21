@@ -7,7 +7,6 @@ import { RGBELoader } from 'three/RGBELoader';
 import { PMREMGenerator } from 'three';
 import { dispersion, mauve, pearlBlue, vialMaterial } from './materials.js';
 import { animatePage } from './scroll.js';
-import * as dat from 'dat.gui';
 
 document.addEventListener('DOMContentLoaded', async () => initScene());
 
@@ -144,7 +143,6 @@ function initScene() {
 
             new CellComponent("blob-inner.glb", pearlBlue, 0).then((object) => {
                 blobInner = object;
-                //setupGUI(blobInner);
                 resolve();
             }),
 
@@ -225,7 +223,7 @@ function initScene() {
         return controls;
     }
 
-    function initSpeckles(scene, boundingBoxes) {
+    function initSpeckles__Prev(scene, boundingBoxes) {
         dotBounds = boundingBoxes[1].max.z * 0.85;
         const waveGeom = new THREE.SphereGeometry(dotBounds, 32, 32);
         const waveMaterial = new THREE.MeshBasicMaterial({ color: 0x92cb86, opacity: 0, transparent: true, depthWrite: false, depthTest: false });
@@ -278,62 +276,78 @@ function initScene() {
         animate();
     }
 
+    function initSpeckles(scene, boundingBoxes) {
+        dotBounds = boundingBoxes[1].max.z * 0.85;
+        const waveGeom = new THREE.SphereGeometry(dotBounds, 32, 32);
+        const waveMaterial = new THREE.MeshBasicMaterial({ color: 0x92cb86, opacity: 0, transparent: true, depthWrite: false, depthTest: false });
+        wavingBlob = new THREE.Mesh(waveGeom, waveMaterial);
+        wavingBlob.renderOrder = 5;
+    
+        const dotsGroup1 = new THREE.Group();
+        const dotsGroup2 = new THREE.Group();
+        const dotsGroup3 = new THREE.Group();
+        wavingBlob.add(dotsGroup1, dotsGroup2, dotsGroup3);
+        scene.add(wavingBlob);
+        spheres.push(sphereMesh);
+    
+        const sizes = [0.12, 0.14, 0.16, 0.18, 0.22];
+        
+        for (let i = 0; i < 180; i++) {
+            const randomPosition = getRandomPositionWithinBounds(dotBounds);
+            const sizeIndex = i % sizes.length;
+            const sphereGeometry = new THREE.SphereGeometry(sizes[sizeIndex], 6, 6);
+            const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xff8e00, opacity: 0, transparent: true, depthWrite: false });
+            const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+            sphereMesh.position.copy(randomPosition);
+            const randomDirection = new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize();
+            sphereMesh.velocity = randomDirection.multiplyScalar(0.014);
+            
+            if (i % 3 === 0) {
+                dotsGroup1.add(sphereMesh);
+            } else if (i % 3 === 1) {
+                dotsGroup2.add(sphereMesh);
+            } else {
+                dotsGroup3.add(sphereMesh);
+            }
+        }
+    
+        function getRandomPositionWithinBounds(bounds) {
+            const x = (Math.random() * 2 - 1) * (bounds * 0.65);
+            const y = (Math.random() * 2 - 1) * (bounds * 0.65);
+            const z = (Math.random() * 2 - 1) * (bounds * 0.65);
+            return new THREE.Vector3(x, y, z);
+        }
+    
+        function animate() {
+            requestAnimationFrame(animate);
+    
+            dotTweenGroup.update();
+            ribbonTweenGroup.update();
+            blobTweenGroup.update();
+    
+            if (productAnchor) { productAnchor.lookAt(camera.position); }
+    
+            renderer.render(scene, camera);
+            controls.update();
+    
+            [dotsGroup1, dotsGroup2, dotsGroup3].forEach(group => {
+                group.children.forEach(sphere => {
+                    sphere.position.add(sphere.velocity);
+                    if (sphere.position.length() > dotBounds) {
+                        sphere.velocity.negate();
+                    }
+                });
+            });
+        }
+    
+        animate();
+    }
+    
+
     function resizeScene(render, camera) {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         render.setSize(window.innerWidth, window.innerHeight);
-    }
-
-    function setupGUI(blobInner) {
-        const gui = new dat.GUI();
-        const blobFolder = gui.addFolder('Blob Inner');
-    
-        blobInner.traverse(child => {
-            if (child.isMesh && child.material) {
-                const material = child.material;
-    
-                blobFolder.addColor({ color: material.color.getStyle() }, 'color').onChange((value) => {
-                    material.color.setStyle(value);
-                    material.needsUpdate = true;
-                });
-    
-                blobFolder.add(material, 'opacity', 0, 1).onChange((value) => {
-                    material.opacity = value;
-                    material.needsUpdate = true;
-                });
-    
-                blobFolder.add(material, 'roughness', 0, 1).onChange((value) => {
-                    material.roughness = value;
-                    material.needsUpdate = true;
-                });
-    
-                blobFolder.add(material, 'metalness', 0, 1).onChange((value) => {
-                    material.metalness = value;
-                    material.needsUpdate = true;
-                });
-
-                blobFolder.addColor({ sheenColor: material.sheenColor.getStyle() }, 'sheenColor').onChange((value) => {
-                    material.sheenColor.setStyle(value);
-                    material.needsUpdate = true;
-                });
-    
-                blobFolder.add(material, 'sheen', 0, 1).onChange((value) => {
-                    material.sheen = value;
-                    material.needsUpdate = true;
-                });
-    
-                blobFolder.add(material, 'sheenRoughness', 0, 1).onChange((value) => {
-                    material.sheenRoughness = value;
-                    material.needsUpdate = true;
-                });
-    
-                blobFolder.open();
-            }
-        });
-    
-        if (blobFolder.__controllers.length === 0) {
-            console.error('No mesh with material found in blobInner');
-        }
     }
 
 }

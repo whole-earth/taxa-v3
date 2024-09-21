@@ -179,7 +179,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
                     });
                 }
             } else if (comingFrom == 'zoomOutArea') {
-                dotsTweenExplosion(spheres, wavingBlob, fadeOutDuration);
+                dotsTweenExplosion(wavingBlob, fadeOutDuration*1.6, 400);
             }
 
             zoomOutCurrent = false;
@@ -504,10 +504,10 @@ function dotRandomizePositions(spheres, dotBounds) {
 
 //================================================================
 
-function dotsTweenExplosion(spheres, wavingBlob, duration) {
+function dotsTweenExplosion__Prev(spheres, wavingBlob, duration) {
     blobTweenGroup.removeAll();
     const initial = { scale: 1, opacity: 1 };
-    const target = { scale: 1.2, opacity: 0 };
+    const target = { scale: 1.5, opacity: 0 };
 
     const scaleTween = new Tween(initial)
         .to({ scale: target.scale }, duration)
@@ -548,9 +548,76 @@ function dotsTweenExplosion(spheres, wavingBlob, duration) {
     }, duration * 0.6);
 }
 
-function restoreDotScale(wavingBlob) {
+function dotsTweenExplosion(wavingBlob, duration, delayBeforeFire) {
+    blobTweenGroup.removeAll();
+
+    const dotGroups = wavingBlob.children.filter(group => group.isGroup); // Get all dot groups (dotsGroup1, dotsGroup2, dotsGroup3)
+    const initial = { scale: 1, opacity: 1 };
+    const target = { scale: 1.5, opacity: 0 };
+
+    dotGroups.forEach((group, index) => {
+        setTimeout(() => {
+            // Create a scaling tween for the group
+            const scaleTween = new Tween(initial)
+                .to({ scale: target.scale }, duration)
+                .easing(Easing.Quadratic.InOut)
+                .onUpdate(() => {
+                    group.scale.set(initial.scale, initial.scale, initial.scale);
+                })
+                .onComplete(() => {
+                    blobTweenGroup.remove(scaleTween);
+                });
+            
+            blobTweenGroup.add(scaleTween);
+            scaleTween.start();
+
+            // Start opacity fade-out for spheres in this group
+            group.children.forEach(sphere => {
+                const currentState = { opacity: initial.opacity };
+                const targetState = { opacity: target.opacity };
+
+                const sphereTween = new Tween(currentState)
+                    .to(targetState, duration * 0.4) // Adjust duration if needed
+                    .easing(Easing.Quadratic.InOut)
+                    .onUpdate(() => {
+                        sphere.material.opacity = currentState.opacity;
+                        sphere.material.needsUpdate = true;
+                    })
+                    .onComplete(() => {
+                        dotTweenGroup.remove(sphereTween);
+                    });
+
+                dotTweenGroup.add(sphereTween);
+                sphereTween.start();
+            });
+            
+        }, index * delayBeforeFire); // Stagger each group's animation by delayBeforeFire
+
+    });
+
+    // Remove the blob tween group after the last group has completed
+    setTimeout(() => {
+        blobTweenGroup.removeAll();
+        dotTweenGroup.removeAll();
+    }, dotGroups.length * delayBeforeFire + duration);
+}
+
+
+function restoreDotScale__Prev(wavingBlob) {
     wavingBlob.scale.set(1, 1, 1);
     console.log("FIX THIS reset the wavingBlob scale to (1,1,1)")
+}
+
+function restoreDotScale(wavingBlob) {
+    wavingBlob.scale.set(1, 1, 1);
+
+    wavingBlob.children.forEach(group => {
+        if (group.isGroup) {
+            group.scale.set(1, 1, 1);
+        }
+    });
+
+    console.log("All scales reset to (1,1,1) for wavingBlob and its dot groups");
 }
 
 //================================================================
