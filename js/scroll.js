@@ -551,11 +551,13 @@ function dotsTweenExplosion__Prev(spheres, wavingBlob, duration) {
 function dotsTweenExplosion(wavingBlob, duration, delayBeforeFire) {
     blobTweenGroup.removeAll();
 
-    const dotGroups = wavingBlob.children.filter(group => group.isGroup); // Get all dot groups (dotsGroup1, dotsGroup2, dotsGroup3)
-    const initial = { scale: 1, opacity: 1 };
-    const target = { scale: 1.5, opacity: 0 };
+    const dotGroups = wavingBlob.children.filter(group => group.isGroup);
 
     dotGroups.forEach((group, index) => {
+
+        const initial = { scale: 1, opacity: 1 };
+        const target = { scale: 1.25, opacity: 0 };
+
         setTimeout(() => {
             // Create a scaling tween for the group
             const scaleTween = new Tween(initial)
@@ -600,12 +602,6 @@ function dotsTweenExplosion(wavingBlob, duration, delayBeforeFire) {
         blobTweenGroup.removeAll();
         dotTweenGroup.removeAll();
     }, dotGroups.length * delayBeforeFire + duration);
-}
-
-
-function restoreDotScale__Prev(wavingBlob) {
-    wavingBlob.scale.set(1, 1, 1);
-    console.log("FIX THIS reset the wavingBlob scale to (1,1,1)")
 }
 
 function restoreDotScale(wavingBlob) {
