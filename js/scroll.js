@@ -179,7 +179,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
                     });
                 }
             } else if (comingFrom == 'zoomOutArea') {
-                dotsTweenExplosion(wavingBlob, fadeOutDuration*1.6, 400);
+                dotsTweenExplosion(wavingBlob, 1000, 1000);
             }
 
             zoomOutCurrent = false;
