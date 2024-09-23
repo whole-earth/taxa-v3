@@ -550,59 +550,60 @@ function dotsTweenExplosion__Prev(spheres, wavingBlob, duration) {
 
 function dotsTweenExplosion(wavingBlob, duration, delayBeforeFire) {
     blobTweenGroup.removeAll();
+    dotTweenGroup.removeAll();
 
     const dotGroups = wavingBlob.children.filter(group => group.isGroup);
 
     dotGroups.forEach((group, index) => {
-
-        const initial = { scale: 1, opacity: 1 };
-        const target = { scale: 1.25, opacity: 0 };
+        const initialScale = { scale: 1 };
+        const targetScale = { scale: 1.25 };
+        const initialOpacity = { opacity: 1 };
+        const targetOpacity = { opacity: 0 };
 
         setTimeout(() => {
-            // Create a scaling tween for the group
-            const scaleTween = new Tween(initial)
-                .to({ scale: target.scale }, duration)
+            // Step 1: Scale Animation - Full duration
+            const scaleTween = new Tween(initialScale)
+                .to(targetScale, duration) // Full duration for scaling
                 .easing(Easing.Quadratic.InOut)
                 .onUpdate(() => {
-                    group.scale.set(initial.scale, initial.scale, initial.scale);
+                    group.scale.set(initialScale.scale, initialScale.scale, initialScale.scale);
                 })
                 .onComplete(() => {
                     blobTweenGroup.remove(scaleTween);
                 });
-            
+
             blobTweenGroup.add(scaleTween);
             scaleTween.start();
 
-            // Start opacity fade-out for spheres in this group
-            group.children.forEach(sphere => {
-                const currentState = { opacity: initial.opacity };
-                const targetState = { opacity: target.opacity };
+            // Step 2: Opacity Animation - Start after 75% of the duration, overlap with last 25%
+            setTimeout(() => {
+                group.children.forEach(sphere => {
+                    const sphereTween = new Tween(initialOpacity)
+                        .to(targetOpacity, duration * 0.25) // Final 25% for fading out opacity
+                        .easing(Easing.Quadratic.InOut)
+                        .onUpdate(() => {
+                            sphere.material.opacity = initialOpacity.opacity;
+                            sphere.material.needsUpdate = true;
+                        })
+                        .onComplete(() => {
+                            dotTweenGroup.remove(sphereTween);
+                        });
 
-                const sphereTween = new Tween(currentState)
-                    .to(targetState, duration * 0.4) // Adjust duration if needed
-                    .easing(Easing.Quadratic.InOut)
-                    .onUpdate(() => {
-                        sphere.material.opacity = currentState.opacity;
-                        sphere.material.needsUpdate = true;
-                    })
-                    .onComplete(() => {
-                        dotTweenGroup.remove(sphereTween);
-                    });
+                    dotTweenGroup.add(sphereTween);
+                    sphereTween.start();
+                });
+            }, duration * 0.75); // Start opacity fade after 75% of the scale animation
 
-                dotTweenGroup.add(sphereTween);
-                sphereTween.start();
-            });
-            
         }, index * delayBeforeFire); // Stagger each group's animation by delayBeforeFire
-
     });
 
-    // Remove the blob tween group after the last group has completed
+    // Cleanup: Remove all tweens after the last group's animation is complete
     setTimeout(() => {
         blobTweenGroup.removeAll();
         dotTweenGroup.removeAll();
-    }, dotGroups.length * delayBeforeFire + duration);
+    }, (dotGroups.length - 1) * delayBeforeFire + duration); // Total time for the last group to finish
 }
+
 
 function restoreDotScale(wavingBlob) {
     wavingBlob.scale.set(1, 1, 1);
