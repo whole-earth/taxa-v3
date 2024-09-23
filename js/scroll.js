@@ -57,6 +57,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
             splashCurrent = false;
             zoomCurrent = true;
             zoomOutCurrent = false;
+            restoreDotScale(wavingBlob); // added 9.23 21:16
         }
 
         zoomProgress = scrollProgress(zoomArea);
