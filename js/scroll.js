@@ -179,7 +179,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
                     });
                 }
             } else if (comingFrom == 'zoomOutArea') {
-                dotsTweenExplosion(wavingBlob, 1000, 1000);
+                dotsTweenExplosion(wavingBlob, 600, 100);
             }
 
             zoomOutCurrent = false;
@@ -556,7 +556,7 @@ function dotsTweenExplosion(wavingBlob, duration, delayBeforeFire) {
 
     dotGroups.forEach((group, index) => {
         const initialScale = { scale: 1 };
-        const targetScale = { scale: 1.25 };
+        const targetScale = { scale: 1.4 };
         const initialOpacity = { opacity: 1 };
         const targetOpacity = { opacity: 0 };
 
