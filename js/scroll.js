@@ -179,7 +179,7 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
                     });
                 }
             } else if (comingFrom == 'zoomOutArea') {
-                dotsTweenExplosion(wavingBlob, 600, 100);
+                dotsTweenExplosion(wavingBlob, 400, 100);
             }
 
             zoomOutCurrent = false;
@@ -199,6 +199,19 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
             productCurrent = true;
             productTextActivated = false;
             comingFrom = 'productArea';
+
+            if (comingFrom == 'pitchArea') {
+                restoreDotScale(wavingBlob);
+                
+                // also, increment thru spheres and set opacity to 0
+                blobTweenGroup.removeAll();
+                dotTweenGroup.removeAll();
+                spheres.forEach(sphere => {
+                    sphere.material.opacity = 0;
+                    sphere.material.needsUpdate = true;
+                });
+
+            }
         }
 
         productProgress = scrollProgress__Last(productArea);
@@ -213,14 +226,14 @@ function scrollLogic(controls, camera, cellObject, blobInner, ribbons, spheres, 
             cellObject.scale.set(cellScale, cellScale, cellScale);
 
             cellObject.children.forEach(child => {
-                if (child.name == 'ribbons.glb'){
+                if (child.name == 'ribbons.glb') {
                     child.traverse(innerChild => {
                         if (innerChild.material) {
                             innerChild.material.opacity = 0;
                             innerChild.material.needsUpdate = true;
                         }
                     });
-                    
+
                 } else {
                     child.traverse(innerChild => {
                         if (innerChild.material) {
@@ -556,7 +569,7 @@ function dotsTweenExplosion(wavingBlob, duration, delayBeforeFire) {
 
     dotGroups.forEach((group, index) => {
         const initialScale = { scale: 1 };
-        const targetScale = { scale: 1.4 };
+        const targetScale = { scale: 1.8 };
         const initialOpacity = { opacity: 1 };
         const targetOpacity = { opacity: 0 };
 
@@ -579,7 +592,7 @@ function dotsTweenExplosion(wavingBlob, duration, delayBeforeFire) {
             setTimeout(() => {
                 group.children.forEach(sphere => {
                     const sphereTween = new Tween(initialOpacity)
-                        .to(targetOpacity, duration * 0.25) // Final 25% for fading out opacity
+                        .to(targetOpacity, duration * 0.3) // Final 30%
                         .easing(Easing.Quadratic.InOut)
                         .onUpdate(() => {
                             sphere.material.opacity = initialOpacity.opacity;
@@ -592,7 +605,7 @@ function dotsTweenExplosion(wavingBlob, duration, delayBeforeFire) {
                     dotTweenGroup.add(sphereTween);
                     sphereTween.start();
                 });
-            }, duration * 0.75); // Start opacity fade after 75% of the scale animation
+            }, duration * 0.7); // Start opacity fade after 70% of the scale animation
 
         }, index * delayBeforeFire); // Stagger each group's animation by delayBeforeFire
     });
